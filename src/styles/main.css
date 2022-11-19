@@ -1,0 +1,17 @@
+.main-content{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.title {
+    font-size: 48px;
+}
+
+.subtitle {
+    font-size: 24px;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+

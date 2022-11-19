@@ -1,38 +1,68 @@
+:root {
+  --background-color: #313131;
+}
+
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  min-height: calc(100vh);
+  height: 100%;
+  color: white;
+  background-color: var(--background-color);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  text-align: center;
 }
 
-.App-link {
-  color: #61dafb;
+.albumArt {
+  max-height: 300px;
+  max-width: 300px;
+  overflow: hidden;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.albumArt #guess0 {
+  transform: scale(10);
+  transform-origin: 0% 100%;
+}
+
+.albumArt #guess1 {
+  transform: scale(8);
+  transform-origin: 0% 100%;
+}
+
+.albumArt #guess2 {
+  transform: scale(6.5);
+  transform-origin: 0% 100%;
+}
+
+.albumArt #guess3 {
+  transform: scale(5);
+  transform-origin: 0% 100%;
+}
+
+.albumArt #guess4 {
+  transform: scale(3.5);
+  transform-origin: 0% 100%;
+}
+
+.albumArt #guess5 {
+  transform: scale(2);
+  transform-origin: 0% 100%;
+}
+
+.albumArt #end {
+  transform: scale(1);
+  transform-origin: 0% 100%;
+}
+
+.guess {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: black;
+}
+
+button {
+  height: 25px;
+  width: 100px;
 }
