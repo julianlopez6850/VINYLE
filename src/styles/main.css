@@ -1,17 +1,77 @@
-.main-content{
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .title {
-    font-size: 48px;
+	font-size: 48px;
 }
 
 .subtitle {
-    font-size: 24px;
-    margin-top: -10px;
-    margin-bottom: 20px;
+	font-size: 24px;
+	margin-top: -10px;
+	margin-bottom: 20px;
 }
 
+.albumArt {
+	max-height: 300px;
+	max-width: 300px;
+	overflow: hidden;
+}
+
+.albumArt #guess0 {
+	transform: scale(10);
+	transform-origin: 0% 100%;
+}
+
+.albumArt #guess1 {
+	transform: scale(8);
+	transform-origin: 0% 100%;
+}
+
+.albumArt #guess2 {
+	transform: scale(6.5);
+	transform-origin: 0% 100%;
+}
+
+.albumArt #guess3 {
+	transform: scale(5);
+	transform-origin: 0% 100%;
+}
+
+.albumArt #guess4 {
+	transform: scale(3.5);
+	transform-origin: 0% 100%;
+}
+
+.albumArt #guess5 {
+	transform: scale(2);
+	transform-origin: 0% 100%;
+}
+
+.albumArt #end {
+	transform: scale(1);
+	transform-origin: 0% 100%;
+}
+
+.guess {
+	width: 100%;
+	margin-top: 20px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	color: black;
+}
+
+.select {
+	width: 500px;
+}
+
+button {
+	height: 38px;
+	width: 50px;
+}

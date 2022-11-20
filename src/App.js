@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
-import Select from 'react-select';
 import './App.css';
 
 import { Credentials } from './Credentials';
-import Artists from './Artists';
 import Main from './pages/Main';
+import Albums from './Albums';
 
-const artistIndex = Math.floor(Math.random() * Artists.length);
-const chosenArtist = Artists[artistIndex];
+const albumIndex = Math.floor(Math.random() * Albums.length);
+const chosenAlbum = Albums[albumIndex];
 
 const App = () => {
 
   const [token, setToken] = useState("");
-  const [albums, setAlbums] = useState({ selectedAlbum: "", listOfAlbums: []});
-  const [track, setTrack] = useState({ selectedTrack: "", listOfTracks: []})
-  const [trackImg, setTrackImg] = useState("");
+  const [album, setAlbum] = useState({albumID: "", albumName: "", albumArt: "", artists: [], genres: []});
   const [guess, setGuess] = useState("");
   const [numGuesses, setNumGuesses] = useState(0);
   const [prevGuesses, setPrevGuesses] = useState([]);
@@ -23,6 +20,7 @@ const App = () => {
 
   useEffect (() => {
 
+    // get api token
     axios('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
@@ -33,61 +31,31 @@ const App = () => {
     })
     .then(tokenResponse => {
       setToken(tokenResponse.data.access_token);
-
-      axios(`https://api.spotify.com/v1/artists/${chosenArtist.value}/albums?limit=10`, {
-        method: 'GET',
-        headers: {
-          'Authorization' : 'Bearer ' + tokenResponse.data.access_token
-        }
-      })
-      .then(albumResponse => {
-        setAlbums({
-          selectedAlbum: albumResponse.data.items[Math.floor(Math.random() * albumResponse.data.items.length)],
-          listOfAlbums: albumResponse.data.items
-        })
-      });
     })
   }, [])
 
-  // 5zi7WsKlIiUXv09tbGLKsE
-
-  // By artist: https://api.spotify.com/v1/search?type=track&q=artist:Michael Jackson
-
-  // By playlist: https://api.spotify.com/v1/playlists/3RFP1W7BAxOr6wfpoEusO7/tracks
-
   useEffect(() => {
-    if(albums.selectedAlbum !== "")
+    
+    if(token)
     {
-      axios(`https://api.spotify.com/v1/albums/${albums.selectedAlbum.id}/tracks`, {
-          method: 'GET',
-          headers: {
-            'Authorization' : 'Bearer ' + token
-          }
+      // upon receiving api token, get the top 10 albums of the chosen artist
+      axios(`https://api.spotify.com/v1/albums/${chosenAlbum.value}`, {
+        method: 'GET',
+        headers: {
+          'Authorization' : 'Bearer ' + token
+        }
+      })
+      .then(albumResponse => {
+        setAlbum({
+          albumID: chosenAlbum.value,
+          albumName: albumResponse.data.name,
+          albumArt: albumResponse.data.images[1].url,
+          artists: albumResponse.data.artists
         })
-        .then(trackResponse => {
-          setTrack({
-            selectedTrack: trackResponse.data.items[Math.floor(Math.random() * trackResponse.data.items.length)],
-            listOfTracks: trackResponse.data.items
-          })
-        });
+      });
     }
-  }, [albums])
 
-  useEffect(() => {
-    if(track.selectedTrack !== "")
-    {
-      axios(`https://api.spotify.com/v1/tracks/${track.selectedTrack.id}`, {
-          method: 'GET',
-          headers: {
-            'Authorization' : 'Bearer ' + token
-          }
-        })
-        .then(trackResponse => {
-          console.log(trackResponse.data.album.name)
-          setTrackImg(trackResponse.data.album.images[1].url)
-        });
-    }
-  }, [track])
+  }, [token])
 
   const checkGuess = () => {
     setNumGuesses(numGuesses => numGuesses + 1);
@@ -96,11 +64,11 @@ const App = () => {
   useEffect(() => {
     if(numGuesses > 0 && !gameOver)
     {
-      console.log(guess.label);
-      console.log(chosenArtist.label);
+      console.log(guess.value);
+      console.log(album.albumID);
       console.log(numGuesses);
 
-      if(guess.label === chosenArtist.label)
+      if(guess.value === album.albumID)
       {
         console.log("YOU WON!");
         setGameOver(true);
@@ -121,22 +89,15 @@ const App = () => {
 
   return (
     <div className="App">
-      <Main />
-      <div className="albumArt" >
-        <img src={trackImg}  id={(gameOver) ? "end" : ("guess" + numGuesses)} />
-      </div>
-      <div className="guess">
-        <Select options={Artists} onChange={(selection) => {setGuess(selection)}} />
-        <button onClick={checkGuess}>
-          GUESS
-        </button>
-      </div>
-      <br />
-      <div>
-        {
-          prevGuesses.map((item, index) => <div>Guess {index + 1} : {item.label}</div>)
-        }
-      </div>
+      <Main 
+        album={album}
+        Albums={Albums}
+        gameOver={gameOver}
+        numGuesses={numGuesses}
+        checkGuess={checkGuess}
+        setGuess={setGuess}
+        prevGuesses={prevGuesses}
+      />
     </div>
   );
 }
