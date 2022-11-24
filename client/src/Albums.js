@@ -27,6 +27,7 @@ export default [
     //Kanye West
     {value: "4Uv86qWpGTxf7fU7lG5X6F", label: "The College Dropout"},
     {value: "5ll74bqtkcXlKE7wwkMq4g", label: "Late Registration"},
+    {value: "0veuYKXCayS7oIfyqlibeR", label: "Late Orchestration"},
     {value: "4SZko61aMnmgvNhfhgTuD3", label: "Graduation"},
     {value: "3WFTGIO6E3Xh4paEOBY9OU", label: "808s & Heartbreak"},
     {value: "20r762YmB5HeofjMCiPMLv", label: "My Beautiful Dark Twisted Fantasy"},

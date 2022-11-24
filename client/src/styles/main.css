@@ -71,7 +71,10 @@
 	width: 500px;
 }
 
-button {
+.guessBtn {
 	height: 38px;
-	width: 50px;
+	width: 80px;
+	background-color: white;
+	border-radius: 15px;
+	margin: 0px 10px 0px 10px;
 }
