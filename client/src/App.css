@@ -1,5 +1,9 @@
 :root {
   --background-color: #313131;
+  --navbar-color: #111111;
+  --correct-guess: #38A169;
+  --incorrect-guess: #E53E3E;
+  --navbar-color-2: #808080;
 }
 
 .App {
@@ -11,4 +15,9 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+}
+
+a {
+  color: white;
+  text-decoration: none;
 }

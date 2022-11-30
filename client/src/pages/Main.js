@@ -23,6 +23,9 @@ import {
 const albumIndex = Math.floor(Math.random() * Albums.length);
 const chosenAlbum = Albums[albumIndex];
 
+const correctGuessColor = "var(--correct-guess)"
+const incorrectGuessColor = "var(--incorrect-guess)"
+
 const Main = (props) => {
 
   const [token, setToken] = useState("");
@@ -33,6 +36,7 @@ const Main = (props) => {
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
 
+  const toast = useToast();
 
   useEffect(() => {
 
@@ -153,7 +157,7 @@ const Main = (props) => {
       let d = new Date();
 
       let data = {
-        userID: "1",
+        username: "1",
         date: `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`,
         albumID: chosenAlbum.value,
         win: win,
@@ -169,12 +173,10 @@ const Main = (props) => {
     }
   }, [prevGuesses])
 
-  const toast = useToast();
-
   return (
     <div className="main">
       <div className="title">
-        ALBUMLE
+        CLASSIC
       </div>
       <div className="subtitle">
         GUESS THE ALBUM FROM ITS ART
@@ -205,21 +207,21 @@ const Main = (props) => {
               </Tr>
             </Thead>
             {prevGuesses.map((item, index) =>
-              <Tbody outline={'1px solid white'} >
+              <Tbody outline={'1px solid white'} key={index}>
                 <Tr>
                   <Td outline="1px solid white" >
                     {index + 1}
                   </Td>
-                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.albumCorrectness) ? "green" : "red"}>
+                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.albumCorrectness) ? correctGuessColor : incorrectGuessColor}>
                     {item.albumName}
                   </Td>
-                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? "green" : "red"}>
+                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
                     {item.artists.map((item, index, artists) => { return (index + 1 === artists.length) ? item.name : (item.name + ", ") })}
                   </Td>
-                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? "green" : "red"}>
+                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
                     {item.genres}
                   </Td>
-                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.releaseYearCorrectness) ? "green" : "red"} isNumeric>
+                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.releaseYearCorrectness) ? correctGuessColor : incorrectGuessColor} isNumeric>
                     {(item.guessCorrectness.releaseYearCorrectness) ? "" : (item.releaseYear) ? ((item.guessCorrectness.releaseYearDirection === "later") ? "^" : "V") : ""}{item.releaseYear}
                   </Td>
                 </Tr>
@@ -253,6 +255,7 @@ const Main = (props) => {
               }) : "" :
             (!toast.isActive('loss')) ?
               toast({
+                position: 'top',
                 id: 'loss',
                 title: 'DEFEAT',
                 description: 'You failed to guess the correct album',
