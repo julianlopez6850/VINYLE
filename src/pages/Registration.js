@@ -26,13 +26,13 @@ const Registration = () => {
   const navigate = useNavigate();
 
   const trySetUsername = (username) => {
-    axios.get(`http://localhost:5000/auth/isUsernameTaken?username=${username}`).then(usernameTakenResponse => {
+    axios.get(`http://localhost:5000/auth/isUsernameAvailable?username=${username}`).then(response => {
         if(username.length < 3 && username.length > 15)
         {
           setUsername("");
           setUsernameError("Username must be between 3 and 15 characters");
         }
-        else if (usernameTakenResponse.data.error)
+        else if (!response.data.result)
         {
           setUsername("");
           setUsernameError("Username is already taken.");
@@ -47,12 +47,26 @@ const Registration = () => {
 
 
   const tryRegister = () => {
-    axios.post("http://localhost:5000/auth", { username: username, password: password.password }).then((response) => {
-      console.log(response.data);
-      console.log({ username: username, password: password.password });
-      if (response.data.success)
+    axios.post("http://localhost:5000/auth/register", { username: username, password: password.password }, { credentials: "include" }).then((response) => {
+      console.log("Registration status code: " + response.status);
+      if (response.ok)
+      {
+        console.log(response);
         navigate('/Login');
-    })
+      }
+      else
+        console.log(response);
+    }).catch(function (error) {
+      console.log("Error Status " + error.response.status + ":");
+      if (error.response) {
+        console.log(error.response.data);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+      }
+    });
   }
 
   const passwordMismatch = password.password !== password.match;

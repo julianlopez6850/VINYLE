@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import axios from 'axios';
+import { instance } from "../Helpers/axiosInstance"
 
 import "../styles/login.css";
 
@@ -22,14 +22,21 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-
   const tryLogin = () => {
-    axios.post("http://localhost:5000/auth/login", { username: username, password: password}).then((response) => {
-      console.log(response.data);
-      console.log({ username: username, password: password });
-      if (response.data.success)
-        navigate('/');
-    })
+    instance.post("http://localhost:5000/auth/login", { username: username, password: password}).then((response) => {
+
+      //localStorage.setItem('accessToken', response.data.accessToken)
+      navigate('/');
+    }).catch(function (error) {
+      console.log("Error Status " + error.response.status + ":");
+      if (error.response) {
+        console.log(error.response.data);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        console.log('Error', error.message);
+      }
+    });
   }
 
   return (

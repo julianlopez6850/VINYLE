@@ -3,12 +3,12 @@ import axios from 'axios';
 
 import { Credentials } from '../Credentials';
 import Albums from '../Albums';
+import { instance } from "../Helpers/axiosInstance"
 
-import Select from 'react-select';
 import "../styles/main.css";
-
+import Select from 'react-select';
 import {
-  ChakraProvider,
+  TableContainer,
   Table,
   Thead,
   Tbody,
@@ -16,7 +16,6 @@ import {
   Tr,
   Th,
   Td,
-  TableContainer,
   useToast,
 } from '@chakra-ui/react'
 
@@ -29,6 +28,7 @@ const incorrectGuessColor = "var(--incorrect-guess)"
 const Main = (props) => {
 
   const [token, setToken] = useState("");
+	const [username, setUsername] = useState("");
   const [album, setAlbum] = useState({ albumID: "", albumName: "", albumArt: "", artists: [], genres: [], releaseYear: "" });
   const [guess, setGuess] = useState("");
   const [numGuesses, setNumGuesses] = useState(0);
@@ -40,16 +40,23 @@ const Main = (props) => {
 
   useEffect(() => {
 
+    // check if user is logged in. (if so, get and store username)
+    instance.get("http://localhost:5000/auth/profile").then((response) => {
+			console.log(response);
+			setUsername(response.data.username)
+		}).catch(function(error) {
+			console.log(error.response.data);
+		});
+
     // get api token
     axios('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + btoa(Credentials().ClientID + ':' + Credentials().ClientSecret)
+        'Authorization': 'Basic ' + btoa(process.env.REACT_APP_ClientID + ':' + process.env.REACT_APP_ClientSecret)
       },
       data: 'grant_type=client_credentials'
-    })
-      .then(tokenResponse => {
+    }).then(tokenResponse => {
         setToken(tokenResponse.data.access_token);
       })
   }, [])
@@ -157,7 +164,7 @@ const Main = (props) => {
       let d = new Date();
 
       let data = {
-        username: "1",
+        username: username,
         date: `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`,
         albumID: chosenAlbum.value,
         win: win,
@@ -167,9 +174,18 @@ const Main = (props) => {
 
       console.log(data)
 
-      axios.post("http://localhost:5000/gamesplayed", data).then((response) => {
-        console.log("GAME POSTED TO ALBUMLEDB")
-      })
+      instance.post("http://localhost:5000/gamesplayed", data).then((response) => {
+        if(response.data.success)
+          console.log("Game data saved into AlbumleDB.")
+        else
+        {
+          console.log("Game data failed to save.");
+          if(response.data.error)
+            console.log("Error: " + response.data.error);
+        }
+      }).catch(function(error) {
+        console.log(error.response.data);
+      });
     }
   }, [prevGuesses])
 
@@ -194,7 +210,6 @@ const Main = (props) => {
         </button>
       </div>
       <br />
-      <ChakraProvider>
         <TableContainer width={1200} outline={'3px solid white'} borderRadius='10px' m="50px 0px 50px 0px">
           <Table variant='simple' size='md' >
             <Thead outline={'1px solid white'} >
@@ -238,7 +253,6 @@ const Main = (props) => {
             </Tfoot>
           </Table>
         </TableContainer>
-      </ChakraProvider>
       {/* WIN/LOSS TOAST NOTIFICATIONS */}
       {
         (gameOver) ?
