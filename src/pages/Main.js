@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-import { Credentials } from '../Credentials';
-import Albums from '../Albums';
-import { instance } from "../Helpers/axiosInstance"
+import { instance } from "../Helpers/axiosInstance";
 
 import "../styles/main.css";
-import Select from 'react-select';
+import Select from "react-select";
 import {
   TableContainer,
   Table,
@@ -17,20 +15,17 @@ import {
   Th,
   Td,
   useToast,
-} from '@chakra-ui/react'
+} from "@chakra-ui/react";
 
-const albumIndex = Math.floor(Math.random() * Albums.length);
-const chosenAlbum = Albums[albumIndex];
+const chosenAlbumID = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
-const correctGuessColor = "var(--correct-guess)"
-const incorrectGuessColor = "var(--incorrect-guess)"
+const correctGuessColor = "var(--correct-guess)";
+const incorrectGuessColor = "var(--incorrect-guess)";
 
 const Main = (props) => {
-
-  const [token, setToken] = useState("");
 	const [username, setUsername] = useState("");
-  const [album, setAlbum] = useState({ albumID: "", albumName: "", albumArt: "", artists: [], genres: [], releaseYear: "" });
-  const [guess, setGuess] = useState("");
+  const [Albums, setAlbums] = useState([]);
+  const [guess, setGuess] = useState();
   const [numGuesses, setNumGuesses] = useState(0);
   const [prevGuesses, setPrevGuesses] = useState([]);
   const [gameOver, setGameOver] = useState(false);
@@ -39,51 +34,24 @@ const Main = (props) => {
   const toast = useToast();
 
   useEffect(() => {
-
     // check if user is logged in. (if so, get and store username)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
 			console.log(response);
 			setUsername(response.data.username)
 		}).catch(function(error) {
-			console.log(error.response.data);
+      if(error.response)
+			  console.log(error.response.data);
+      else
+        console.log({ error: "Error logging in" });
 		});
 
-    // get api token
-    axios('https://accounts.spotify.com/api/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Basic ' + btoa(process.env.REACT_APP_ClientID + ':' + process.env.REACT_APP_ClientSecret)
-      },
-      data: 'grant_type=client_credentials'
-    }).then(tokenResponse => {
-        setToken(tokenResponse.data.access_token);
+    axios.get('http://localhost:5000/albums/all').then((response) => {
+      response.data.map((album) => {
+        setAlbums((Albums) => [...Albums, { value: album.albumID, label: album.albumName}])
       })
+      return { value: response.data.albumID, label: response.data.albumName}
+    })
   }, [])
-
-  useEffect(() => {
-
-    if (token) {
-      // upon receiving api token, get the top 10 albums of the chosen artist
-      axios(`https://api.spotify.com/v1/albums/${chosenAlbum.value}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        }
-      })
-        .then(albumResponse => {
-          setAlbum({
-            albumID: chosenAlbum.value,
-            albumName: albumResponse.data.name,
-            albumArt: albumResponse.data.images[1].url,
-            artists: albumResponse.data.artists,
-            releaseYear: parseInt(albumResponse.data.release_date.slice(0, 4)),
-            genres: albumResponse.data.genres
-          })
-        });
-    }
-
-  }, [token])
 
   const checkGuess = () => {
     if (guess && !gameOver) {
@@ -93,7 +61,7 @@ const Main = (props) => {
 
   const skipGuess = () => {
     if (!gameOver) {
-      setGuess("");
+      setGuess();
       setNumGuesses(numGuesses => numGuesses + 1);
     }
   }
@@ -102,34 +70,44 @@ const Main = (props) => {
     if (numGuesses > 0 && !gameOver) {
       console.log("GUESS " + numGuesses + ": ");
       console.log(guess);
-      console.log("ACTUAL ALBUM:");
-      console.log(album);
       console.log("PREVIOUS GUESSES:");
       console.log(prevGuesses);
 
       if (guess) {
-        axios(`https://api.spotify.com/v1/albums/${guess.value}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': 'Bearer ' + token
+        axios.get(`http://localhost:5000/albums?id=${guess.value}`).then((response) => {
+          console.log(response.data.album);
+          var guessCorrectness;
+          
+          var guess = {
+            albumID: response.data.album.albumID,
+            albumName: response.data.album.albumName,
+            albumArt: response.data.album.albumArt,
+            artists: response.data.album.artists,
+            genres: response.data.album.genres,
+            releaseYear: parseInt(response.data.album.releaseYear),
           }
-        })
-          .then(albumResponse => {
+
+          guess = `guess_albumID=${guess.albumID}&guess_artists=${guess.artists}&guess_genres=${guess.genres}&guess_releaseYear=${guess.releaseYear}`
+
+          axios.get(`http://localhost:5000/albums/compare?id=${chosenAlbumID}&${guess}`).then((compareRes) => {
+            console.log(compareRes.data)
+            guessCorrectness = {
+              albumCorrectness: compareRes.data.correct,
+              artistCorrectness: compareRes.data.correctArtist,
+              releaseYearCorrectness: compareRes.data.correctReleaseYear,
+              releaseYearDirection: compareRes.data.releaseYearDirection
+            }
             setPrevGuesses(prevGuesses => [...prevGuesses, {
               albumID: guess.value,
-              albumName: albumResponse.data.name,
-              albumArt: albumResponse.data.images[1].url,
-              artists: albumResponse.data.artists,
-              releaseYear: parseInt(albumResponse.data.release_date.slice(0, 4)),
-              genres: albumResponse.data.genres,
-              guessCorrectness: {
-                albumCorrectness: (albumResponse.data.name === album.albumName) ? true : false,
-                artistCorrectness: (albumResponse.data.artists[0].name === album.artists[0].name) ? true : false,
-                releaseYearCorrectness: (parseInt(albumResponse.data.release_date.slice(0, 4)) === album.releaseYear) ? true : false,
-                releaseYearDirection: (parseInt(albumResponse.data.release_date.slice(0, 4)) > album.releaseYear) ? "earlier" : "later"
-              }
+              albumName: response.data.album.albumName,
+              albumArt: response.data.album.albumArt,
+              artists: response.data.album.artists,
+              releaseYear: parseInt(response.data.album.releaseYear),
+              genres: response.data.album.genres,
+              guessCorrectness : guessCorrectness
             }]);
-          });
+          })
+        })
       }
       else {
         setPrevGuesses(prevGuesses => [...prevGuesses, {
@@ -146,8 +124,12 @@ const Main = (props) => {
           }
         }]);
       }
+    }
+  }, [numGuesses])
 
-      if (guess.value === album.albumID) {
+  useEffect(() => {
+    if(prevGuesses[0]) {
+      if (prevGuesses[prevGuesses.length - 1].guessCorrectness.albumCorrectness) {
         console.log("YOU WON!");
         setWin(true);
         setGameOver(true);
@@ -157,7 +139,8 @@ const Main = (props) => {
         setGameOver(true);
       }
     }
-  }, [numGuesses])
+
+  }, [prevGuesses])
 
   useEffect(() => {
     if (gameOver) {
@@ -166,14 +149,14 @@ const Main = (props) => {
       let data = {
         username: username,
         date: `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`,
-        albumID: chosenAlbum.value,
+        albumID: `http://localhost:5000/albums?id=${chosenAlbumID}`,
         win: win,
         numGuesses: numGuesses,
         guesses: prevGuesses
       }
 
       console.log(data)
-
+      
       instance.post("http://localhost:5000/gamesplayed", data).then((response) => {
         if(response.data.success)
           console.log("Game data saved into AlbumleDB.")
@@ -184,10 +167,11 @@ const Main = (props) => {
             console.log("Error: " + response.data.error);
         }
       }).catch(function(error) {
+        console.log("Game data failed to save.");
         console.log(error.response.data);
       });
     }
-  }, [prevGuesses])
+  }, [gameOver])
 
   return (
     <div className="main">
@@ -198,7 +182,7 @@ const Main = (props) => {
         GUESS THE ALBUM FROM ITS ART
       </div>
       <div className="albumArt" >
-        <img src={album.albumArt} id={(gameOver) ? "end" : ("guess" + numGuesses)} />
+        <img src={`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`} />
       </div>
       <div className="guess">
         <button className="guessBtn" onClick={skipGuess}>
@@ -210,49 +194,49 @@ const Main = (props) => {
         </button>
       </div>
       <br />
-        <TableContainer width={1200} outline={'3px solid white'} borderRadius='10px' m="50px 0px 50px 0px">
-          <Table variant='simple' size='md' >
-            <Thead outline={'1px solid white'} >
+      <TableContainer width={1200} outline={'3px solid white'} borderRadius='10px' m="50px 0px 50px 0px">
+        <Table variant='simple' size='md' >
+          <Thead>
+            <Tr>
+              <Th outline="1px solid white" color='white'>Guess #</Th>
+              <Th outline="1px solid white" color='white'>Album</Th>
+              <Th outline="1px solid white" color='white'>Artist</Th>
+              <Th outline="1px solid white" color='white'>Genre(s)</Th>
+              <Th outline="1px solid white" color='white' isNumeric>Release Year</Th>
+            </Tr>
+          </Thead>
+          {prevGuesses.map((item, index) =>
+            <Tbody key={index}>
               <Tr>
-                <Th outline="1px solid white" color='white'>Guess #</Th>
-                <Th outline="1px solid white" color='white'>Album</Th>
-                <Th outline="1px solid white" color='white'>Artist</Th>
-                <Th outline="1px solid white" color='white'>Genre(s)</Th>
-                <Th outline="1px solid white" color='white' isNumeric>Release Year</Th>
+                <Td outline="1px solid white" >
+                  {index + 1}
+                </Td>
+                <Td outline="1px solid white" bgColor={(item.guessCorrectness.albumCorrectness) ? correctGuessColor : incorrectGuessColor}>
+                  {item.albumName}
+                </Td>
+                <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
+                  {item.artists}
+                </Td>
+                <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
+                  {item.genres}
+                </Td>
+                <Td outline="1px solid white" bgColor={(item.guessCorrectness.releaseYearCorrectness) ? correctGuessColor : incorrectGuessColor} isNumeric>
+                  {(item.guessCorrectness.releaseYearCorrectness) ? "" : (item.releaseYear) ? ((item.guessCorrectness.releaseYearDirection === "later") ? "^" : "V") : ""}{item.releaseYear}
+                </Td>
               </Tr>
-            </Thead>
-            {prevGuesses.map((item, index) =>
-              <Tbody outline={'1px solid white'} key={index}>
-                <Tr>
-                  <Td outline="1px solid white" >
-                    {index + 1}
-                  </Td>
-                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.albumCorrectness) ? correctGuessColor : incorrectGuessColor}>
-                    {item.albumName}
-                  </Td>
-                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
-                    {item.artists.map((item, index, artists) => { return (index + 1 === artists.length) ? item.name : (item.name + ", ") })}
-                  </Td>
-                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
-                    {item.genres}
-                  </Td>
-                  <Td outline="1px solid white" bgColor={(item.guessCorrectness.releaseYearCorrectness) ? correctGuessColor : incorrectGuessColor} isNumeric>
-                    {(item.guessCorrectness.releaseYearCorrectness) ? "" : (item.releaseYear) ? ((item.guessCorrectness.releaseYearDirection === "later") ? "^" : "V") : ""}{item.releaseYear}
-                  </Td>
-                </Tr>
-              </Tbody>
-            )}
-            <Tfoot>
-              <Tr>
-                <Th outline="1px solid white" color='white'>Guess #</Th>
-                <Th outline="1px solid white" color='white'>Album</Th>
-                <Th outline="1px solid white" color='white'>Artist</Th>
-                <Th outline="1px solid white" color='white'>Genre(s)</Th>
-                <Th outline="1px solid white" color='white' isNumeric>Release Year</Th>
-              </Tr>
-            </Tfoot>
-          </Table>
-        </TableContainer>
+            </Tbody>
+          )}
+          <Tfoot>
+            <Tr>
+              <Th outline="1px solid white" color='white'>Guess #</Th>
+              <Th outline="1px solid white" color='white'>Album</Th>
+              <Th outline="1px solid white" color='white'>Artist</Th>
+              <Th outline="1px solid white" color='white'>Genre(s)</Th>
+              <Th outline="1px solid white" color='white' isNumeric>Release Year</Th>
+            </Tr>
+          </Tfoot>
+        </Table>
+      </TableContainer>
       {/* WIN/LOSS TOAST NOTIFICATIONS */}
       {
         (gameOver) ?

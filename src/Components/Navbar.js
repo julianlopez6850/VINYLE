@@ -20,7 +20,10 @@ function Navbar() {
 			setUsername(response.data.username)
 		}).catch(function(error) {
 			setLoggedIn(false);
-			console.log(error.response.data);
+      if(error.response)
+			  console.log(error.response.data);
+      else
+        console.log({ error: "Error logging in" });
 		});
 	}, [location])
 
