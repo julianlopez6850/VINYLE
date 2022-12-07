@@ -241,20 +241,20 @@ const Main = (props) => {
       {
         (gameOver) ?
           (win) ?
-            (!toast.isActive('win')) ?
+            (!toast.isActive(' ')) ?
               toast({
                 position: 'top',
-                id: 'win',
+                id: ' ',
                 title: 'VICTORY',
                 description: `You guessed the correct album in ${numGuesses} ${(numGuesses === 1) ? "try" : "tries"}!`,
                 status: 'success',
                 duration: 5000,
                 isClosable: false
               }) : "" :
-            (!toast.isActive('loss')) ?
+            (!toast.isActive('')) ?
               toast({
                 position: 'top',
-                id: 'loss',
+                id: '',
                 title: 'DEFEAT',
                 description: 'You failed to guess the correct album',
                 status: 'error',
