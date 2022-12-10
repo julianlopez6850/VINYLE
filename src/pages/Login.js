@@ -22,12 +22,14 @@ const Login = () => {
 
   const navigate = useNavigate();
 
+  // this function is called when the user presses the LOGIN button.
   const tryLogin = () => {
-    instance.post("http://localhost:5000/auth/login", { username: username, password: password}).then((response) => {
 
-      //localStorage.setItem('accessToken', response.data.accessToken)
+    // send username and password combo to backend...
+    instance.post("http://localhost:5000/auth/login", { username: username, password: password}).then((response) => {
+      // if login is successful, nagivate to the main page.
       navigate('/');
-    }).catch(function (error) {
+    }).catch(function (error) { // catch any errors and log them to console.
       console.log("Error Status " + error.response.status + ":");
       if (error.response) {
         console.log(error.response.data);
@@ -65,7 +67,21 @@ const Login = () => {
               placeholder='Password'
             />
             <InputRightElement width='4.5rem'>
-              <Button h='1.75rem' size='sm' onClick={() => {setShow(!show)}}>
+              <Button 
+                h='1.75rem'
+                size='sm'
+                bgColor="blue.500"
+                color="white"
+                _hover={{
+                  bg: "blue.600",
+                  color: "white"
+                }}
+                _active={{
+                  bg: "blue.600",
+                  color: "gray.200"
+                }}
+                onClick={() => {setShow(!show)}}
+              >
                 {show ? 'Hide' : 'Show'}
               </Button>
             </InputRightElement>
@@ -76,16 +92,26 @@ const Login = () => {
           <Button
             mt={50}
             type='submit'
+            bgColor="blue.500"
+            color="white"
+            _hover={{
+              bg: "blue.600",
+              color: "white"
+            }}
+            _active={{
+              bg: "blue.600",
+              color: "gray.200"
+            }}
             onClick={() => {tryLogin()}}
           >
-            Submit
+            LOGIN
           </Button>
         </FormControl>
       </div>
 
       <p/>
 
-			<Link to="/registration"> Don't have an account? Register here!</Link>
+			<Link to="/registration" style={{textDecoration:"underline"}}> Don't have an account? Register here! </Link>
     </div>
   );
 }

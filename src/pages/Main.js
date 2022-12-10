@@ -17,6 +17,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
+// A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
 const chosenAlbumID = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
 const correctGuessColor = "var(--correct-guess)";
@@ -36,7 +37,6 @@ const Main = (props) => {
   useEffect(() => {
     // check if user is logged in. (if so, get and store username)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
-			console.log(response);
 			setUsername(response.data.username)
 		}).catch(function(error) {
       if(error.response)
@@ -45,6 +45,7 @@ const Main = (props) => {
         console.log({ error: "Error logging in" });
 		});
 
+    // get all of the albums from the database to be shown in our Select component later.
     axios.get('http://localhost:5000/albums/all').then((response) => {
       response.data.map((album) => {
         setAlbums((Albums) => [...Albums, { value: album.albumID, label: album.albumName}])
@@ -53,19 +54,24 @@ const Main = (props) => {
     })
   }, [])
 
+  // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
+    // if the user has selected a guess AND not gameOver... increment numGuesses.
     if (guess && !gameOver) {
       setNumGuesses(numGuesses => numGuesses + 1);
     }
   }
 
+  // this function is called when the user presses the SKIP button.
   const skipGuess = () => {
+    // if not gameOver... set guess to null, and increment numGuesses.
     if (!gameOver) {
       setGuess();
       setNumGuesses(numGuesses => numGuesses + 1);
     }
   }
 
+  // when the numGuesses state updates...
   useEffect(() => {
     if (numGuesses > 0 && !gameOver) {
       console.log("GUESS " + numGuesses + ": ");
@@ -73,32 +79,24 @@ const Main = (props) => {
       console.log("PREVIOUS GUESSES:");
       console.log(prevGuesses);
 
+      // if guess is not undefined (if user made a guess)...
       if (guess) {
-        axios.get(`http://localhost:5000/albums?id=${guess.value}`).then((response) => {
-          console.log(response.data.album);
-          var guessCorrectness;
-          
-          var guess = {
-            albumID: response.data.album.albumID,
-            albumName: response.data.album.albumName,
-            albumArt: response.data.album.albumArt,
-            artists: response.data.album.artists,
-            genres: response.data.album.genres,
-            releaseYear: parseInt(response.data.album.releaseYear),
-          }
-
-          guess = `guess_albumID=${guess.albumID}&guess_artists=${guess.artists}&guess_genres=${guess.genres}&guess_releaseYear=${guess.releaseYear}`
-
-          axios.get(`http://localhost:5000/albums/compare?id=${chosenAlbumID}&${guess}`).then((compareRes) => {
-            console.log(compareRes.data)
-            guessCorrectness = {
+        const guessID = guess.value
+        // get the info of the album where the album id = guess.value
+        axios.get(`http://localhost:5000/albums?id=${guessID}`).then((response) => {
+          // compare the guess with the answer album
+          axios.get(`http://localhost:5000/albums/compare?id=${chosenAlbumID}&guess_albumID=${guessID}`).then((compareRes) => {
+            // store response data into object, to be saved into prevGuesses state
+            const guessCorrectness = {
               albumCorrectness: compareRes.data.correct,
-              artistCorrectness: compareRes.data.correctArtist,
+              artistCorrectness: compareRes.data.correctArtists,
+              genreCorrectness: compareRes.data.correctGenres,
               releaseYearCorrectness: compareRes.data.correctReleaseYear,
               releaseYearDirection: compareRes.data.releaseYearDirection
             }
+            // add the guess to the prevGuesses state
             setPrevGuesses(prevGuesses => [...prevGuesses, {
-              albumID: guess.value,
+              albumID: guessID,
               albumName: response.data.album.albumName,
               albumArt: response.data.album.albumArt,
               artists: response.data.album.artists,
@@ -109,7 +107,9 @@ const Main = (props) => {
           })
         })
       }
+      // if guess is underfined (if user pressed the SKIP button)...
       else {
+        // add an empty guess to the prevGuesses state
         setPrevGuesses(prevGuesses => [...prevGuesses, {
           albumID: "",
           albumName: "",
@@ -127,13 +127,17 @@ const Main = (props) => {
     }
   }, [numGuesses])
 
+  // when the prevGuesses state updates...
   useEffect(() => {
+    // if prevGuesses is not empty...
     if(prevGuesses[0]) {
+      // if the last guess was correct... the player won.
       if (prevGuesses[prevGuesses.length - 1].guessCorrectness.albumCorrectness) {
         console.log("YOU WON!");
         setWin(true);
         setGameOver(true);
       }
+      // if the last guess was not correct, and the user has reached 6 guesses... the player lost.
       else if (numGuesses >= 6) {
         console.log("YOU LOST.");
         setGameOver(true);
@@ -142,34 +146,53 @@ const Main = (props) => {
 
   }, [prevGuesses])
 
+  // when the gameOver state updates...
   useEffect(() => {
+    // if gameOver...
     if (gameOver) {
-      let d = new Date();
 
-      let data = {
-        username: username,
-        date: `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`,
-        albumID: `http://localhost:5000/albums?id=${chosenAlbumID}`,
-        win: win,
-        numGuesses: numGuesses,
-        guesses: prevGuesses
+      // async function to save game data.
+      const saveGame = async () => {
+
+        // get the spotify ID of the answer album.
+        var albumID;
+        await axios.get(`http://localhost:5000/albums?id=${chosenAlbumID}`).then((response) => {
+          albumID = response.data.album.albumID;
+        })
+
+        let d = new Date(); // save todays Date.
+        // this data object will be passed to the POST request to save the game data into the DB.
+        let data = {
+          username: username,
+          date: `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`,
+          albumID: albumID,
+          win: win,
+          numGuesses: numGuesses,
+          guesses: prevGuesses
+        }
+
+        // add the game data to the gamesplayed table in the DB.
+        instance.post("http://localhost:5000/gamesplayed", data).then((response) => {
+          if(response.data.success)
+            console.log("Game data saved into AlbumleDB.")
+          else
+          {
+            console.log("Game data failed to save. Error:");
+            if(response.data.error)
+              console.log(response.data.error);
+          }
+        }).catch(function(error) {
+          console.log("Game data failed to save. Error:");
+          console.log(error.response.data);
+        });
       }
 
-      console.log(data)
-      
-      instance.post("http://localhost:5000/gamesplayed", data).then((response) => {
-        if(response.data.success)
-          console.log("Game data saved into AlbumleDB.")
-        else
-        {
-          console.log("Game data failed to save.");
-          if(response.data.error)
-            console.log("Error: " + response.data.error);
-        }
-      }).catch(function(error) {
-        console.log("Game data failed to save.");
-        console.log(error.response.data);
-      });
+      // call the saveGame function.
+      saveGame().catch((err) => {
+        console.log(err);
+      })
+
+      setNumGuesses(6);
     }
   }, [gameOver])
 
@@ -194,6 +217,7 @@ const Main = (props) => {
         </button>
       </div>
       <br />
+      {/* Guess Table */}
       <TableContainer width={1200} outline={'3px solid white'} borderRadius='10px' m="50px 0px 50px 0px">
         <Table variant='simple' size='md' >
           <Thead>
@@ -217,7 +241,7 @@ const Main = (props) => {
                 <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
                   {item.artists}
                 </Td>
-                <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
+                <Td outline="1px solid white" bgColor={(item.guessCorrectness.genreCorrectness) ? correctGuessColor : incorrectGuessColor}>
                   {item.genres}
                 </Td>
                 <Td outline="1px solid white" bgColor={(item.guessCorrectness.releaseYearCorrectness) ? correctGuessColor : incorrectGuessColor} isNumeric>

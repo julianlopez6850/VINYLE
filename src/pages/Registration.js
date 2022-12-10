@@ -21,50 +21,52 @@ const Registration = () => {
   const [password, setPassword] = useState({password: "", match: ""});
   const [show, setShow] = useState({showPassword: false, showMatch: false});
   const [matchPassword, setMatchPassword] = useState("");
-  const [usernameError, setUsernameError] = useState("Username must be atleast 3 characters.");
+  const [usernameError, setUsernameError] = useState("Username must be between 3 and 15 characters.");
 
   const navigate = useNavigate();
 
-  const trySetUsername = (username) => {
-    axios.get(`http://localhost:5000/auth/isUsernameAvailable?username=${username}`).then(response => {
-        if(username.length < 3 && username.length > 15)
-        {
-          setUsername("");
-          setUsernameError("Username must be between 3 and 15 characters");
-        }
-        else if (!response.data.result)
+  // this function will run when the username input is updated and check if the input is a valid username.
+  const trySetUsername = (input) => {
+    // check if the input is within 3 and 15 characters.
+    if(input.length < 3 || input.length > 15)
+    {
+      setUsername("");
+      setUsernameError("Username must be between 3 and 15 characters.");
+      return;
+    }
+    // check if the username is available.
+    axios.get(`http://localhost:5000/auth/isUsernameAvailable?username=${input}`).then(response => {
+      console.log(response);
+      console.log(response.data.result);
+        if (!response.data.result)
         {
           setUsername("");
           setUsernameError("Username is already taken.");
         }
         else
         {
-          setUsername(username);
+          setUsername(input);
           setUsernameError("");
         }
       })
   }
 
-
+  // this function is called when the user pressed the REGISTER button.
   const tryRegister = () => {
+    // post the username and password combination to the server, to be added to the users table.
     axios.post("http://localhost:5000/auth/register", { username: username, password: password.password }, { credentials: "include" }).then((response) => {
-      console.log("Registration status code: " + response.status);
-      if (response.ok)
-      {
-        console.log(response);
-        navigate('/Login');
-      }
-      else
-        console.log(response);
+      console.log(response.data.success);
+      // registration is complete... navigate to the login page.
+      navigate('/Login');
     }).catch(function (error) {
-      console.log("Error Status " + error.response.status + ":");
+      // catch any errors.
+      console.log("An error occurred while trying to register...");
       if (error.response) {
         console.log(error.response.data);
       } else if (error.request) {
         console.log(error.request);
       } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log('Error', error.message);
+        console.log('Error: ', error.message);
       }
     });
   }
@@ -82,17 +84,28 @@ const Registration = () => {
       <div className="content">
 
         <p/>
-
-        <FormControl className="content" isInvalid={isInvalid}>
+        {/* Form for username input */}
+        <FormControl className="content" isInvalid={usernameError}>
 
           <FormLabel>Username</FormLabel>
-          <Input type='text' isRequired={true} placeholder="Username" onChange={(e) => {trySetUsername(e.target.value)}} />
+          <Input
+            type='text'
+            isRequired={true}
+            placeholder="Username"
+            onChange={(e) => {trySetUsername(e.target.value)}}
+          />
           {usernameError ? 
-            <FormErrorMessage color="red">{usernameError}</FormErrorMessage>  : <FormHelperText><br/></FormHelperText>
+            <FormErrorMessage>
+              {usernameError}
+            </FormErrorMessage>  : 
+            <FormHelperText><br/></FormHelperText>
           }
           
           <FormHelperText><br/></FormHelperText>
+        </FormControl>
 
+        {/* Form for password & repeat password input */}
+        <FormControl className="content" isInvalid={passwordMismatch || passwordTooSmall}>
           <FormLabel>Password</FormLabel>
           <InputGroup size='md'>
             <Input
@@ -103,18 +116,35 @@ const Registration = () => {
               placeholder='Password'
             />
             <InputRightElement width='4.5rem'>
-              <Button h='1.75rem' size='sm' onClick={() => {setShow({showPassword: !show.showPassword})}}>
+              <Button 
+                h='1.75rem'
+                size='sm'
+                bgColor="blue.500"
+                color="white"
+                _hover={{
+                  bg: "blue.600",
+                  color: "white"
+                }}
+                _active={{
+                  bg: "blue.600",
+                  color: "gray.200"
+                }}
+                onClick={() => {setShow({showPassword: !show.showPassword})}}
+              >
                 {show.showPassword ? 'Hide' : 'Show'}
               </Button>
             </InputRightElement>
           </InputGroup>
           {passwordTooSmall ? 
-            <FormErrorMessage color="red">Password must be atleast 5 characters.</FormErrorMessage> : <FormHelperText><br/></FormHelperText>
+            <FormErrorMessage>
+              Password must be atleast 5 characters.
+            </FormErrorMessage> : 
+            <FormHelperText><br/></FormHelperText>
           }
 
           <FormHelperText><br/></FormHelperText>
 
-          <FormLabel>Retype Password</FormLabel>
+          <FormLabel>Repeat Password</FormLabel>
           <InputGroup size='md'>
             <Input
               pr='4.5rem'
@@ -124,28 +154,55 @@ const Registration = () => {
               placeholder='Password'
             />
             <InputRightElement width='4.5rem'>
-              <Button h='1.75rem' size='sm' onClick={() => {setShow({showMatch: !show.showMatch})}}>
+              <Button 
+                h='1.75rem'
+                size='sm'
+                bgColor="blue.500"
+                color="white"
+                _hover={{
+                  bg: "blue.600",
+                  color: "white"
+                }}
+                _active={{
+                  bg: "blue.600",
+                  color: "gray.200"
+                }}
+                onClick={() => {setShow({showMatch: !show.showMatch})}}
+              >
                 {show.showMatch ? 'Hide' : 'Show'}
               </Button>
             </InputRightElement>
           </InputGroup>
           {passwordMismatch ? 
-            <FormErrorMessage color="red">Password does not match.</FormErrorMessage> : <FormHelperText><br/></FormHelperText>
+            <FormErrorMessage>
+              Password does not match.
+            </FormErrorMessage> : 
+            <FormHelperText><br/></FormHelperText>
           }
 
           <Button
             mt={50}
             type='submit'
+            bgColor="blue.500"
+            color="white"
+            _hover={{
+              bg: "blue.600",
+              color: "white"
+            }}
+            _active={{
+              bg: "blue.600",
+              color: "gray.200"
+            }}
             onClick={(isInvalid) ? ()=>{} : ()=>{tryRegister()}}
           >
-            Submit
+            REGISTER
           </Button>
         </FormControl>
       </div>
 
       <p/>
 
-			<Link to="/login"> Already have an account? Login here!</Link>
+			<Link to="/login" style={{textDecoration:"underline"}}> Already have an account? Login here! </Link>
     </div>
   );
 }
