@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ChakraProvider } from '@chakra-ui/react';
 
 import Navbar from './Components/Navbar';
-import Main from './pages/Main';
+import Classic from './pages/Classic';
+import Infinite from './pages/Infinite';
 import Login from './pages/Login';
 import Registration from './pages/Registration';
 
@@ -15,7 +16,8 @@ const App = () => {
         <Router>
           <Navbar />
           <Routes>
-            <Route exact path="/" element={<Main />} />
+            <Route exact path="/" element={<Classic/>} />
+            <Route exact path="/infinite" element={<Infinite/>} />
             <Route exact path="/registration" element={<Registration />} />
             <Route exact path="/login" element={<Login />} />
           </Routes>

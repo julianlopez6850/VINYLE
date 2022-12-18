@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 
 import { instance } from "../Helpers/axiosInstance";
@@ -15,15 +16,17 @@ import {
   Th,
   Td,
   useToast,
+  Button
 } from "@chakra-ui/react";
 
-// A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
-const chosenAlbumID = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
 const correctGuessColor = "var(--correct-guess)";
 const incorrectGuessColor = "var(--incorrect-guess)";
 
 const Main = (props) => {
+  // A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
+  const [chosenAlbumID, setChosenAlbumID] = useState(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
+
 	const [username, setUsername] = useState("");
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
@@ -32,9 +35,11 @@ const Main = (props) => {
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
 
+  const location = useLocation();
   const toast = useToast();
 
   useEffect(() => {
+
     // check if user is logged in. (if so, get and store username)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
 			setUsername(response.data.username)
@@ -44,7 +49,8 @@ const Main = (props) => {
       else
         console.log({ error: "Error logging in" });
 		});
-
+    
+    setAlbums([]);
     // get all of the albums from the database to be shown in our Select component later.
     axios.get('http://localhost:5000/albums/all').then((response) => {
       response.data.map((album) => {
@@ -164,6 +170,7 @@ const Main = (props) => {
         // this data object will be passed to the POST request to save the game data into the DB.
         let data = {
           username: username,
+          mode: "infinite",
           date: `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`,
           albumID: albumID,
           win: win,
@@ -171,8 +178,8 @@ const Main = (props) => {
           guesses: prevGuesses
         }
 
-        // add the game data to the gamesplayed table in the DB.
-        instance.post("http://localhost:5000/gamesplayed", data).then((response) => {
+        // add the game data to the games table in the DB.
+        instance.post("http://localhost:5000/games", data).then((response) => {
           if(response.data.success)
             console.log("Game data saved into AlbumleDB.")
           else
@@ -196,10 +203,21 @@ const Main = (props) => {
     }
   }, [gameOver])
 
+  const restartGame = () => {
+    setChosenAlbumID(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
+    setGuess();
+    setNumGuesses(0);
+    setPrevGuesses([]);
+    setGameOver(false);
+    setWin(false);
+    toast.close('');
+    toast.close(' ');
+  }
+
   return (
     <div className="main">
       <div className="title">
-        CLASSIC
+        INFINITE
       </div>
       <div className="subtitle">
         GUESS THE ALBUM FROM ITS ART
@@ -208,13 +226,37 @@ const Main = (props) => {
         <img src={`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`} />
       </div>
       <div className="guess">
-        <button className="guessBtn" onClick={skipGuess}>
+        <Button
+          className="guessBtn"
+          color="white"
+          bgColor="gray.700"
+          borderColor="gray.700"
+          _hover={{
+            border:"1px solid gray"
+          }}
+          _active={{
+            bg: "gray.600",
+          }}
+          onClick={skipGuess}
+        >
           SKIP
-        </button>
+        </Button>
         <Select className="select" options={Albums} onChange={(selection) => { if (!gameOver) setGuess(selection) }} />
-        <button className="guessBtn" onClick={checkGuess}>
+        <Button
+          className="guessBtn"
+          color="white"
+          bgColor="gray.700"
+          borderColor="gray.700"
+          _hover={{
+            border:"1px solid gray"
+          }}
+          _active={{
+            bg: "gray.600",
+          }}
+          onClick={checkGuess}
+        >
           GUESS
-        </button>
+        </Button>
       </div>
       <br />
       {/* Guess Table */}
@@ -286,6 +328,24 @@ const Main = (props) => {
                 isClosable: false
               }) : "" :
           ""
+      }
+      {
+        (gameOver) ?
+          <Button
+            marginBottom="50px"
+            color="white"
+            bgColor="gray.700"
+            borderColor="gray.700"
+            _hover={{
+              border:"1px solid gray"
+            }}
+            _active={{
+              bg: "gray.600",
+            }}
+            onClick={() => {restartGame()}}
+          >
+            NEW GAME
+          </Button> : ""
       }
     </div>
   );
