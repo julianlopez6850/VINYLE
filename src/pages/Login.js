@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { instance } from "../Helpers/axiosInstance"
 
@@ -41,6 +41,22 @@ const Login = () => {
     });
   }
 
+  useEffect(() => {
+    const keyDownHandler = event => {
+
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        tryLogin();
+      }
+    };
+
+    document.addEventListener('keydown', keyDownHandler);
+
+    return () => {
+      document.removeEventListener('keydown', keyDownHandler);
+    };
+  }, [ username, password ]);
+
   return (
     <div className="main">
       <div className="title">
@@ -50,10 +66,16 @@ const Login = () => {
 
         <p/>
 
-        <FormControl className="content">
+        <FormControl className="content" style={{width:"300px"}}>
 
           <FormLabel>Username</FormLabel>
-          <Input type='text' isRequired={true} placeholder="Username" onChange={(e) => {setUsername(e.target.value)}} />
+          <Input
+            type='text'
+            isRequired={true}
+            placeholder="Username"
+            onChange={(e) => {setUsername(e.target.value)}}
+            autoFocus
+          />
           
           <FormHelperText><br/></FormHelperText>
 

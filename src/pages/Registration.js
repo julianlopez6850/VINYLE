@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 
@@ -19,8 +19,8 @@ const Registration = () => {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState({password: "", match: ""});
-  const [show, setShow] = useState({showPassword: false, showMatch: false});
   const [matchPassword, setMatchPassword] = useState("");
+  const [show, setShow] = useState({showPassword: false, showMatch: false});
   const [usernameError, setUsernameError] = useState("Username must be between 3 and 15 characters.");
 
   const navigate = useNavigate();
@@ -71,9 +71,24 @@ const Registration = () => {
     });
   }
 
+  useEffect(() => {
+    const keyDownHandler = event => {
+
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        tryRegister();
+      }
+    };
+
+    document.addEventListener('keydown', keyDownHandler);
+
+    return () => {
+      document.removeEventListener('keydown', keyDownHandler);
+    };
+  }, [ username, password, matchPassword ]);
+
   const passwordMismatch = password.password !== password.match;
   const passwordTooSmall = (password.password.length < 5)
-
   const isInvalid = (passwordMismatch || passwordTooSmall || usernameError)
 
   return (
@@ -93,6 +108,7 @@ const Registration = () => {
             isRequired={true}
             placeholder="Username"
             onChange={(e) => {trySetUsername(e.target.value)}}
+            autoFocus
           />
           {usernameError ? 
             <FormErrorMessage>
