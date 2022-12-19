@@ -16,6 +16,7 @@ import {
   Th,
   Td,
   useToast,
+  Button
 } from "@chakra-ui/react";
 
 // A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
@@ -217,13 +218,37 @@ const Main = (props) => {
         <img src={`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`} />
       </div>
       <div className="guess">
-        <button className="guessBtn" onClick={skipGuess}>
+        <Button
+          className="guessBtn"
+          color="white"
+          bgColor="gray.700"
+          borderColor="gray.700"
+          _hover={{
+            border:"1px solid gray"
+          }}
+          _active={{
+            bg: "gray.600",
+          }}
+          onClick={skipGuess}
+        >
           SKIP
-        </button>
+        </Button>
         <Select className="select" options={Albums} onChange={(selection) => { if (!gameOver) setGuess(selection) }} />
-        <button className="guessBtn" onClick={checkGuess}>
+        <Button
+          className="guessBtn"
+          color="white"
+          bgColor="gray.700"
+          borderColor="gray.700"
+          _hover={{
+            border:"1px solid gray"
+          }}
+          _active={{
+            bg: "gray.600",
+          }}
+          onClick={checkGuess}
+        >
           GUESS
-        </button>
+        </Button>
       </div>
       <br />
       {/* Guess Table */}
