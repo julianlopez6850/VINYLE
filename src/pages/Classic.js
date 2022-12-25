@@ -223,7 +223,7 @@ const Main = (props) => {
           className="guessBtn"
           color="white"
           bgColor="gray.700"
-          borderColor="gray.700"
+          border="1px solid black"
           _hover={{
             border:"1px solid gray"
           }}
@@ -245,6 +245,11 @@ const Main = (props) => {
             control: (baseStyles) => ({
               ...baseStyles,
               backgroundColor: 'var(--gray-700)',
+              borderColor: 'black',
+              '&:hover': {
+                borderColor: 'gray',
+                cursor: 'pointer',
+              },
             }),
             placeholder: (baseStyles, state) => ({
               ...baseStyles,
@@ -268,6 +273,9 @@ const Main = (props) => {
             input: (baseStyles) => ({
               ...baseStyles,
               color: 'white',
+              '&:hover': {
+                cursor: 'text',
+              },
             }),
             menu: (baseStyles) => ({
               ...baseStyles,
@@ -284,7 +292,7 @@ const Main = (props) => {
           className="guessBtn"
           color="white"
           bgColor="gray.700"
-          borderColor="gray.700"
+          border="1px solid black"
           _hover={{
             border:"1px solid gray"
           }}
