@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Navigate, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ChakraProvider } from '@chakra-ui/react';
 
 import Navbar from './Components/Navbar';
@@ -16,7 +16,8 @@ const App = () => {
         <Router>
           <Navbar />
           <Routes>
-            <Route exact path="/" element={<Classic/>} />
+            <Route exact path="/" element={ <Navigate to="/classic" /> } />
+            <Route exact path="/classic" element={<Classic/>} />
             <Route exact path="/infinite" element={<Infinite/>} />
             <Route exact path="/registration" element={<Registration />} />
             <Route exact path="/login" element={<Login />} />
