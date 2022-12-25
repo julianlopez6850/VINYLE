@@ -4,6 +4,9 @@
   --correct-guess: #38A169;
   --incorrect-guess: #E53E3E;
   --navbar-color-2: #808080;
+  --gray-700: #2D3748;
+  --gray-600: #4A5568;
+  --select-hovered: #666666;
 }
 
 .App {

@@ -72,7 +72,7 @@ const Main = (props) => {
   const skipGuess = () => {
     // if not gameOver... set guess to null, and increment numGuesses.
     if (!gameOver) {
-      setGuess();
+      setGuess(null);
       setNumGuesses(numGuesses => numGuesses + 1);
     }
   }
@@ -131,6 +131,7 @@ const Main = (props) => {
         }]);
       }
     }
+    setGuess(null);
   }, [numGuesses])
 
   // when the prevGuesses state updates...
@@ -241,7 +242,52 @@ const Main = (props) => {
         >
           SKIP
         </Button>
-        <Select className="select" options={Albums} onChange={(selection) => { if (!gameOver) setGuess(selection) }} />
+        <Select
+          className="select"
+          options={Albums}
+          value={guess}
+          onChange={(selection) => {
+            if (!gameOver) setGuess(selection)
+          }}
+          styles={{
+            control: (baseStyles) => ({
+              ...baseStyles,
+              backgroundColor: 'var(--gray-700)',
+            }),
+            placeholder: (baseStyles, state) => ({
+              ...baseStyles,
+              display: 'flex',
+              justifyContent: 'left',
+              color: state.isFocused ? 'var(--select-hovered)' : 'white',
+            }),
+            option: (baseStyles, state) => ({
+              ...baseStyles,
+              display: 'flex',
+              justifyContent: 'left',
+              color: 'white',
+              backgroundColor: state.isFocused ? 'var(--gray-600)' : 'var(--gray-700)',
+            }),
+            singleValue: (baseStyles) => ({
+              ...baseStyles,
+              display: 'flex',
+              justifyContent: 'left',
+              color: 'white',
+            }),
+            input: (baseStyles) => ({
+              ...baseStyles,
+              color: 'white',
+            }),
+            menu: (baseStyles) => ({
+              ...baseStyles,
+              color: 'white',
+              backgroundColor: 'var(--gray-700)',
+            }),
+            indicatorSeparator: (baseStyles, state) => ({
+              ...baseStyles,
+              backgroundColor: state.isFocused ? 'var(--select-hovered)' : 'white',
+            }),
+          }}
+        />
         <Button
           className="guessBtn"
           color="white"
