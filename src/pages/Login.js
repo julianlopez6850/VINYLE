@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import { instance } from "../Helpers/axiosInstance"
+import { loginInstance } from "../Helpers/axiosInstance"
 
 import "../styles/login.css";
 
@@ -12,6 +12,7 @@ import {
   InputGroup,
   InputRightElement,
   Button,
+  useToast,
 } from '@chakra-ui/react'
 
 const Login = () => {
@@ -19,27 +20,44 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
+  const [request, setRequest] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
+  const toast = useToast();
 
   // this function is called when the user presses the LOGIN button.
   const tryLogin = () => {
 
     // send username and password combo to backend...
-    instance.post("http://localhost:5000/auth/login", { username: username, password: password}).then((response) => {
-      // if login is successful, nagivate to the main page.
-      navigate('/');
-    }).catch(function (error) { // catch any errors and log them to console.
-      console.log("Error Status " + error.response.status + ":");
+    loginInstance.post("http://localhost:5000/auth/login", { username: username, password: password}).then(() => {
+      setRequest(true);
+    }).catch(function (error) { // catch any errors.
       if (error.response) {
-        console.log(error.response.data);
+        setErrorMessage(error.response.data.error);
       } else if (error.request) {
-        console.log(error.request);
+        setErrorMessage('There was an error processing the request... Try again later');
       } else {
-        console.log('Error', error.message);
+        setErrorMessage('Error: ', error.message);
       }
+      toast.close(' ');
+      setRequest(true);
+      setError(true);
     });
   }
+
+  useEffect(() => {
+    if(request && !error) {
+      // if login is successful, nagivate to the main page.
+      setTimeout(() => navigate('/'), 1500);
+      setRequest(false);
+      toast.close(' ');
+    } else if(error) {
+      setRequest(false);
+      setError(false);
+    }
+  }, [request])
 
   useEffect(() => {
     const keyDownHandler = event => {
@@ -133,7 +151,35 @@ const Login = () => {
 
       <p/>
 
-			<Link to="/registration" style={{textDecoration:"underline"}}> Don't have an account? Register here! </Link>
+      <Link to="/registration" style={{textDecoration:"underline"}} onClick={() => {toast.close(' ')}}> Don't have an account? Register here! </Link>
+
+      
+      {/* LOGIN TOAST NOTIFICATIONS */}
+      {
+        (request) ?
+          (error) ?
+            (!toast.isActive(' ')) ?
+              toast({
+                position: 'top',
+                id: ' ',
+                title: 'ERROR',
+                description: errorMessage,
+                status: 'error',
+                duration: 5000,
+                isClosable: false
+              }) : "" :
+            (!toast.isActive('')) ?
+              toast({
+                position: 'top',
+                id: '',
+                title: 'SUCCESS',
+                description: `You are now logged in as ${username}.`,
+                status: 'success',
+                duration: 2000,
+                isClosable: false
+              }) : "" :
+        ""
+      }
     </div>
   );
 }

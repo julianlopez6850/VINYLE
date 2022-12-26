@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
+import { loginInstance } from "../Helpers/axiosInstance"
 import axios from 'axios';
 
 import "../styles/login.css";
@@ -13,6 +14,7 @@ import {
   InputGroup,
   InputRightElement,
   Button,
+  useToast,
 } from '@chakra-ui/react'
 
 const Registration = () => {
@@ -22,8 +24,16 @@ const Registration = () => {
   const [matchPassword, setMatchPassword] = useState("");
   const [show, setShow] = useState({showPassword: false, showMatch: false});
   const [usernameError, setUsernameError] = useState("Username must be between 3 and 15 characters.");
+  const [request, setRequest] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Make sure to follow all registration directions");
 
   const navigate = useNavigate();
+  const toast = useToast();
+
+  const passwordMismatch = password.password !== password.match;
+  const passwordTooSmall = (password.password.length < 5)
+  const isInvalid = (passwordMismatch || passwordTooSmall || (usernameError != ""))
 
   // this function will run when the username input is updated and check if the input is a valid username.
   const trySetUsername = (input) => {
@@ -33,33 +43,32 @@ const Registration = () => {
       setUsername("");
       setUsernameError("Username must be between 3 and 15 characters.");
       return;
+    } else {
+      setUsernameError("");
     }
     // check if the username is available.
     axios.get(`http://localhost:5000/auth/isUsernameAvailable?username=${input}`).then(response => {
       console.log(response);
       console.log(response.data.result);
-        if (!response.data.result)
-        {
-          setUsername("");
-          setUsernameError("Username is already taken.");
-        }
-        else
-        {
-          setUsername(input);
-          setUsernameError("");
-        }
-      })
+      if (!response.data.result)
+      {
+        setUsername("");
+        setUsernameError("Username is already taken.");
+      }
+      else
+      {
+        setUsername(input);
+        setUsernameError("");
+      }
+    })
   }
 
   // this function is called when the user pressed the REGISTER button.
   const tryRegister = () => {
     // post the username and password combination to the server, to be added to the users table.
-    axios.post("http://localhost:5000/auth/register", { username: username, password: password.password }, { credentials: "include" }).then((response) => {
-      console.log(response.data.success);
-      // registration is complete... navigate to the login page.
-      navigate('/Login');
-    }).catch(function (error) {
-      // catch any errors.
+    loginInstance.post("http://localhost:5000/auth/register", { username: username, password: password.password }).then(() => {
+      setRequest(true);
+    }).catch(function (error) { // catch any errors.
       console.log("An error occurred while trying to register...");
       if (error.response) {
         console.log(error.response.data);
@@ -68,8 +77,33 @@ const Registration = () => {
       } else {
         console.log('Error: ', error.message);
       }
+      setErrorMessage('There was an error processing the request... Try again later');
+      toast.close(' ');
+      setRequest(true);
+      setError(true);
     });
   }
+
+  const handleError = () => {
+    loginInstance.post("http://localhost:5000/auth/register").catch(function () { 
+      setErrorMessage('Make sure to follow all registration directions');
+      toast.close(' ');
+      setRequest(true);
+      setError(true);
+    });
+  }
+
+  useEffect(() => {
+    if(request && !error) {
+      // registration is complete... navigate to the login page.
+      setTimeout(() => navigate('/Login'), 1500);
+      setRequest(false);
+      toast.close(' ');
+    } else if(error) {
+      setRequest(false);
+      setError(false);
+    }
+  }, [request])
 
   useEffect(() => {
     const keyDownHandler = event => {
@@ -87,10 +121,6 @@ const Registration = () => {
     };
   }, [ username, password, matchPassword ]);
 
-  const passwordMismatch = password.password !== password.match;
-  const passwordTooSmall = (password.password.length < 5)
-  const isInvalid = (passwordMismatch || passwordTooSmall || usernameError)
-
   return (
     <div className="main">
       <div className="title">
@@ -100,7 +130,7 @@ const Registration = () => {
 
         <p/>
         {/* Form for username input */}
-        <FormControl className="content" isInvalid={usernameError}>
+        <FormControl className="content" isInvalid={usernameError} style={{width:"300px"}}>
 
           <FormLabel>Username</FormLabel>
           <Input
@@ -121,7 +151,7 @@ const Registration = () => {
         </FormControl>
 
         {/* Form for password & repeat password input */}
-        <FormControl className="content" isInvalid={passwordMismatch || passwordTooSmall}>
+        <FormControl className="content" isInvalid={passwordMismatch || passwordTooSmall}  style={{width:"300px"}}>
           <FormLabel>Password</FormLabel>
           <InputGroup size='md'>
             <Input
@@ -209,7 +239,14 @@ const Registration = () => {
               bg: "blue.600",
               color: "gray.200"
             }}
-            onClick={(isInvalid) ? ()=>{} : ()=>{tryRegister()}}
+            onClick={(isInvalid) ? 
+              () => {
+                handleError();
+              } : 
+              () => {
+                tryRegister();
+              }
+            }
           >
             REGISTER
           </Button>
@@ -218,7 +255,34 @@ const Registration = () => {
 
       <p/>
 
-			<Link to="/login" style={{textDecoration:"underline"}}> Already have an account? Login here! </Link>
+      <Link to="/login" style={{textDecoration:"underline"}} onClick={() => {toast.close(' ')}}> Already have an account? Login here! </Link>
+
+      {/* REGISTRATION TOAST NOTIFICATIONS */}
+      {
+        (request) ?
+          (error) ?
+            (!toast.isActive(' ')) ?
+              toast({
+                position: 'top',
+                id: ' ',
+                title: 'ERROR',
+                description: errorMessage,
+                status: 'error',
+                duration: 5000,
+                isClosable: false
+              }) : "" :
+            (!toast.isActive('')) ?
+              toast({
+                position: 'top',
+                id: '',
+                title: 'SUCCESS',
+                description: `Welcome to VINYLE, ${username}.`,
+                status: 'success',
+                duration: 2000,
+                isClosable: false
+              }) : "" :
+        ""
+      }
     </div>
   );
 }
