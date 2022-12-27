@@ -55,6 +55,12 @@ function Navbar() {
       else
         console.log({ error: "Error logging in" });
 		});
+
+		// set mode depending on pathname
+		if(location.pathname === "/classic")
+			setMode("Classic");
+		if(location.pathname === "/infinite")
+			setMode("Infinite");
 	}, [location])
 
 	// this function will handle  logging out the user.
@@ -114,13 +120,6 @@ function Navbar() {
 	useEffect(() => {
 		console.log(stats);
 	}, [stats])
-
-	useEffect(() => {
-		if(mode === "Classic")
-			navigate('/');
-		else if(mode === "Infinite")
-			navigate('/infinite');
-	}, [mode])
       
 	return (
 		<div className="navbar">
@@ -156,7 +155,7 @@ function Navbar() {
 								value='stats'
 								bgColor="gray.900"
 								_hover={{ bgColor: "gray.600" }}
-								onClick={() => {setMode("Classic")}}
+								onClick={() => {navigate('/classic')}}
 							>
 								Classic
 							</MenuItem>
@@ -164,7 +163,7 @@ function Navbar() {
 								value='logout'
 								bgColor="gray.900"
 								_hover={{ bgColor: "gray.600" }}
-								onClick={() => {setMode("Infinite")}}
+								onClick={() => {navigate('/infinite')}}
 							>
 								Infinite
 							</MenuItem>
