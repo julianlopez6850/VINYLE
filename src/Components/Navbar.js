@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../styles/navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { instance } from "../Helpers/axiosInstance";
+import ConditionalLink from "../Helpers/conditionalLink";
 import axios from "axios";
 
 import {
@@ -180,15 +181,19 @@ function Navbar() {
 						_hover={{ background: "transparent", color: "blue.500" }}
 						_active={{ background: "transparent" }}
 					>
-						<Link
-							to="/"
-							style={{
-								height:"inherit",
-								padding:"0px 10px 0px 10px"
-							}}
-						>
-							VINYLE
-						</Link>
+						{
+							// if gamemode is not classic, VINYLE page title becomes a link to the main page.
+							<ConditionalLink
+								to="/"
+								condition={(mode === "Classic")}
+								style={{
+									height:"inherit",
+									padding:"0px 10px 0px 10px"
+								}}
+							>
+								VINYLE
+							</ConditionalLink>
+						}
 					</Button>
         </div>
 
