@@ -19,13 +19,11 @@ import {
   Button
 } from "@chakra-ui/react";
 
-// A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
-const chosenAlbumID = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
-
 const correctGuessColor = "var(--correct-guess)";
 const incorrectGuessColor = "var(--incorrect-guess)";
 
 const Main = (props) => {
+  const [chosenAlbumID, setChosenAlbumID] = useState();
 	const [username, setUsername] = useState("");
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
@@ -60,6 +58,20 @@ const Main = (props) => {
         setAlbums((Albums) => [...Albums, { value: album.albumID, label: album.albumName}])
       })
       return { value: response.data.albumID, label: response.data.albumName}
+    })
+
+    const date = new Date();
+    const MM_DD_YYYY = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`;
+
+    axios.post('http://localhost:5000/daily', { date: MM_DD_YYYY }).then(() => {
+      axios.get(`http://localhost:5000/daily/id?date=${MM_DD_YYYY}`).then((response) => {
+        setChosenAlbumID(response.data.albumID);
+      })
+    }).catch((error) => {
+      if(error.response)
+			  console.log(error.response.data);
+      else
+        console.log({ error: "An error occurred fetching today's daily classic game." });
     })
   }, [])
 
@@ -216,7 +228,7 @@ const Main = (props) => {
         GUESS THE ALBUM FROM ITS ART
       </div>
       <div className="albumArt" >
-        <img src={`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`} />
+        <img src={(chosenAlbumID) ? `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}` : ""} />
       </div>
       <div className="guess">
         <Button
