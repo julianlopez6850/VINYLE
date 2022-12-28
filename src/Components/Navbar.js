@@ -3,6 +3,7 @@ import "../styles/navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { instance } from "../Helpers/axiosInstance";
 import ConditionalLink from "../Helpers/conditionalLink";
+import Statistics from "../Components/Statistics"
 import axios from "axios";
 
 import {
@@ -16,15 +17,7 @@ import {
   MenuOptionGroup,
   MenuDivider,
 	IconButton,
-	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalFooter,
-	ModalBody,
-	ModalCloseButton,
 	useDisclosure,
-	Progress
 } from '@chakra-ui/react'
 
 import {
@@ -272,62 +265,8 @@ function Navbar() {
 					}
 				</div>
 				
-				{/* Statistics Popup */}
-				<Modal
-					isCentered
-					onClose={onClose}
-					isOpen={isOpen}
-					motionPreset='slideInBottom'
-				>
-					<ModalOverlay />
-					<ModalContent 
-					color="white"
-					bgColor="gray.700">
-						<ModalHeader style={{display:"flex", justifyContent:"center" }}>{mode} Mode Statistics</ModalHeader>
-						<ModalCloseButton />
-						<ModalBody>
-							<div style={{display:"flex", flexDirection:"row", justifyContent:"space-evenly", textAlign:"center"}}>
-								<div style={{display:"flex", flexDirection:"column", minWidth:65, width:"fit-content", alignItems:"center"}}>
-									<div style={{fontSize:36, fontWeight:"bold"}}>{stats.numGames}</div>
-									<div style={{width:65, marginTop:-10}}>Games Played</div>
-								</div>
-								<div style={{display:"flex", flexDirection:"column", minWidth:65, width:"fit-content", alignItems:"center"}}>
-									<div style={{fontSize:36, fontWeight:"bold"}}>{stats.numWins}</div>
-									<div style={{width:65, marginTop:-10}}>Wins</div>
-								</div>
-								<div style={{display:"flex", flexDirection:"column", minWidth:65, width:"fit-content", alignItems:"center"}}>
-									<div style={{fontSize:36, fontWeight:"bold"}}>{stats.numLosses}</div>
-									<div style={{width:65, marginTop:-10}}>Losses</div>
-								</div>
-								<div style={{display:"flex", flexDirection:"column", minWidth:65, width:"fit-content", alignItems:"center"}}>
-									<div style={{fontSize:36, fontWeight:"bold"}}>{stats.winPercent}</div>
-									<div style={{width:65, marginTop:-10}}>Win %</div>
-								</div>
-								<div style={{display:"flex", flexDirection:"column", minWidth:65, width:"fit-content", alignItems:"center"}}>
-									<div style={{fontSize:36, fontWeight:"bold"}}>{stats.avgGuessesPerWin}</div>
-									<div style={{width:65, marginTop:-10}}>Avg Guesses</div>
-								</div>
-							</div>
-
-							<br/>
-							<strong style={{ display:"flex", justifyContent:"center" }}>Guess Distribution:</strong>
-							{(stats.guessDistribution) ? stats.guessDistribution.map((item, index) => {
-								return (
-								<>
-									{index + 1} Guess Win <Progress style={{ zIndex:"-1" }} size='lg' colorScheme='green' bgColor="gray.700" value={Math.max((item / stats.mostFrequent) * 100, 5)} />
-									<div style={{ margin:"-21px 0px 0px 5px", textAlign:"left" }}>{item}</div>
-								</>
-							)}) : ""}
-							Loss: <Progress style={{zIndex:"-1"}} size='lg' colorScheme='red' bgColor="gray.700" value={Math.max(stats.numLosses / stats.mostFrequent * 100, 5)} />
-							<div style={{ margin:"-21px 0px 0px 5px", textAlign:"left" }}>{stats.numLosses}</div>
-						</ModalBody>
-						<ModalFooter>
-							<Button colorScheme='blue' mr={3} onClick={onClose}>
-								Close
-							</Button>
-						</ModalFooter>
-					</ModalContent>
-				</Modal>
+				<Statistics mode={mode} stats={stats} onClose={onClose} isOpen={isOpen} />
+				
 			</div>
 		</div>
 	);
