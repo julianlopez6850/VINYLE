@@ -219,6 +219,7 @@ function Navbar() {
 									value='stats'
 									bgColor="gray.900"
 									_hover={{ bgColor: "gray.600" }}
+									onClick={() => {navigate('/history')}}
 								>
 									History
 								</MenuItem>

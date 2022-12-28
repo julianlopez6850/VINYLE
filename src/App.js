@@ -7,6 +7,7 @@ import Classic from './pages/Classic';
 import Infinite from './pages/Infinite';
 import Login from './pages/Login';
 import Registration from './pages/Registration';
+import History from './pages/History'
 
 const App = () => {
 
@@ -21,6 +22,7 @@ const App = () => {
             <Route exact path="/infinite" element={<Infinite/>} />
             <Route exact path="/registration" element={<Registration />} />
             <Route exact path="/login" element={<Login />} />
+            <Route exact path="/history" element={<History />} />
           </Routes>
         </Router>
       </div>
