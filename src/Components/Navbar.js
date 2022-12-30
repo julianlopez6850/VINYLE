@@ -51,10 +51,12 @@ function Navbar() {
 		});
 
 		// set mode depending on pathname
-		if(location.pathname === "/classic")
+		if(location.pathname.includes("/classic"))
 			setMode("Classic");
-		if(location.pathname === "/infinite")
+		else if(location.pathname.includes("/infinite"))
 			setMode("Infinite");
+		else
+			setMode();
 	}, [location])
 
 	// this function will handle  logging out the user.
@@ -75,7 +77,7 @@ function Navbar() {
 		e.preventDefault();
 		if(loggedIn)
 		{
-			await instance.get(`http://localhost:5000/games/user/mode?username=${username}&mode=${mode}`).then(async (response) => {
+			await instance.get(`http://localhost:5000/games/user?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
 				if(response.data.error) {
 					console.log(response.data.error);
 				} else {

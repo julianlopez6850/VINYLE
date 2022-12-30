@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { instance } from "../Helpers/axiosInstance";
@@ -28,6 +28,7 @@ const Main = (props) => {
   const [gamesList, setGamesList] = useState([])
 
   const location = useLocation();
+  const navigate = useNavigate();
   const toast = useToast();
 
   useEffect(() => {
@@ -91,7 +92,7 @@ const Main = (props) => {
             _active={{
               bg: "gray.600",
             }}
-            onClick={()=>{setMode('all')}}
+            onClick={()=>{setMode('all'); navigate('/history/all')}}
           >
             ALL
           </Button>
@@ -106,7 +107,7 @@ const Main = (props) => {
             _active={{
               bg: "gray.600",
             }}
-            onClick={()=>{setMode('Classic')}}
+            onClick={()=>{setMode('Classic'); navigate('/history/classic')}}
           >
             CLASSIC
           </Button>
@@ -121,7 +122,7 @@ const Main = (props) => {
             _active={{
               bg: "gray.600",
             }}
-            onClick={()=>{setMode('Infinite')}}
+            onClick={()=>{setMode('Infinite'); navigate('/history/infinite')}}
           >
             INFINITE
           </Button>

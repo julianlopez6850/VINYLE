@@ -25,7 +25,7 @@ const Statistics = (props) => {
         <ModalContent 
         color="white"
         bgColor="gray.700">
-          <ModalHeader style={{display:"flex", justifyContent:"center" }}>{props.mode} Mode Statistics</ModalHeader>
+          <ModalHeader style={{display:"flex", justifyContent:"center" }}>{props.mode ? `${props.mode} Mode` : ``}  Statistics</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <div style={{display:"flex", flexDirection:"row", justifyContent:"space-evenly", textAlign:"center"}}>
