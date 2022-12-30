@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
-import { MainButton } from "../Components/miniComponents"
+import { MainButton, AlbumSelect } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
 
 import "../styles/main.css";
-import Select from "react-select";
 import {
   TableContainer,
   Table,
@@ -232,58 +231,11 @@ const Main = (props) => {
           text={'SKIP'}
           onClick={skipGuess}
         />
-        <Select
-          className="select"
+        <AlbumSelect
           options={Albums}
           value={guess}
           onChange={(selection) => {
             if (!gameOver) setGuess(selection)
-          }}
-          styles={{
-            control: (baseStyles) => ({
-              ...baseStyles,
-              backgroundColor: 'var(--gray-700)',
-              borderColor: 'black',
-              '&:hover': {
-                borderColor: 'gray',
-                cursor: 'pointer',
-              },
-            }),
-            placeholder: (baseStyles, state) => ({
-              ...baseStyles,
-              display: 'flex',
-              justifyContent: 'left',
-              color: state.isFocused ? 'var(--select-hovered)' : 'white',
-            }),
-            option: (baseStyles, state) => ({
-              ...baseStyles,
-              display: 'flex',
-              justifyContent: 'left',
-              color: 'white',
-              backgroundColor: state.isFocused ? 'var(--gray-600)' : 'var(--gray-700)',
-            }),
-            singleValue: (baseStyles) => ({
-              ...baseStyles,
-              display: 'flex',
-              justifyContent: 'left',
-              color: 'white',
-            }),
-            input: (baseStyles) => ({
-              ...baseStyles,
-              color: 'white',
-              '&:hover': {
-                cursor: 'text',
-              },
-            }),
-            menu: (baseStyles) => ({
-              ...baseStyles,
-              color: 'white',
-              backgroundColor: 'var(--gray-700)',
-            }),
-            indicatorSeparator: (baseStyles, state) => ({
-              ...baseStyles,
-              backgroundColor: state.isFocused ? 'var(--select-hovered)' : 'white',
-            }),
           }}
         />
         <MainButton
