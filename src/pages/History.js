@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+import { MainButton } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
 
 import "../styles/main.css";
@@ -81,51 +82,24 @@ const Main = (props) => {
       </div>
       <div style={{display:"flex", flexDirection:"row", width:"100%", height:"100%"}}>
         <div style={{width:"10%", height:"calc(80vh)", position:"fixed", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", borderRight:"2px solid white" }}>
-          <Button
-            className="guessBtn"
-            color="white"
-            bgColor="gray.700"
-            border="1px solid black"
-            _hover={{
-              border:"1px solid gray"
-            }}
-            _active={{
-              bg: "gray.600",
-            }}
+          <strong>
+            MODES
+          </strong>
+          <MainButton
+            text={'ALL'}
             onClick={()=>{setMode('all'); navigate('/history/all')}}
-          >
-            ALL
-          </Button>
-          <Button
-            className="guessBtn"
-            color="white"
-            bgColor="gray.700"
-            border="1px solid black"
-            _hover={{
-              border:"1px solid gray"
-            }}
-            _active={{
-              bg: "gray.600",
-            }}
+            m="10px 0 10px 0"
+          />
+          <MainButton
+            text={'CLASSIC'}
             onClick={()=>{setMode('Classic'); navigate('/history/classic')}}
-          >
-            CLASSIC
-          </Button>
-          <Button
-            className="guessBtn"
-            color="white"
-            bgColor="gray.700"
-            border="1px solid black"
-            _hover={{
-              border:"1px solid gray"
-            }}
-            _active={{
-              bg: "gray.600",
-            }}
+            m="10px 0 10px 0"
+          />
+          <MainButton
+            text={'INFINITE'}
             onClick={()=>{setMode('Infinite'); navigate('/history/infinite')}}
-          >
-            INFINITE
-          </Button>
+            m="10px 0 10px 0"
+          />
         </div>
         <div style={{width:"100%", display:"flex", flexDirection:"column", alignItems:"center", marginTop:"-25px" }}>
           

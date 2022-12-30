@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
+import { MainButton } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
 
 import "../styles/main.css";
@@ -227,21 +228,10 @@ const Main = (props) => {
         <img src={`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`} />
       </div>
       <div className="guess">
-        <Button
-          className="guessBtn"
-          color="white"
-          bgColor="gray.700"
-          border="1px solid black"
-          _hover={{
-            border:"1px solid gray"
-          }}
-          _active={{
-            bg: "gray.600",
-          }}
+        <MainButton
+          text={'SKIP'}
           onClick={skipGuess}
-        >
-          SKIP
-        </Button>
+        />
         <Select
           className="select"
           options={Albums}
@@ -296,21 +286,10 @@ const Main = (props) => {
             }),
           }}
         />
-        <Button
-          className="guessBtn"
-          color="white"
-          bgColor="gray.700"
-          border="1px solid black"
-          _hover={{
-            border:"1px solid gray"
-          }}
-          _active={{
-            bg: "gray.600",
-          }}
+        <MainButton
+          text={'GUESS'}
           onClick={checkGuess}
-        >
-          GUESS
-        </Button>
+        />
       </div>
       <br />
       {/* Guess Table */}
