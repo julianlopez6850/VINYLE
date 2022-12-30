@@ -46,37 +46,26 @@ const Main = (props) => {
     if(username != undefined) {
 
       setGamesList([]);
-      (mode === "all") ?
-      instance.get(`http://localhost:5000/games/user/all?username=${username}`).then((gamesResponse) => {
-        console.log(gamesResponse.data.games)
-
-        gamesResponse.data.games.map((game, index) => {
-          axios.get(`http://localhost:5000/albums?id=${game.albumID}`).then((albumResponse) => {
-            const date = new Date(game.date);
-            const album = albumResponse.data.album;
-            setGamesList((gamesList) => 
-              [...gamesList, 
-                { date:`${date.getMonth() + 1}-${date.getDate() + 1}-${date.getYear() + 1900}`, 
-                  id: game.id, 
-                  win: game.win, 
-                  album: album.albumName, 
-                  albumArt: album.albumArt, 
-                  artists: album.artists, 
-                  genres: album.genres, 
-                  releaseYear: album.releaseYear, 
-                  numGuesses: (game.win) ? game.numGuesses : undefined,
-                }]
-            )
-          })
+      instance.get(`http://localhost:5000/games/user?username=${username}${(mode === 'all') ? '' : `&mode=${mode}`}`).then((gamesResponse) => {
+        gamesResponse.data.games.map((game) => {
+          const date = new Date(game.date);
+          setGamesList((gamesList) => 
+            [...gamesList, 
+              { date:`${date.getMonth() + 1}-${date.getDate() + 1}-${date.getYear() + 1900}`, 
+                id: game.id, 
+                win: game.win, 
+                album: game.album.albumName, 
+                albumArt: game.album.albumArt, 
+                artists: game.album.artists, 
+                genres: game.album.genres, 
+                releaseYear: game.album.releaseYear, 
+                numGuesses: (game.win) ? game.numGuesses : undefined,
+              }
+            ])
         })
       }).catch((error) => {
         console.log(error);
-      }) :
-      instance.get(`http://localhost:5000/games/user/mode?username=${username}&mode=${mode}`).then((response) => {
-        console.log(response);
-      }).catch((error) => {
-        console.log(error);
-      });
+      })
     }
   }, [username, mode])
 
