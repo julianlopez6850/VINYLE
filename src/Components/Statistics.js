@@ -10,7 +10,6 @@ import {
 	ModalBody,
 	ModalCloseButton,
 	Progress,
-  Stat
 } from '@chakra-ui/react'
 
 export const getStats = async (e, loggedIn, username, mode, setStats, onOpen) => {

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import axios from "axios";
 
 import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../Components/miniComponents"
@@ -7,23 +6,13 @@ import { instance } from "../Helpers/axiosInstance";
 
 import "../styles/main.css";
 import {
-  TableContainer,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
   useToast,
-  Button
 } from "@chakra-ui/react";
-
 
 const correctGuessColor = "var(--correct-guess)";
 const incorrectGuessColor = "var(--incorrect-guess)";
 
-const Main = (props) => {
+const InfiniteGame = () => {
   // A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
   const [chosenAlbumID, setChosenAlbumID] = useState(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
 
@@ -35,11 +24,9 @@ const Main = (props) => {
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
 
-  const location = useLocation();
   const toast = useToast();
 
   useEffect(() => {
-
     // check if user is logged in. (if so, get and store username)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
 			setUsername(response.data.username)
@@ -47,7 +34,7 @@ const Main = (props) => {
       if(error.response)
 			  console.log(error.response.data);
       else
-        console.log({ error: "Error logging in" });
+        console.log({ error: "Cannot authenticate user." });
 		});
     
     setAlbums([]);
@@ -56,7 +43,6 @@ const Main = (props) => {
       response.data.map((album) => {
         setAlbums((Albums) => [...Albums, { value: album.albumID, label: album.albumName}])
       })
-      return { value: response.data.albumID, label: response.data.albumName}
     })
   }, [])
 
@@ -273,4 +259,4 @@ const Main = (props) => {
   );
 }
 
-export default Main;
+export default InfiniteGame;

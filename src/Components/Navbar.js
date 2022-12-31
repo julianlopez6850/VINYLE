@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { instance } from "../Helpers/axiosInstance";
 import ConditionalLink from "../Helpers/conditionalLink";
 import Statistics, { getStats } from "../Components/Statistics"
-import axios from "axios";
 
 import {
 	Button,
@@ -38,8 +37,8 @@ function Navbar() {
 
 	// when the url changes...
 	useEffect(() => {
+    // check if user is logged in. (if so, get and store username)
 		instance.get("http://localhost:5000/auth/profile").then((response) => {
-			console.log(response.data);
 			setLoggedIn(true);
 			setUsername(response.data.username)
 		}).catch(function(error) {
@@ -47,7 +46,7 @@ function Navbar() {
       if(error.response)
 			  console.log(error.response.data);
       else
-        console.log({ error: "Error logging in" });
+        console.log({ error: "Cannot authenticate user." });
 		});
 
 		// set mode depending on pathname
@@ -59,23 +58,22 @@ function Navbar() {
 			setMode();
 	}, [location])
 
-	// this function will handle  logging out the user.
+	// this function will handle logging out the user.
 	const logout = async (e) => {
 		e.preventDefault();
 		if(loggedIn)
 		{
-			setLoggedIn(false)
 			await instance.post('http://localhost:5000/auth/logout').then((response) => {
 				console.log("User logged out.");
+				setLoggedIn(false);
 			}).catch(function(error) {
-				console.log(error);
+				if(error.response)
+					console.log(error.response.data);
+				else
+					console.log({ error: "Error logging out user." });
 			})
 		}
 	}
-
-	useEffect(() => {
-		console.log(stats);
-	}, [stats])
       
 	return (
 		<div className="navbar">
