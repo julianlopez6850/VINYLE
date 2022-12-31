@@ -280,21 +280,12 @@ const Main = (props) => {
       }
       {
         (gameOver) ?
-          <Button
-            marginBottom="50px"
-            color="white"
-            bgColor="gray.700"
-            borderColor="gray.700"
-            _hover={{
-              border:"1px solid gray"
-            }}
-            _active={{
-              bg: "gray.600",
-            }}
+          <MainButton
+            text={'NEW GAME'}
             onClick={() => {restartGame()}}
-          >
-            NEW GAME
-          </Button> : ""
+            m='0px 0px 50px 0px'
+            w="fit-content"
+          /> : ""
       }
     </div>
   );

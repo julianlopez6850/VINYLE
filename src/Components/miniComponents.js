@@ -25,6 +25,7 @@ export const MainButton = (props) => {
         bg: "gray.600",
       }}
       m={props.m}
+      w={props.w}
       onClick={props.onClick}
     >
       {props.text}
