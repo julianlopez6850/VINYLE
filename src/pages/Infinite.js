@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
-import { MainButton, AlbumSelect, MainTable } from "../Components/miniComponents"
+import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
 
 import "../styles/main.css";
@@ -253,31 +253,13 @@ const Main = (props) => {
         includeFooter={true}
       />
       {/* WIN/LOSS TOAST NOTIFICATIONS */}
-      {
-        (gameOver) ?
-          (win) ?
-            (!toast.isActive(' ')) ?
-              toast({
-                position: 'top',
-                id: ' ',
-                title: 'VICTORY',
-                description: `You guessed the correct album in ${numGuesses} ${(numGuesses === 1) ? "try" : "tries"}!`,
-                status: 'success',
-                duration: 5000,
-                isClosable: false
-              }) : "" :
-            (!toast.isActive('')) ?
-              toast({
-                position: 'top',
-                id: '',
-                title: 'DEFEAT',
-                description: 'You failed to guess the correct album',
-                status: 'error',
-                duration: 5000,
-                isClosable: false
-              }) : "" :
-          ""
-      }
+      <WinLossToast
+        toast={toast}
+        gameOver={gameOver}
+        win={win}
+        numGuesses={numGuesses}
+      />
+      {/* NEW GAME Button */}
       {
         (gameOver) ?
           <MainButton
