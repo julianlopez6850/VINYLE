@@ -88,15 +88,30 @@ const Statistics = (props) => {
 
             <br/>
             <strong style={{ display:"flex", justifyContent:"center" }}>Guess Distribution:</strong>
-            {(props.stats.guessDistribution) ? props.stats.guessDistribution.map((item, index) => {
+
+            {/* Display progress bars and # of each item for guess distribution */}
+            {(props.stats.guessDistribution) ? [...props.stats.guessDistribution, props.stats.numLosses].map((item, index) => {
               return (
-              <>
-                {index + 1} Guess Win <Progress style={{ zIndex:"-1" }} size='lg' colorScheme='green' bgColor="gray.700" value={Math.max((item / props.stats.mostFrequent) * 100, 5)} />
-                <div style={{ margin:"-21px 0px 0px 5px", textAlign:"left" }}>{item}</div>
-              </>
+                <div key={index}>
+                  {(index===6) ? "Loss:" : (index + 1) + " Guess Win:"}
+                  <Progress
+                    style={{ zIndex:"-1" }}
+                    size='lg'
+                    colorScheme={(index===6) ? 'red' : 'green'}
+                    bgColor="gray.700"
+                    value={Math.max((item / props.stats.mostFrequent) * 100, 5)}
+                  />
+                  <div
+                    style={{
+                      margin:"-21px 0px 0px 5px",
+                      textAlign:"left"
+                    }}
+                  >
+                    {item}
+                  </div>
+                </div>
             )}) : ""}
-            Loss: <Progress style={{zIndex:"-1"}} size='lg' colorScheme='red' bgColor="gray.700" value={Math.max(props.stats.numLosses / props.stats.mostFrequent * 100, 5)} />
-            <div style={{ margin:"-21px 0px 0px 5px", textAlign:"left" }}>{props.stats.numLosses}</div>
+            
           </ModalBody>
           <ModalFooter>
             <Button colorScheme='blue' mr={3} onClick={props.onClose}>
