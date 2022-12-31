@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
-import { MainButton, AlbumSelect } from "../Components/miniComponents"
+import { MainButton, AlbumSelect, MainTable } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
 
 import "../styles/main.css";
@@ -249,49 +249,13 @@ const Main = (props) => {
       </div>
       <br />
       {/* Guess Table */}
-      <TableContainer width={1200} outline={'3px solid white'} borderRadius='10px' m="50px 0px 50px 0px">
-        <Table variant='simple' size='md' >
-          <Thead>
-            <Tr>
-              <Th outline="1px solid white" color='white'>Guess #</Th>
-              <Th outline="1px solid white" color='white'>Album</Th>
-              <Th outline="1px solid white" color='white'>Artist</Th>
-              <Th outline="1px solid white" color='white'>Genre(s)</Th>
-              <Th outline="1px solid white" color='white' isNumeric>Release Year</Th>
-            </Tr>
-          </Thead>
-          {prevGuesses.map((item, index) =>
-            <Tbody key={index}>
-              <Tr>
-                <Td outline="1px solid white" >
-                  {index + 1}
-                </Td>
-                <Td outline="1px solid white" bgColor={(item.guessCorrectness.albumCorrectness) ? correctGuessColor : incorrectGuessColor}>
-                  {item.albumName}
-                </Td>
-                <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
-                  {item.artists}
-                </Td>
-                <Td outline="1px solid white" bgColor={(item.guessCorrectness.genreCorrectness) ? correctGuessColor : incorrectGuessColor}>
-                  {item.genres}
-                </Td>
-                <Td outline="1px solid white" bgColor={(item.guessCorrectness.releaseYearCorrectness) ? correctGuessColor : incorrectGuessColor} isNumeric>
-                  {(item.guessCorrectness.releaseYearCorrectness) ? "" : (item.releaseYear) ? ((item.guessCorrectness.releaseYearDirection === "later") ? "^" : "V") : ""}{item.releaseYear}
-                </Td>
-              </Tr>
-            </Tbody>
-          )}
-          <Tfoot>
-            <Tr>
-              <Th outline="1px solid white" color='white'>Guess #</Th>
-              <Th outline="1px solid white" color='white'>Album</Th>
-              <Th outline="1px solid white" color='white'>Artist</Th>
-              <Th outline="1px solid white" color='white'>Genre(s)</Th>
-              <Th outline="1px solid white" color='white' isNumeric>Release Year</Th>
-            </Tr>
-          </Tfoot>
-        </Table>
-      </TableContainer>
+      <MainTable
+        columnHeaders={["Guess #", "Album", "Artist(s)", "Genre(s)", "Release Year"]}
+        correctGuessColor={correctGuessColor}
+        incorrectGuessColor={incorrectGuessColor}
+        body={prevGuesses}
+        includeFooter={true}
+      />
       {/* WIN/LOSS TOAST NOTIFICATIONS */}
       {
         (gameOver) ?

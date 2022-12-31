@@ -1,5 +1,13 @@
 import {
-	Button
+  Button,
+  TableContainer,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  Tfoot,
 } from '@chakra-ui/react'
 import Select from "react-select";
 
@@ -78,5 +86,61 @@ export const AlbumSelect = (props) => {
         }),
       }}
     />
+  )
+}
+
+export const MainTable = (props) => {
+
+  const correctGuessColor = props.correctGuessColor;
+  const incorrectGuessColor = props.incorrectGuessColor;
+
+  return (
+    <TableContainer width={1200} outline={'3px solid white'} borderRadius='10px' m="50px 0px 50px 0px">
+      <Table variant='simple' size='md'>
+        <Thead>
+          <Tr>
+            {props.columnHeaders.map((header, index) => {
+              if(index !== props.columnHeaders.length - 1)
+                return <Th outline="1px solid white" color='white'>{header}</Th>
+              else
+                return <Th outline="1px solid white" color='white' isNumeric>{header}</Th>
+            })}
+          </Tr>
+        </Thead>
+        {props.body.map((item, index) =>
+          <Tbody key={index}>
+            <Tr>
+              <Td outline="1px solid white" >
+                {index + 1}
+              </Td>
+              <Td outline="1px solid white" bgColor={(item.guessCorrectness.albumCorrectness) ? correctGuessColor : incorrectGuessColor}>
+                {item.albumName}
+              </Td>
+              <Td outline="1px solid white" bgColor={(item.guessCorrectness.artistCorrectness) ? correctGuessColor : incorrectGuessColor}>
+                {item.artists}
+              </Td>
+              <Td outline="1px solid white" bgColor={(item.guessCorrectness.genreCorrectness) ? correctGuessColor : incorrectGuessColor}>
+                {item.genres}
+              </Td>
+              <Td outline="1px solid white" bgColor={(item.guessCorrectness.releaseYearCorrectness) ? correctGuessColor : incorrectGuessColor} isNumeric>
+                {(item.guessCorrectness.releaseYearCorrectness) ? "" : (item.releaseYear) ? ((item.guessCorrectness.releaseYearDirection === "later") ? "^" : "V") : ""}{item.releaseYear}
+              </Td>
+            </Tr>
+          </Tbody>
+        )}
+        {(props.includeFooter) ?
+          <Tfoot>
+            <Tr>
+              {props.columnHeaders.map((header, index) => {
+                if(index !== props.columnHeaders.length - 1)
+                  return <Th outline="1px solid white" color='white'>{header}</Th>
+                else
+                  return <Th outline="1px solid white" color='white' isNumeric>{header}</Th>
+              })}
+            </Tr>
+          </Tfoot> : ''
+        }
+      </Table>
+    </TableContainer>
   )
 }
