@@ -102,9 +102,9 @@ export const MainTable = (props) => {
           <Tr>
             {props.columnHeaders.map((header, index) => {
               if(index !== props.columnHeaders.length - 1)
-                return <Th outline="1px solid white" color='white'>{header}</Th>
+                return <Th key={index} outline="1px solid white" color='white'>{header}</Th>
               else
-                return <Th outline="1px solid white" color='white' isNumeric>{header}</Th>
+                return <Th key={index} outline="1px solid white" color='white' isNumeric>{header}</Th>
             })}
           </Tr>
         </Thead>
@@ -134,9 +134,9 @@ export const MainTable = (props) => {
             <Tr>
               {props.columnHeaders.map((header, index) => {
                 if(index !== props.columnHeaders.length - 1)
-                  return <Th outline="1px solid white" color='white'>{header}</Th>
+                  return <Th key={index} outline="1px solid white" color='white'>{header}</Th>
                 else
-                  return <Th outline="1px solid white" color='white' isNumeric>{header}</Th>
+                  return <Th key={index} outline="1px solid white" color='white' isNumeric>{header}</Th>
               })}
             </Tr>
           </Tfoot> : ''
