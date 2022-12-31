@@ -3,7 +3,7 @@ import "../styles/navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { instance } from "../Helpers/axiosInstance";
 import ConditionalLink from "../Helpers/conditionalLink";
-import Statistics from "../Components/Statistics"
+import Statistics, { getStats } from "../Components/Statistics"
 import axios from "axios";
 
 import {
@@ -71,46 +71,6 @@ function Navbar() {
 				console.log(error);
 			})
 		}
-	}
-
-	const getStats = async (e) => {
-		e.preventDefault();
-		if(loggedIn)
-		{
-			await instance.get(`http://localhost:5000/games/user?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
-				if(response.data.error) {
-					console.log(response.data.error);
-				} else {
-					var numGames = response.data.games.length;
-					var numWins = 0;
-					var numGuesses = 0;
-					var numGuessDistribution = [0,0,0,0,0,0]
-					for(var i = 0; i < numGames; i++) {
-						if(response.data.games[i].win === 1) {
-							numWins++;
-							numGuessDistribution[response.data.games[i].numGuesses - 1]++;
-						}
-					}
-					var mostFrequent = 0;
-					numGuessDistribution.forEach((item, index) => {
-						numGuesses += item * (index + 1);
-						if(item > mostFrequent)
-							mostFrequent = item;
-					})
-					setStats({ numGames: numGames,
-						numWins: numWins,
-						numLosses: numGames - numWins,
-						winPercent: parseFloat((numWins / numGames * 100).toFixed()),
-						guessDistribution: numGuessDistribution,
-						avgGuessesPerWin: parseFloat((numGuesses / numWins).toFixed(2)),
-						mostFrequent: mostFrequent
-					});
-				}
-			}).catch(function(error) {
-				console.log(error);
-			})
-		}
-		onOpen();
 	}
 
 	useEffect(() => {
@@ -229,7 +189,7 @@ function Navbar() {
 									value='stats'
 									bgColor="gray.900"
 									_hover={{ bgColor: "gray.600" }}
-									onClick={(e) => getStats(e)}
+									onClick={(e) => getStats(e, loggedIn, username, mode, setStats, onOpen)}
 								>
 									Statistics
 								</MenuItem>

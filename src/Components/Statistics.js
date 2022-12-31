@@ -1,3 +1,5 @@
+import { instance } from "../Helpers/axiosInstance";
+
 import {
 	Button,
 	Modal,
@@ -10,6 +12,46 @@ import {
 	Progress,
   Stat
 } from '@chakra-ui/react'
+
+export const getStats = async (e, loggedIn, username, mode, setStats, onOpen) => {
+  e.preventDefault();
+  if(loggedIn)
+  {
+    await instance.get(`http://localhost:5000/games/user?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
+      if(response.data.error) {
+        console.log(response.data.error);
+      } else {
+        var numGames = response.data.games.length;
+        var numWins = 0;
+        var numGuesses = 0;
+        var numGuessDistribution = [0,0,0,0,0,0]
+        for(var i = 0; i < numGames; i++) {
+          if(response.data.games[i].win === 1) {
+            numWins++;
+            numGuessDistribution[response.data.games[i].numGuesses - 1]++;
+          }
+        }
+        var mostFrequent = 0;
+        numGuessDistribution.forEach((item, index) => {
+          numGuesses += item * (index + 1);
+          if(item > mostFrequent)
+            mostFrequent = item;
+        })
+        setStats({ numGames: numGames,
+          numWins: numWins,
+          numLosses: numGames - numWins,
+          winPercent: parseFloat((numWins / numGames * 100).toFixed()),
+          guessDistribution: numGuessDistribution,
+          avgGuessesPerWin: parseFloat((numGuesses / numWins).toFixed(2)),
+          mostFrequent: mostFrequent
+        });
+      }
+    }).catch(function(error) {
+      console.log(error);
+    })
+  }
+  onOpen();
+}
 
 const Statistics = (props) => {
 
