@@ -15,7 +15,21 @@ import {
   Th,
   Td,
   useToast,
-  Button
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Box,
+  VStack,
+  Text,
+  HStack,
+  Image,
+  Tooltip
 } from "@chakra-ui/react";
 
 const wonColor = "var(--correct-guess)";
@@ -23,12 +37,14 @@ const lossedColor = "var(--incorrect-guess)";
 
 const History = () => {
   const [username, setUsername] = useState();
-  const [mode, setMode] = useState("all");
+  const [mode, setMode] = useState();
   const [gamesList, setGamesList] = useState([])
+  const [openedGame, setOpenedGame] = useState();
 
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     // check if user is logged in. (if so, get and store username)
@@ -46,13 +62,14 @@ const History = () => {
     if(username != undefined) {
 
       setGamesList([]);
-      instance.get(`http://localhost:5000/games/user?username=${username}${(mode === 'all') ? '' : `&mode=${mode}`}`).then((gamesResponse) => {
-        gamesResponse.data.games.map((game) => {
+      instance.get(`http://localhost:5000/games/user?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then((gamesResponse) => {
+        gamesResponse.data.games.reverse().map((game) => {
           const date = new Date(game.date);
           setGamesList((gamesList) => 
             [...gamesList, 
-              { date:`${date.getMonth() + 1}-${date.getDate() + 1}-${date.getYear() + 1900}`, 
-                id: game.id, 
+              { date:`${date.getMonth() + 1}-${date.getDate()}-${date.getYear() + 1900}`, 
+                id: game.id,
+                mode: game.mode,
                 win: game.win, 
                 album: game.album.albumName, 
                 albumArt: game.album.albumArt, 
@@ -60,6 +77,7 @@ const History = () => {
                 genres: game.album.genres, 
                 releaseYear: game.album.releaseYear, 
                 numGuesses: (game.win) ? game.numGuesses : undefined,
+                guesses: game.guesses
               }
             ])
         })
@@ -68,6 +86,13 @@ const History = () => {
       })
     }
   }, [username, mode])
+
+  const openGame = (game, index) => {
+    console.log("clicked on game " + (index + 1));
+    console.log(game);
+    setOpenedGame(game);
+    onOpen();
+  }
 
   return (
     <div className="main">
@@ -81,7 +106,7 @@ const History = () => {
           </strong>
           <MainButton
             text={'ALL'}
-            onClick={()=>{setMode('all'); navigate('/history/all')}}
+            onClick={()=>{setMode(); navigate('/history/all')}}
             m="10px 0 10px 0"
           />
           <MainButton
@@ -97,52 +122,153 @@ const History = () => {
         </div>
         <div style={{width:"100%", display:"flex", flexDirection:"column", alignItems:"center", marginTop:"-25px" }}>
           
-          {/* Guess Table */}
-          <TableContainer width={1200} maxH={690} overflowY={"auto"} outline={'3px solid white'} borderRadius='10px' m="50px 0px 50px 0px">
-            <Table variant='simple' size='md' >
-              <Thead>
-                <Tr>
-                  <Th outline="1px solid white" color='white'>Game #</Th>
-                  <Th outline="1px solid white" color='white'>Date</Th>
-                  <Th outline="1px solid white" color='white'>Album</Th>
-                  <Th outline="1px solid white" color='white'>Artist</Th>
-                  <Th outline="1px solid white" color='white'>Genre(s)</Th>
-                  <Th outline="1px solid white" color='white' isNumeric>Release Year</Th>
-                </Tr>
-              </Thead>
-              {gamesList.map((item, index) =>
+          {/* Games History Table */}
+          <TableContainer width={800} m="50px 0px 50px 0px" boxShadow="0px 0px 10px black">
+            <Table variant='unstyled' size='md'>
+              {/* For each game... */}
+              {gamesList.map((game, index) =>
+                // Add a new row to the table, colored green if the game result was win, red if loss.
                 <Tbody
                   key={index}
-                  bgColor={(item.win) ? wonColor : lossedColor}
+                  bgColor={(game.win) ? wonColor : lossedColor}
                   style={{
                     cursor: "pointer"
                   }}
-                  onClick={()=>{console.log("clicked on game " + (index + 1))}} 
+                  onClick={()=>{openGame(game, index)}}
+                  borderTop={(index === 0) ? "" : "1px solid white"}
                 >
                   <Tr>
-                    <Td outline="1px solid white" isNumeric>
-                      {index + 1}
+                    <Td display="flex" flexDir="row" pos="relative">
+                      {/* Display Album art. */}
+                      <Image src={game.albumArt} w="60px" h="60px" mr="20px"/>
+
+                      {/* Display number of guesses, or X if the player lossed that game. */}
+                      <Box
+                        w="23px" h="23px"
+                        borderRadius="23px"
+                        border={"2px solid " + `${(game.win) ? wonColor : lossedColor}`}
+                        bottom="2" left="70"
+                        align="center" justifyContent="center"
+                        pos="absolute"
+                        bg="var(--background-color)"
+                      >
+                        <Text lineHeight="1">
+                          {(game.win) ? game.numGuesses : "X"}
+                        </Text>
+                      </Box>
+
+                      {/* Display Album name, artist, and release year. */}
+                      <VStack align="left" spacing="0">
+                        {[game.album,game.artists,game.releaseYear].map((item, index) => {
+                          return <Text key={index} fontWeight={(index === 0) ? "bold" : ""}>
+                              {item}
+                            </Text>
+                        })}
+                      </VStack>
+
                     </Td>
-                    <Td outline="1px solid white">
-                      {item.date}
-                    </Td>
-                    <Td outline="1px solid white" style={{ display: "flex", flexDirection:"row", alignItems:"center" }}>
-                      <img src={item.albumArt} style={{width:"60px", marginRight:"20px" }} />{item.album}
-                    </Td>
-                    <Td outline="1px solid white">
-                      {item.artists}
-                    </Td>
-                    <Td outline="1px solid white">
-                      {item.genres}
-                    </Td>
-                    <Td outline="1px solid white" isNumeric>
-                      {item.releaseYear}
+                    <Td>
+                      {/* Display Game mode and date. */}
+                      <VStack align="center" spacing="0">
+                        {[game.mode,game.date].map((item, index) => {
+                          return <Text key={index} fontWeight={(index === 0) ? "bold" : ""}>
+                              {item.toUpperCase()}
+                            </Text>
+                        })}
+                      </VStack>
                     </Td>
                   </Tr>
                 </Tbody>
               )}
             </Table>
           </TableContainer>
+
+          {/* Modal: Open Game Info From History Table */}
+          <Modal
+            isCentered
+            onClose={onClose}
+            isOpen={isOpen}
+            motionPreset='slideInBottom'
+          >
+            <ModalOverlay />
+            {(openedGame) ? 
+              <ModalContent 
+                color="white"
+                bgColor="gray.700"
+              >
+                {/* Display game date and mode. */}
+                <ModalHeader
+                  display="flex"
+                  justifyContent="center"
+                >
+                  {`${openedGame.date} ${openedGame.mode[0].toUpperCase() + openedGame.mode.substring(1)} Game`}
+                </ModalHeader>
+
+                <ModalCloseButton />
+
+                <ModalBody
+                  display="flex"
+                  flexDir="column"
+                  justifyContent="center"
+                >
+                  {/* Display Album art. */}
+                  <Image src={openedGame.albumArt} />
+
+                  {/* Display Album name, artist, and release year. */}
+                  <VStack 
+                    justifyContent="center"
+                    spacing="-1"
+                    mb="10px"
+                  >
+                    {[openedGame.album,openedGame.artists,openedGame.releaseYear].map((item, index) => {
+                      return <Text key={index} fontWeight={(index === 0) ? "bold" : ""}>
+                          {item}
+                        </Text>
+                    })}
+                  </VStack>
+
+                  {/* Display the guesses made by the player. */}
+                  <Text align="center" fontWeight="bold">
+                    GUESSES:
+                  </Text>
+                  <HStack>
+                    {openedGame.guesses.map((item, index) => {
+                      return <Box bg="white" w="60px" h="60px" display="flex" justifyContent="center" key={index}
+                        border={"2px solid " + `${(item.guessCorrectness.albumCorrectness) ? wonColor : lossedColor}`}  
+                      >
+                        <Tooltip
+                          hasArrow
+                          label={(item.albumArt) ? 
+                            <VStack spacing="-1">
+                              <Text fontWeight="bold">{item.albumName}</Text>
+                              <Text >{item.artists}</Text>
+                              <Text >{item.releaseYear}</Text>
+                            </VStack>
+                            : 'SKIPPED'
+                          }
+                          display="flex"
+                          bg='var(--background-color)'
+                        >
+                          {(item.albumArt) ?
+                            <Image src={item.albumArt} alt='' w="56px" h="56px" border="0px" alignSelf="center" justifyContent="center"/> :
+                            <Text color="black" w="60px" p="19px 0px 19px 0px" display="flex" alignSelf="center" justifyContent="center" fontSize="12px">
+                              SKIPPED
+                            </Text>
+                          }
+                        </Tooltip>
+                      </Box>
+                    })}
+                  </HStack>
+                </ModalBody>
+                <ModalFooter>
+                  <Button colorScheme='blue' mr={3} onClick={onClose}>
+                    Close
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+              : ""
+            }
+          </Modal>
         </div>
       </div>
     </div>
