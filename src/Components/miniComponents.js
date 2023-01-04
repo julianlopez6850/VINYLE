@@ -33,6 +33,28 @@ export const MainButton = (props) => {
   )
 }
 
+export const HistoryButton = (props) => {
+  return (
+    <Button
+      variant='link'
+      color={(props.active) ? "white" : "gray.400"}
+      borderBottom={(props.active) ? "2px solid white" : "2px solid var(--background-color)"}
+      borderRadius="0"
+      transition=".3s"
+      _hover={(props.active) ? {
+        cursor:"default"} : {
+        textColor:"gray.200",
+        cursor:"pointer"
+      }}
+      _active={{}}
+      p="0px 10px 0px 10px"
+      onClick={props.onClick}
+    >
+      {props.text}
+    </Button>
+  )
+}
+
 export const AlbumSelect = (props) => {
   return (
     <Select
