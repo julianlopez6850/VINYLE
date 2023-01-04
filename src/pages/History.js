@@ -60,9 +60,8 @@ const History = () => {
 
   useEffect(() => {
     if(username != undefined) {
-
-      setGamesList([]);
       instance.get(`http://localhost:5000/games/user?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then((gamesResponse) => {
+        setGamesList([]);
         gamesResponse.data.games.reverse().map((game) => {
           const date = new Date(game.date);
           setGamesList((gamesList) => 
