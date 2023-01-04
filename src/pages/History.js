@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { HistoryButton } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
@@ -8,13 +8,9 @@ import "../styles/main.css";
 import {
   TableContainer,
   Table,
-  Thead,
   Tbody,
-  Tfoot,
   Tr,
-  Th,
   Td,
-  useToast,
   Button,
   Modal,
   ModalOverlay,
@@ -41,13 +37,11 @@ const History = () => {
   const [gamesList, setGamesList] = useState([])
   const [openedGame, setOpenedGame] = useState();
 
-  const location = useLocation();
   const navigate = useNavigate();
-  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // check if user is logged in. (if so, get and store username)
   useEffect(() => {
-    // check if user is logged in. (if so, get and store username)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
 			setUsername(response.data.username)
 		}).catch(function(error) {
@@ -58,27 +52,28 @@ const History = () => {
 		});
   }, [])
 
+  // get the user's game history, depending on selected mode.
   useEffect(() => {
-    if(username != undefined) {
+    if(username !== undefined) {
       instance.get(`http://localhost:5000/games/user?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then((gamesResponse) => {
         setGamesList([]);
-        gamesResponse.data.games.reverse().map((game) => {
+        gamesResponse.data.games.reverse().forEach((game) => {
           const date = new Date(game.date);
-          setGamesList((gamesList) => 
-            [...gamesList, 
-              { date:`${date.getMonth() + 1}-${date.getDate()}-${date.getYear() + 1900}`, 
-                id: game.id,
-                mode: game.mode,
-                win: game.win, 
-                album: game.album.albumName, 
-                albumArt: game.album.albumArt, 
-                artists: game.album.artists, 
-                genres: game.album.genres, 
-                releaseYear: game.album.releaseYear, 
-                numGuesses: (game.win) ? game.numGuesses : undefined,
-                guesses: game.guesses
-              }
-            ])
+          setGamesList((gamesList) =>
+            [...gamesList, {
+              date:`${date.getMonth() + 1}-${date.getDate()}-${date.getYear() + 1900}`,
+              id: game.id,
+              mode: game.mode,
+              win: game.win,
+              album: game.album.albumName,
+              albumArt: game.album.albumArt,
+              artists: game.album.artists,
+              genres: game.album.genres,
+              releaseYear: game.album.releaseYear,
+              numGuesses: (game.win) ? game.numGuesses : undefined,
+              guesses: game.guesses
+            }]
+          )
         })
       }).catch((error) => {
         console.log(error);
@@ -86,9 +81,8 @@ const History = () => {
     }
   }, [username, mode])
 
-  const openGame = (game, index) => {
-    console.log("clicked on game " + (index + 1));
-    console.log(game);
+  // this method is called to open up a game that the user clicks on from the history table.
+  const openGame = (game) => {
     setOpenedGame(game);
     onOpen();
   }
@@ -131,7 +125,7 @@ const History = () => {
                 style={{
                   cursor: "pointer"
                 }}
-                onClick={()=>{openGame(game, index)}}
+                onClick={()=>{openGame(game)}}
                 borderTop={(index === 0) ? "" : "1px solid white"}
               >
                 <Tr>
@@ -143,7 +137,7 @@ const History = () => {
                     <Box
                       w="23px" h="23px"
                       borderRadius="23px"
-                      border={"2px solid " + `${(game.win) ? wonColor : lossedColor}`}
+                      border={"2px solid " + (game.win) ? wonColor : lossedColor}
                       bottom="2" left="70"
                       align="center" justifyContent="center"
                       pos="absolute"
@@ -231,7 +225,7 @@ const History = () => {
                 <HStack>
                   {openedGame.guesses.map((item, index) => {
                     return <Box bg="white" w="60px" h="60px" display="flex" justifyContent="center" key={index}
-                      border={"2px solid " + `${(item.guessCorrectness.albumCorrectness) ? wonColor : lossedColor}`}  
+                      border={"2px solid " + (item.guessCorrectness.albumCorrectness) ? wonColor : lossedColor}  
                     >
                       <Tooltip
                         hasArrow
