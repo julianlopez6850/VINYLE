@@ -138,7 +138,7 @@ function Navbar() {
 							// if gamemode is not classic, VINYLE page title becomes a link to the main page.
 							<ConditionalLink
 								to="/"
-								condition={(mode === "Classic")}
+								condition={(location.pathname.includes("/classic") && !(location.pathname.includes("/history")))}
 								style={{
 									height:"inherit",
 									padding:"0px 10px 0px 10px"
