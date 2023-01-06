@@ -21,6 +21,8 @@ const ClassicGame = () => {
   const [prevGuesses, setPrevGuesses] = useState([]);
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
+  const [MM_DD_YYYY, setMM_DD_YYYY] = useState();
+  const [storage, setStorage] = useState(false);
 
   const toast = useToast();
 
@@ -44,7 +46,19 @@ const ClassicGame = () => {
     })
 
     const date = new Date();
-    const MM_DD_YYYY = `${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`;
+    setMM_DD_YYYY(`${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`);
+  }, [])
+
+  useEffect(() => {
+    if(MM_DD_YYYY === undefined) {
+      return;
+    }
+
+    if(localStorage.getItem(MM_DD_YYYY)) {
+      setStorage(true);
+      setNumGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses.length)
+      setPrevGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses)
+    }
 
     axios.post('http://localhost:5000/daily', { date: MM_DD_YYYY }).then(() => {
       axios.get(`http://localhost:5000/daily/id?date=${MM_DD_YYYY}`).then((response) => {
@@ -56,7 +70,7 @@ const ClassicGame = () => {
       else
         console.log({ error: "An error occurred fetching today's daily classic game." });
     })
-  }, [])
+  }, [MM_DD_YYYY])
 
   // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
@@ -77,7 +91,9 @@ const ClassicGame = () => {
 
   // when the numGuesses state updates...
   useEffect(() => {
-    if (numGuesses > 0 && !gameOver) {
+    if(storage) {
+      setStorage(false);
+    } else if (numGuesses > 0 && !gameOver) {
       console.log("GUESS " + numGuesses + ": ");
       console.log(guess);
       console.log("PREVIOUS GUESSES:");
@@ -136,6 +152,7 @@ const ClassicGame = () => {
   useEffect(() => {
     // if prevGuesses is not empty...
     if(prevGuesses[0]) {
+      localStorage.setItem(MM_DD_YYYY,  JSON.stringify({guesses: prevGuesses}))
       // if the last guess was correct... the player won.
       if (prevGuesses[prevGuesses.length - 1].guessCorrectness.albumCorrectness) {
         console.log("YOU WON!");
@@ -154,7 +171,7 @@ const ClassicGame = () => {
   // when the gameOver state updates...
   useEffect(() => {
     // if gameOver...
-    if (gameOver) {
+    if (gameOver && chosenAlbumID) {
 
       // async function to save game data.
       const saveGame = async () => {
@@ -163,6 +180,11 @@ const ClassicGame = () => {
         var albumID;
         await axios.get(`http://localhost:5000/albums?id=${chosenAlbumID}`).then((response) => {
           albumID = response.data.album.albumID;
+        }).catch((error) => {
+          if(error.response)
+            console.log(error.response.data);
+          else
+            console.log(error.message);
         })
 
         let d = new Date(); // save todays Date.
@@ -177,20 +199,32 @@ const ClassicGame = () => {
           guesses: prevGuesses
         }
 
-        // add the game data to the games table in the DB.
-        instance.post("http://localhost:5000/games", data).then((response) => {
-          if(response.data.success)
-            console.log("Game data saved into AlbumleDB.")
-          else
-          {
-            console.log("Game data failed to save. Error:");
-            if(response.data.error)
-              console.log(response.data.error);
+        // if this game has not already been saved to the DB, save it.
+        instance.get(`http://localhost:5000/games/user/hasGame?uesrname=${data.username}&mode=${data.mode}&date=${data.date}`).then((response) => {
+          if(response.data.value) {
+            return;
+          } else {
+            // add the game data to the games table in the DB.
+            instance.post("http://localhost:5000/games", data).then((response) => {
+              if(response.data.success)
+                console.log("Game data saved into AlbumleDB.")
+              else
+              {
+                console.log("Game data failed to save. Error:");
+                if(response.data.error)
+                  console.log(response.data.error);
+              }
+            }).catch(function(error) {
+              console.log("Game data failed to save. Error:");
+              console.log(error.response.data);
+            });
           }
-        }).catch(function(error) {
-          console.log("Game data failed to save. Error:");
-          console.log(error.response.data);
-        });
+        }).catch((error) => {
+          if(error.response)
+            console.log(error.response.data);
+          else
+            console.log(error.message);
+        })
       }
 
       // call the saveGame function.
@@ -200,7 +234,7 @@ const ClassicGame = () => {
 
       setNumGuesses(6);
     }
-  }, [gameOver])
+  }, [gameOver, chosenAlbumID])
 
   return (
     <div className="main">
