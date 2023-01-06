@@ -47,13 +47,13 @@ const History = () => {
     toast.closeAll();
 
     instance.get("http://localhost:5000/auth/profile").then((response) => {
-			setUsername(response.data.username)
-		}).catch(function(error) {
+      setUsername(response.data.username)
+    }).catch(function(error) {
       if(error.response)
-			  console.log(error.response.data);
+        console.log(error.response.data);
       else
         console.log({ error: "Cannot authenticate user." });
-		});
+    });
   }, [])
 
   // get the user's game history, depending on selected mode.

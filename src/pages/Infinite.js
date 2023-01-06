@@ -16,7 +16,7 @@ const InfiniteGame = () => {
   // A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
   const [chosenAlbumID, setChosenAlbumID] = useState(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
 
-	const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("");
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
   const [numGuesses, setNumGuesses] = useState(0);
@@ -31,13 +31,13 @@ const InfiniteGame = () => {
 
     // check if user is logged in. (if so, get and store username)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
-			setUsername(response.data.username)
-		}).catch(function(error) {
+      setUsername(response.data.username)
+    }).catch(function(error) {
       if(error.response)
-			  console.log(error.response.data);
+        console.log(error.response.data);
       else
         console.log({ error: "Cannot authenticate user." });
-		});
+    });
     
     setAlbums([]);
     // get all of the albums from the database to be shown in our Select component later.

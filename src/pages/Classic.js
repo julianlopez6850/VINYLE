@@ -14,7 +14,7 @@ const incorrectGuessColor = "var(--incorrect-guess)";
 
 const ClassicGame = () => {
   const [chosenAlbumID, setChosenAlbumID] = useState();
-	const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("");
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
   const [numGuesses, setNumGuesses] = useState(0);
@@ -31,13 +31,13 @@ const ClassicGame = () => {
 
     // check if user is logged in. (if so, get and store username)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
-			setUsername(response.data.username)
-		}).catch(function(error) {
+      setUsername(response.data.username)
+    }).catch(function(error) {
       if(error.response)
-			  console.log(error.response.data);
+        console.log(error.response.data);
       else
         console.log({ error: "Cannot authenticate user." });
-		});
+    });
 
     setAlbums([]);
     // get all of the albums from the database to be shown in our Select component later.
@@ -68,7 +68,7 @@ const ClassicGame = () => {
       })
     }).catch((error) => {
       if(error.response)
-			  console.log(error.response.data);
+        console.log(error.response.data);
       else
         console.log({ error: "An error occurred fetching today's daily classic game." });
     })
