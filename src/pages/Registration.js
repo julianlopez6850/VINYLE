@@ -35,6 +35,10 @@ const Registration = () => {
   const passwordTooSmall = (password.password.length < 5)
   const isInvalid = (passwordMismatch || passwordTooSmall || (usernameError != ""))
 
+  useEffect(() => {
+    toast.closeAll();
+  }, [])
+
   // this function will run when the username input is updated and check if the input is a valid username.
   const trySetUsername = (input) => {
     // check if the input is within 3 and 15 characters.
@@ -98,7 +102,6 @@ const Registration = () => {
       // registration is complete... navigate to the login page.
       setTimeout(() => navigate('/Login'), 1500);
       setRequest(false);
-      toast.close(' ');
     } else if(error) {
       setRequest(false);
       setError(false);

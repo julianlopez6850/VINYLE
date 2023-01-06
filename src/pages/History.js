@@ -25,7 +25,8 @@ import {
   Text,
   HStack,
   Image,
-  Tooltip
+  Tooltip,
+  useToast,
 } from "@chakra-ui/react";
 
 const wonColor = "var(--correct-guess)";
@@ -37,11 +38,14 @@ const History = () => {
   const [gamesList, setGamesList] = useState([])
   const [openedGame, setOpenedGame] = useState();
 
+  const toast = useToast();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   // check if user is logged in. (if so, get and store username)
   useEffect(() => {
+    toast.closeAll();
+
     instance.get("http://localhost:5000/auth/profile").then((response) => {
 			setUsername(response.data.username)
 		}).catch(function(error) {

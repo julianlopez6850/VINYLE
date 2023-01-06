@@ -27,9 +27,12 @@ const Login = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
+  useEffect(() => {
+    toast.closeAll();
+  }, [])
+
   // this function is called when the user presses the LOGIN button.
   const tryLogin = () => {
-
     // send username and password combo to backend...
     loginInstance.post("http://localhost:5000/auth/login", { username: username, password: password}).then(() => {
       setRequest(true);
@@ -52,7 +55,6 @@ const Login = () => {
       // if login is successful, nagivate to the main page.
       setTimeout(() => navigate('/'), 1500);
       setRequest(false);
-      toast.close(' ');
     } else if(error) {
       setRequest(false);
       setError(false);

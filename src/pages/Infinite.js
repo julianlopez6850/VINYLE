@@ -27,6 +27,8 @@ const InfiniteGame = () => {
   const toast = useToast();
 
   useEffect(() => {
+    toast.closeAll();
+
     // check if user is logged in. (if so, get and store username)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
 			setUsername(response.data.username)
@@ -197,8 +199,7 @@ const InfiniteGame = () => {
     setPrevGuesses([]);
     setGameOver(false);
     setWin(false);
-    toast.close('');
-    toast.close(' ');
+    toast.closeAll();
   }
 
   return (
