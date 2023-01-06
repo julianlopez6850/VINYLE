@@ -202,7 +202,7 @@ const ClassicGame = () => {
         }
 
         // if this game has not already been saved to the DB, save it.
-        instance.get(`http://localhost:5000/games/user/hasGame?uesrname=${data.username}&mode=${data.mode}&date=${data.date}`).then((response) => {
+        instance.get(`http://localhost:5000/games/user/hasGame?username=${data.username}&mode=${data.mode}&date=${data.date}`).then((response) => {
           if(response.data.value) {
             return;
           } else {
