@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { HistoryButton } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
 
-import "../styles/main.css";
+import "../styles/page.css";
 import {
   TableContainer,
   Table,
@@ -92,7 +92,7 @@ const History = () => {
   }
 
   return (
-    <div className="main">
+    <div className="page">
       <div className="title">
         HISTORY
       </div>

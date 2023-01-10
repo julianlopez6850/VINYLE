@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { loginInstance } from "../Helpers/axiosInstance"
 
-import "../styles/login.css";
+import "../styles/page.css";
 
 import {
   FormControl,
@@ -78,7 +78,7 @@ const Login = () => {
   }, [ username, password ]);
 
   return (
-    <div className="main">
+    <div className="page">
       <div className="title">
         LOGIN
       </div>

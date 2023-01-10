@@ -4,7 +4,7 @@ import axios from "axios";
 import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
 
-import "../styles/main.css";
+import "../styles/page.css";
 import {
   useToast,
 } from "@chakra-ui/react";
@@ -203,7 +203,7 @@ const InfiniteGame = () => {
   }
 
   return (
-    <div className="main">
+    <div className="page">
       <div className="title">
         INFINITE
       </div>

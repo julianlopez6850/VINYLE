@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { loginInstance } from "../Helpers/axiosInstance"
 import axios from 'axios';
 
-import "../styles/login.css";
+import "../styles/page.css";
 
 import {
   FormControl,
@@ -125,7 +125,7 @@ const Registration = () => {
   }, [ username, password, matchPassword ]);
 
   return (
-    <div className="main">
+    <div className="page">
       <div className="title">
         REGISTER
       </div>
