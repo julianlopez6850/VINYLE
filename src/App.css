@@ -12,6 +12,7 @@
 .App {
   min-height: calc(100vh);
   height: 100%;
+  width: calc(100vw);
   color: white;
   background-color: var(--background-color);
   display: flex;
