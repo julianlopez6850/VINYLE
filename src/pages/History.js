@@ -141,7 +141,7 @@ const History = () => {
                     <Box
                       w="23px" h="23px"
                       borderRadius="23px"
-                      border={"2px solid " + (game.win) ? wonColor : lossedColor}
+                      border={"2px solid " + (game.win ? wonColor : lossedColor)}
                       bottom="2" left="70"
                       align="center" justifyContent="center"
                       pos="absolute"
@@ -229,7 +229,7 @@ const History = () => {
                 <HStack>
                   {openedGame.guesses.map((item, index) => {
                     return <Box bg="white" w="60px" h="60px" display="flex" justifyContent="center" key={index}
-                      border={"2px solid " + (item.guessCorrectness.albumCorrectness) ? wonColor : lossedColor}  
+                      border={"2px solid " + (item.guessCorrectness.albumCorrectness ? wonColor : lossedColor)}  
                     >
                       <Tooltip
                         hasArrow
