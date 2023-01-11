@@ -170,7 +170,7 @@ export const MainTable = (props) => {
 
 export const WinLossToast = (props) => {
   return (
-    (props.gameOver) ?
+    (props.showToast) ?
     (props.win) ?
       (!props.toast.isActive(' ')) ?
         props.toast({

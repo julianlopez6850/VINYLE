@@ -26,6 +26,7 @@ const ClassicGame = () => {
   const [MM_DD_YYYY, setMM_DD_YYYY] = useState();
   const [storage, setStorage] = useState(false);
   const [stats, setStats] = useState({});
+  const [showToast, setShowToast] = useState(false);
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -216,6 +217,7 @@ const ClassicGame = () => {
                 else
                   console.log("YOU LOST.");
                 console.log("Game data saved into VINYLE_DB.");
+                setShowToast(true);
                 setTimeout(() => {
                   getStats(undefined, !(username === undefined), username, "Classic", setStats, onOpen);
                 }, 1500);
@@ -288,7 +290,7 @@ const ClassicGame = () => {
       {/* WIN/LOSS TOAST NOTIFICATIONS */}
       <WinLossToast
         toast={toast}
-        gameOver={gameOver}
+        showToast={showToast}
         win={win}
         numGuesses={numGuesses}
       />
