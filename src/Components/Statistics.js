@@ -17,7 +17,8 @@ import {
 } from '@chakra-ui/react'
 
 export const getStats = async (e, loggedIn, username, mode, setStats, onOpen) => {
-  e.preventDefault();
+  if(e)
+    e.preventDefault();
   if(loggedIn)
   {
     await instance.get(`http://localhost:5000/games/user/stats?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {

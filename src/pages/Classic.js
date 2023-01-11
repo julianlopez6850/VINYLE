@@ -3,10 +3,12 @@ import axios from "axios";
 
 import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
+import Statistics, { getStats } from "../Components/Statistics"
 
 import "../styles/page.css";
 import {
   useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 const correctGuessColor = "var(--correct-guess)";
@@ -23,8 +25,10 @@ const ClassicGame = () => {
   const [win, setWin] = useState(false);
   const [MM_DD_YYYY, setMM_DD_YYYY] = useState();
   const [storage, setStorage] = useState(false);
+  const [stats, setStats] = useState({});
 
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     toast.closeAll();
@@ -157,13 +161,11 @@ const ClassicGame = () => {
       localStorage.setItem(MM_DD_YYYY,  JSON.stringify({guesses: prevGuesses}))
       // if the last guess was correct... the player won.
       if (prevGuesses[prevGuesses.length - 1].guessCorrectness.albumCorrectness) {
-        console.log("YOU WON!");
         setWin(true);
         setGameOver(true);
       }
       // if the last guess was not correct, and the user has reached 6 guesses... the player lost.
       else if (numGuesses >= 6) {
-        console.log("YOU LOST.");
         setGameOver(true);
       }
     }
@@ -189,12 +191,11 @@ const ClassicGame = () => {
             console.log(error.message);
         })
 
-        let d = new Date(); // save todays Date.
         // this data object will be passed to the POST request to save the game data into the DB.
         let data = {
           username: username,
           mode: "classic",
-          date: `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`,
+          date: MM_DD_YYYY,
           albumID: albumID,
           win: win,
           numGuesses: numGuesses,
@@ -209,8 +210,16 @@ const ClassicGame = () => {
           } else {
             // add the game data to the games table in the DB.
             instance.post("http://localhost:5000/games", data).then((response) => {
-              if(response.data.success)
+              if(response.data.success) {
+                if(win)
+                  console.log("YOU WON!");
+                else
+                  console.log("YOU LOST.");
                 console.log("Game data saved into VINYLE_DB.");
+                setTimeout(() => {
+                  getStats(undefined, !(username === undefined), username, "Classic", setStats, onOpen);
+                }, 1500);
+              }
               else
               {
                 console.log("Game data failed to save. Error:");
@@ -282,6 +291,13 @@ const ClassicGame = () => {
         gameOver={gameOver}
         win={win}
         numGuesses={numGuesses}
+      />
+      {/* Statistics Modal: Shown after game is completed */}
+      <Statistics
+        mode="Classic"
+        stats={stats}
+        onClose={onClose}
+        isOpen={isOpen}
       />
     </div>
   );
