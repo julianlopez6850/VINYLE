@@ -170,7 +170,7 @@ const InfiniteGame = () => {
         // add the game data to the games table in the DB.
         instance.post("http://localhost:5000/games", data).then((response) => {
           if(response.data.success)
-            console.log("Game data saved into AlbumleDB.")
+            console.log("Game data saved into VINYLE_DB.")
           else
           {
             console.log("Game data failed to save. Error:");
