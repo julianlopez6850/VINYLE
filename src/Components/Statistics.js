@@ -110,6 +110,7 @@ const Statistics = (props) => {
                   colorScheme={(index===6) ? 'red' : 'green'}
                   bgColor="gray.700"
                   value={Math.max((item / props.stats.mostFrequent) * 100, 5)}
+                  hasStripe={props.numGuesses === index}
                 />
                 <Box
                   m="-21px 0px 0px 5px"

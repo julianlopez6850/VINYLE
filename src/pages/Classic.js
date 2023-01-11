@@ -26,6 +26,7 @@ const ClassicGame = () => {
   const [MM_DD_YYYY, setMM_DD_YYYY] = useState();
   const [storage, setStorage] = useState(false);
   const [stats, setStats] = useState({});
+  const [guessIndex, setGuessIndex] = useState(0);
   const [showToast, setShowToast] = useState(false);
 
   const toast = useToast();
@@ -158,15 +159,17 @@ const ClassicGame = () => {
   // when the prevGuesses state updates...
   useEffect(() => {
     // if prevGuesses is not empty...
-    if(prevGuesses[0]) {
+    if(prevGuesses[0] && !gameOver) {
       localStorage.setItem(MM_DD_YYYY,  JSON.stringify({guesses: prevGuesses}))
       // if the last guess was correct... the player won.
       if (prevGuesses[prevGuesses.length - 1].guessCorrectness.albumCorrectness) {
+        setGuessIndex(numGuesses - 1);
         setWin(true);
         setGameOver(true);
       }
       // if the last guess was not correct, and the user has reached 6 guesses... the player lost.
       else if (numGuesses >= 6) {
+        setGuessIndex(6);
         setGameOver(true);
       }
     }
@@ -300,6 +303,7 @@ const ClassicGame = () => {
         stats={stats}
         onClose={onClose}
         isOpen={isOpen}
+        numGuesses={guessIndex}
       />
     </div>
   );
