@@ -116,20 +116,19 @@ const ClassicGame = () => {
           axios.get(`http://localhost:5000/albums/compare?id=${chosenAlbumID}&guess_albumID=${guessID}`).then((compareRes) => {
             // store response data into object, to be saved into prevGuesses state
             const guessCorrectness = {
-              albumCorrectness: compareRes.data.correct,
-              artistCorrectness: compareRes.data.correctArtists,
-              genreCorrectness: compareRes.data.correctGenres,
-              releaseYearCorrectness: compareRes.data.correctReleaseYear,
+              album: compareRes.data.correct,
+              artist: compareRes.data.correctArtists,
+              releaseYear: compareRes.data.correctReleaseYear,
               releaseYearDirection: compareRes.data.releaseYearDirection
             }
             // add the guess to the prevGuesses state
             setPrevGuesses(prevGuesses => [...prevGuesses, {
+              skipped: false,
               albumID: guessID,
               albumName: response.data.album.albumName,
               albumArt: response.data.album.albumArt,
               artists: response.data.album.artists,
               releaseYear: parseInt(response.data.album.releaseYear),
-              genres: response.data.album.genres,
               guessCorrectness : guessCorrectness
             }]);
           })
@@ -139,16 +138,16 @@ const ClassicGame = () => {
       else {
         // add an empty guess to the prevGuesses state
         setPrevGuesses(prevGuesses => [...prevGuesses, {
+          skipped: true,
           albumID: "",
           albumName: "",
           albumArt: "",
-          artists: [""],
+          artists: "",
           releaseYear: "",
-          genres: [""],
           guessCorrectness: {
-            albumCorrectness: false,
-            artistCorrectness: false,
-            releaseYearCorrectness: false,
+            album: false,
+            artist: false,
+            releaseYear: false,
           }
         }]);
       }
@@ -162,7 +161,7 @@ const ClassicGame = () => {
     if(prevGuesses[0] && !gameOver) {
       localStorage.setItem(MM_DD_YYYY,  JSON.stringify({guesses: prevGuesses}))
       // if the last guess was correct... the player won.
-      if (prevGuesses[prevGuesses.length - 1].guessCorrectness.albumCorrectness) {
+      if (prevGuesses[prevGuesses.length - 1].guessCorrectness.album) {
         setGuessIndex(numGuesses - 1);
         setWin(true);
         setGameOver(true);
@@ -283,13 +282,15 @@ const ClassicGame = () => {
       </div>
       <br />
       {/* Guess Table */}
-      <MainTable
-        columnHeaders={["Guess #", "Album", "Artist(s)", "Genre(s)", "Release Year"]}
-        correctGuessColor={correctGuessColor}
-        incorrectGuessColor={incorrectGuessColor}
-        body={prevGuesses}
-        includeFooter={true}
-      />
+      {(prevGuesses[0] !== undefined) ? 
+        <MainTable
+          columnHeaders={["Guess #", "Album", "Artist(s)", "Release Year"]}
+          correctGuessColor={correctGuessColor}
+          incorrectGuessColor={incorrectGuessColor}
+          body={prevGuesses}
+          includeFooter={false}
+        /> : <></>
+      }
       {/* WIN/LOSS TOAST NOTIFICATIONS */}
       <WinLossToast
         toast={toast}
