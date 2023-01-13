@@ -59,7 +59,7 @@ const History = () => {
   // get the user's game history, depending on selected mode.
   useEffect(() => {
     if(username !== undefined) {
-      instance.get(`http://localhost:5000/games/user?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then((gamesResponse) => {
+      instance.get(`http://localhost:5000/games/user/hasGame?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then((gamesResponse) => {
         setGamesList([]);
         gamesResponse.data.games.reverse().forEach((game) => {
           const date = new Date(game.date);
