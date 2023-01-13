@@ -49,7 +49,7 @@ const ClassicGame = () => {
     // get all of the albums from the database to be shown in our Select component later.
     axios.get('http://localhost:5000/albums/all').then((response) => {
       response.data.map((album) => {
-        setAlbums((Albums) => [...Albums, { value: album.albumID, label: album.albumName}])
+        setAlbums((Albums) => [...Albums, { value: album.albumID, label: `${album.albumName} - ${album.artists}`}])
       })
     })
 
