@@ -63,6 +63,10 @@ const History = () => {
         setGamesList([]);
         gamesResponse.data.games.reverse().forEach((game) => {
           const date = new Date(game.date);
+          var artists = '';
+          game.album.artists.forEach((artist, index) => {
+            artists += `${artist}${(index !== game.album.artists.length - 1) ? ', ' : ''}`
+          });
           setGamesList((gamesList) =>
             [...gamesList, {
               date:`${date.getMonth() + 1}-${date.getDate()}-${date.getYear() + 1900}`,
@@ -71,7 +75,7 @@ const History = () => {
               win: game.win,
               album: game.album.albumName,
               albumArt: game.album.albumArt,
-              artists: game.album.artists,
+              artists: artists,
               genres: game.album.genres,
               releaseYear: game.album.releaseYear,
               numGuesses: (game.win) ? game.numGuesses : undefined,

@@ -151,7 +151,12 @@ export const MainTable = (props) => {
                 {(item.skipped) ? <CloseIcon/> : item.albumName }
               </Td>
               <Td borderEnd="8px solid var(--background-color)" p="0" pl="25px" bgColor={(item.guessCorrectness.artist) ? correct : incorrect}>
-                {(item.skipped) ? <CloseIcon/> : item.artists }
+                {(item.skipped) ? 
+                  <CloseIcon/> : 
+                  item.artists.map((artist, index) => 
+                    `${artist}${(index !== item.artists.length - 1) ? `, ` : ``}`
+                  )
+                }
               </Td>
               <Td bgColor={(item.guessCorrectness.releaseYear) ? correct : incorrect} textAlign="center">
                 {(item.skipped) ? 

@@ -43,7 +43,14 @@ const InfiniteGame = () => {
     // get all of the albums from the database to be shown in our Select component later.
     axios.get('http://localhost:5000/albums/all').then((response) => {
       response.data.map((album) => {
-        setAlbums((Albums) => [...Albums, { value: album.albumID, label: `${album.albumName} - ${album.artists}`}])
+        var artists = '';
+        album.artists.forEach((artist, index) => {
+          artists += `${artist}${(index !== album.artists.length - 1) ? ', ' : ''}`
+        });
+        setAlbums((Albums) => [...Albums, {
+          value: album.albumID,
+          label: `${album.albumName} - ${artists}`
+        }])
       })
     })
   }, [])
