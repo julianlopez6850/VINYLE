@@ -9,9 +9,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-const correctGuessColor = "var(--correct-guess)";
-const incorrectGuessColor = "var(--incorrect-guess)";
-const partialGuessColor = "var(--partial)";
+const correctColor = "var(--correct)";
+const incorrectColor = "var(--incorrect)";
+const partialColor = "var(--partial)";
 
 const InfiniteGame = () => {
   // A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
@@ -242,9 +242,9 @@ const InfiniteGame = () => {
       {(prevGuesses[0] !== undefined) ? 
         <MainTable
           columnHeaders={["Guess #", "Album", "Artist(s)", "Release Year"]}
-          correctGuessColor={correctGuessColor}
-          incorrectGuessColor={incorrectGuessColor}
-          partialGuessColor={partialGuessColor}
+          correctGuessColor={correctColor}
+          incorrectGuessColor={incorrectColor}
+          partialGuessColor={partialColor}
           body={prevGuesses}
           includeFooter={false}
         /> : <></>

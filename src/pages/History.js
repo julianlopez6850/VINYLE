@@ -29,8 +29,8 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-const wonColor = "var(--correct-guess)";
-const lossedColor = "var(--incorrect-guess)";
+const winColor = "var(--correct)";
+const lossColor = "var(--incorrect)";
 
 const History = () => {
   const [username, setUsername] = useState();
@@ -128,7 +128,7 @@ const History = () => {
               // Add a new row to the table, colored green if the game result was win, red if loss.
               <Tbody
                 key={index}
-                bgColor={(game.win) ? wonColor : lossedColor}
+                bgColor={(game.win) ? winColor : lossColor}
                 style={{
                   cursor: "pointer"
                 }}
@@ -144,7 +144,7 @@ const History = () => {
                     <Box
                       w="23px" h="23px"
                       borderRadius="23px"
-                      border={"2px solid " + (game.win ? wonColor : lossedColor)}
+                      border={"2px solid " + (game.win ? winColor : lossColor)}
                       bottom="2" left="70"
                       align="center" justifyContent="center"
                       pos="absolute"
@@ -232,7 +232,7 @@ const History = () => {
                 <HStack>
                   {openedGame.guesses.map((item, index) => {
                     return <Box bg="white" w="60px" h="60px" display="flex" justifyContent="center" key={index}
-                      border={"2px solid " + (item.guessCorrectness.albumCorrectness ? wonColor : lossedColor)}  
+                      border={"2px solid " + (item.guessCorrectness.albumCorrectness ? winColor : lossColor)}  
                     >
                       <Tooltip
                         hasArrow

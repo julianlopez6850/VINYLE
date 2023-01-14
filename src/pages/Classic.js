@@ -11,9 +11,9 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-const correctGuessColor = "var(--correct-guess)";
-const incorrectGuessColor = "var(--incorrect-guess)";
-const partialGuessColor = "var(--partial)";
+const correctColor = "var(--correct)";
+const incorrectColor = "var(--incorrect)";
+const partialColor = "var(--partial)";
 
 const ClassicGame = () => {
   const [chosenAlbumID, setChosenAlbumID] = useState();
@@ -293,9 +293,9 @@ const ClassicGame = () => {
       {(prevGuesses[0] !== undefined) ? 
         <MainTable
           columnHeaders={["Guess #", "Album", "Artist(s)", "Release Year"]}
-          correctGuessColor={correctGuessColor}
-          incorrectGuessColor={incorrectGuessColor}
-          partialGuessColor={partialGuessColor}
+          correctGuessColor={correctColor}
+          incorrectGuessColor={incorrectColor}
+          partialGuessColor={partialColor}
           body={prevGuesses}
           includeFooter={false}
         /> : <></>
