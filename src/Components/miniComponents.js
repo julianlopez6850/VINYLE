@@ -159,10 +159,10 @@ export const MainTable = (props) => {
                   )
                 }
               </Td>
-              <Td bgColor={(item.guessCorrectness.releaseYear) ? correct : incorrect} textAlign="center">
+              <Td bgColor={(item.guessCorrectness.releaseYear) ? (item.guessCorrectness.releaseYear === "correct") ? correct : partial : incorrect} textAlign="center">
                 {(item.skipped) ? 
                   <CloseIcon/> : 
-                  (item.guessCorrectness.releaseYear) ? 
+                  (item.guessCorrectness.releaseYear === "correct") ? 
                     <></> : 
                       ((item.guessCorrectness.releaseYearDirection === "later") ? 
                         <ArrowUpIcon/> : 
