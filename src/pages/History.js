@@ -76,7 +76,6 @@ const History = () => {
               album: game.album.albumName,
               albumArt: game.album.albumArt,
               artists: artists,
-              genres: game.album.genres,
               releaseYear: game.album.releaseYear,
               numGuesses: (game.win) ? game.numGuesses : undefined,
               guesses: game.guesses
