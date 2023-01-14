@@ -133,7 +133,7 @@ export const MainTable = (props) => {
   const partial = props.partialGuessColor;
 
   return (
-    <TableContainer width={1080} m="50px 0px 50px 0px" overflowX="hidden">
+    <TableContainer width={1080} m="30px 0px 50px 0px" overflowX="hidden">
       <Table variant='unstyled' size='md'>
         <Thead>
           <Tr>

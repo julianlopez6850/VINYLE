@@ -7,6 +7,8 @@ import { instance } from "../Helpers/axiosInstance";
 import "../styles/page.css";
 import {
   useToast,
+  VStack,
+  Text,
 } from "@chakra-ui/react";
 
 const correctColor = "var(--correct)";
@@ -24,6 +26,7 @@ const InfiniteGame = () => {
   const [prevGuesses, setPrevGuesses] = useState([]);
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
+  const [albumInfo, setAlbumInfo] = useState();
 
   const toast = useToast();
 
@@ -160,6 +163,7 @@ const InfiniteGame = () => {
         var albumID;
         await axios.get(`http://localhost:5000/albums?id=${chosenAlbumID}`).then((response) => {
           albumID = response.data.album.albumID;
+          setAlbumInfo(response.data.album)
         })
 
         let d = new Date(); // save todays Date.
@@ -206,6 +210,7 @@ const InfiniteGame = () => {
     setPrevGuesses([]);
     setGameOver(false);
     setWin(false);
+    setAlbumInfo();
     toast.closeAll();
   }
 
@@ -220,23 +225,38 @@ const InfiniteGame = () => {
       <div className="albumArt" >
         <img src={`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`} />
       </div>
-      <div className="guess">
-        <MainButton
-          text={'SKIP'}
-          onClick={skipGuess}
-        />
-        <AlbumSelect
-          options={Albums}
-          value={guess}
-          onChange={(selection) => {
-            if (!gameOver) setGuess(selection)
-          }}
-        />
-        <MainButton
-          text={'GUESS'}
-          onClick={checkGuess}
-        />
-      </div>
+      {(gameOver && albumInfo) && <VStack spacing="0" fontSize="20" mt="10px">
+        <Text fontWeight="bold">
+          {albumInfo.albumName}
+        </Text>
+        <Text>
+          {albumInfo.artists.map((artist, index) => 
+            `${artist}${(index !== albumInfo.artists.length - 1) ? `, ` : ``}`
+          )}
+        </Text>
+        <Text>
+          {albumInfo.releaseYear}
+        </Text>
+        </VStack>
+      }
+      {!(gameOver && albumInfo) && <div className="guess">
+          <MainButton
+            text={'SKIP'}
+            onClick={skipGuess}
+          />
+          <AlbumSelect
+            options={Albums}
+            value={guess}
+            onChange={(selection) => {
+              if (!gameOver) setGuess(selection)
+            }}
+          />
+          <MainButton
+            text={'GUESS'}
+            onClick={checkGuess}
+          />
+        </div>
+      }
       <br />
       {/* Guess Table */}
       {(prevGuesses[0] !== undefined) ? 
