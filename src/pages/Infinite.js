@@ -11,6 +11,7 @@ import {
 
 const correctGuessColor = "var(--correct-guess)";
 const incorrectGuessColor = "var(--incorrect-guess)";
+const partialGuessColor = "var(--partial)";
 
 const InfiniteGame = () => {
   // A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
@@ -243,6 +244,7 @@ const InfiniteGame = () => {
           columnHeaders={["Guess #", "Album", "Artist(s)", "Release Year"]}
           correctGuessColor={correctGuessColor}
           incorrectGuessColor={incorrectGuessColor}
+          partialGuessColor={partialGuessColor}
           body={prevGuesses}
           includeFooter={false}
         /> : <></>

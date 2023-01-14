@@ -13,6 +13,7 @@ import {
 
 const correctGuessColor = "var(--correct-guess)";
 const incorrectGuessColor = "var(--incorrect-guess)";
+const partialGuessColor = "var(--partial)";
 
 const ClassicGame = () => {
   const [chosenAlbumID, setChosenAlbumID] = useState();
@@ -294,6 +295,7 @@ const ClassicGame = () => {
           columnHeaders={["Guess #", "Album", "Artist(s)", "Release Year"]}
           correctGuessColor={correctGuessColor}
           incorrectGuessColor={incorrectGuessColor}
+          partialGuessColor={partialGuessColor}
           body={prevGuesses}
           includeFooter={false}
         /> : <></>

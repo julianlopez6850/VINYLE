@@ -130,6 +130,7 @@ export const MainTable = (props) => {
 
   const correct = props.correctGuessColor;
   const incorrect = props.incorrectGuessColor;
+  const partial = props.partialGuessColor;
 
   return (
     <TableContainer width={1080} m="50px 0px 50px 0px" overflowX="hidden">
@@ -150,7 +151,7 @@ export const MainTable = (props) => {
               <Td borderEnd="8px solid var(--background-color)" p="0" pl="25px" bgColor={(item.guessCorrectness.album) ? correct : incorrect}>
                 {(item.skipped) ? <CloseIcon/> : item.albumName }
               </Td>
-              <Td borderEnd="8px solid var(--background-color)" p="0" pl="25px" bgColor={(item.guessCorrectness.artist) ? correct : incorrect}>
+              <Td borderEnd="8px solid var(--background-color)" p="0" pl="25px" bgColor={(item.guessCorrectness.artist) ? (item.guessCorrectness.artist === "correct") ? correct : partial : incorrect}>
                 {(item.skipped) ? 
                   <CloseIcon/> : 
                   item.artists.map((artist, index) => 
