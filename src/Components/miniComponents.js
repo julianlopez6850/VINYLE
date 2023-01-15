@@ -122,10 +122,8 @@ export const MainTable = (props) => {
 
   // styling for column headers
   const widths=["60px", "500px", "400px", "120px"]
-  const pl=["0", "25px", "25px", "0"]
-  const textAlign=["center", "left", "left", "center"]
   const columnHeaders = props.columnHeaders.map((header, index) => {
-    return { text: header, width: widths[index], pl: pl[index], textAlign: textAlign[index] }
+    return { text: header, width: widths[index] }
   })
 
   const correct = props.correctGuessColor;
@@ -138,7 +136,7 @@ export const MainTable = (props) => {
         <Thead>
           <Tr>
             {columnHeaders.map((header, index) => {
-              return <Th key={index} p="0" pl={header.pl} textAlign={header.textAlign} color='white' w={header.width}>{header.text}</Th>
+              return <Th key={index} p="0" textAlign="center" color='white' w={header.width}>{header.text}</Th>
             })}
           </Tr>
         </Thead>
