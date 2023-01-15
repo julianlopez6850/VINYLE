@@ -147,24 +147,22 @@ export const MainTable = (props) => {
                 {props.body.length - index}
               </Td>
               <Td borderEnd="8px solid var(--background-color)" p="0" pl="25px" bgColor={(item.guessCorrectness.album) ? correct : incorrect}>
-                {(item.skipped) ? <CloseIcon/> : item.albumName }
+                {(item.albumName) || <CloseIcon/>}
               </Td>
               <Td borderEnd="8px solid var(--background-color)" p="0" pl="25px" bgColor={(item.guessCorrectness.artist) ? (item.guessCorrectness.artist === "correct") ? correct : partial : incorrect}>
-                {(item.skipped) ? 
-                  <CloseIcon/> : 
-                  item.artists.map((artist, index) => 
-                    `${artist}${(index !== item.artists.length - 1) ? `, ` : ``}`
-                  )
+                {(item.artists) ? 
+                  item.artists.map((artist, index) => `${artist}${(index !== item.artists.length - 1) ? `, ` : ``}`) : 
+                  <CloseIcon/>
                 }
               </Td>
               <Td bgColor={(item.guessCorrectness.releaseYear) ? (item.guessCorrectness.releaseYear === "correct") ? correct : partial : incorrect} textAlign="center">
-                {(item.skipped) ? 
-                  <CloseIcon/> : 
-                  (item.guessCorrectness.releaseYear === "correct") ? 
+                {(item.releaseYear) ? 
+                  ((item.guessCorrectness.releaseYear === "correct") ? 
                     <></> : 
-                      ((item.guessCorrectness.releaseYearDirection === "later") ? 
-                        <ArrowUpIcon/> : 
-                        <ArrowDownIcon/>)
+                    ((item.guessCorrectness.releaseYearDirection === "later") ? 
+                      <ArrowUpIcon/> : 
+                      <ArrowDownIcon/>)) : 
+                  <CloseIcon/>
                 }
                 {item.releaseYear}
               </Td>

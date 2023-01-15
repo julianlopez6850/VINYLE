@@ -151,7 +151,6 @@ const ClassicGame = () => {
             }
             // add the guess to the prevGuesses state
             setPrevGuesses(prevGuesses => [...prevGuesses, {
-              skipped: false,
               albumID: guessID,
               albumName: response.data.album.albumName,
               albumArt: response.data.album.albumArt,
@@ -166,7 +165,6 @@ const ClassicGame = () => {
       else {
         // add an empty guess to the prevGuesses state
         setPrevGuesses(prevGuesses => [...prevGuesses, {
-          skipped: true,
           guessCorrectness: {
             album: false,
             artist: false,
