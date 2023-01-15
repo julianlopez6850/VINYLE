@@ -73,7 +73,24 @@ const ClassicGame = () => {
       return;
     }
 
-    if(localStorage.getItem(MM_DD_YYYY)) {
+    if(username) {
+      instance.get(`http://localhost:5000/games/user/hasGame?username=${username}&mode=classic&date=${MM_DD_YYYY}`).then((response) => {
+        if(response.data.value) {
+          setStorage(true);
+          setNumGuesses(response.data.games[0].numGuesses)
+          setPrevGuesses(response.data.games[0].guesses)
+        } else if(localStorage.getItem(MM_DD_YYYY)) {
+          setStorage(true);
+          setNumGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses.length)
+          setPrevGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses)
+        }
+      }).catch((error) => {
+        if(error.response)
+          console.log(error.response.data);
+        else
+          console.log(error.message);
+      })
+    } else if(localStorage.getItem(MM_DD_YYYY)) {
       setStorage(true);
       setNumGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses.length)
       setPrevGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses)
@@ -89,7 +106,7 @@ const ClassicGame = () => {
       else
         console.log({ error: "An error occurred fetching today's daily classic game." });
     })
-  }, [MM_DD_YYYY])
+  }, [MM_DD_YYYY, username])
 
   // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
