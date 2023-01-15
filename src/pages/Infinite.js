@@ -116,11 +116,6 @@ const InfiniteGame = () => {
         // add an empty guess to the prevGuesses state
         setPrevGuesses(prevGuesses => [...prevGuesses, {
           skipped: true,
-          albumID: "",
-          albumName: "",
-          albumArt: "",
-          artists: "",
-          releaseYear: "",
           guessCorrectness: {
             album: false,
             artist: false,
