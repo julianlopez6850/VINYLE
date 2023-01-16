@@ -29,6 +29,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
+import {
+  CloseIcon,
+} from '@chakra-ui/icons'
+
 const winColor = "var(--correct)";
 const lossColor = "var(--incorrect)";
 
@@ -231,15 +235,16 @@ const History = () => {
                 </Text>
                 <HStack>
                   {openedGame.guesses.map((item, index) => {
-                    return <Box bg="white" w="60px" h="60px" display="flex" justifyContent="center" key={index}
-                      border={"2px solid " + (item.guessCorrectness.albumCorrectness ? winColor : lossColor)}  
+                    return <Box bg={item.guessCorrectness.album ? winColor : lossColor} w="60px" h="60px" display="flex" justifyContent="center" key={index}
+                      border={"2px solid " + (item.guessCorrectness.album ? winColor : lossColor)}  
                     >
                       <Tooltip
+                        maxW="400px"
                         hasArrow
                         label={(item.albumArt) ? 
                           <VStack spacing="-1">
                             <Text fontWeight="bold">{item.albumName}</Text>
-                            <Text >{item.artists}</Text>
+                            <Text >{item.artists.map((artist, index) => `${artist}${(index !== item.artists.length - 1) ? `, ` : ``}`)}</Text>
                             <Text >{item.releaseYear}</Text>
                           </VStack>
                           : 'SKIPPED'
@@ -249,8 +254,8 @@ const History = () => {
                       >
                         {(item.albumArt) ?
                           <Image src={item.albumArt} alt='' w="56px" h="56px" border="0px" alignSelf="center" justifyContent="center"/> :
-                          <Text color="black" w="60px" p="19px 0px 19px 0px" display="flex" alignSelf="center" justifyContent="center" fontSize="12px">
-                            SKIPPED
+                          <Text w="60px" p="12px 0px 12px 0px" display="flex" alignSelf="center" justifyContent="center" fontSize="12px">
+                            <CloseIcon w="8" h="8"/>
                           </Text>
                         }
                       </Tooltip>
