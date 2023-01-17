@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { HistoryButton } from "../Components/miniComponents"
+import { HistoryButton, MainButton } from "../Components/miniComponents"
 import { instance } from "../Helpers/axiosInstance";
 
 import "../styles/page.css";
@@ -41,6 +41,10 @@ const History = () => {
   const [mode, setMode] = useState();
   const [gamesList, setGamesList] = useState([])
   const [openedGame, setOpenedGame] = useState();
+  const [limit, setLimit] = useState(20);
+  const [offset, setOffset] = useState(0);
+  const [showMore, setShowMore] = useState(false);
+  const [modeChanged, setModeChanged] = useState(false);
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -63,9 +67,16 @@ const History = () => {
   // get the user's game history, depending on selected mode.
   useEffect(() => {
     if(username !== undefined) {
-      instance.get(`http://localhost:5000/games/user/hasGame?username=${username}${(mode) ? `&mode=${mode}` : ``}&limit=20`).then((gamesResponse) => {
-        setGamesList([]);
-        gamesResponse.data.games.forEach((game) => {
+      instance.get(`http://localhost:5000/games/user/hasGame?username=${username}${(mode) ? `&mode=${mode}` : ``}&offset=${offset}&limit=${limit}`).then((response) => {
+        if(gamesList[0] === undefined)
+          setShowMore(true);
+        if(modeChanged) {
+          setGamesList([]);
+          setModeChanged(false);
+        }
+        if(response.data.numGames <= 20)
+          setShowMore(false);
+        response.data.games.forEach((game) => {
           const date = new Date(game.date);
           var artists = '';
           game.album.artists.forEach((artist, index) => {
@@ -90,7 +101,7 @@ const History = () => {
         console.log(error);
       })
     }
-  }, [username, mode])
+  }, [username, mode, offset, limit])
 
   // this method is called to open up a game that the user clicks on from the history table.
   const openGame = (game) => {
@@ -98,35 +109,46 @@ const History = () => {
     onOpen();
   }
 
+  const doShowMore = () => {
+    instance.get(`http://localhost:5000/games/user/hasGame?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then((response) => {
+      if(response.data.numGames > offset)
+        setOffset(offset => offset + 20);
+      if(offset + (limit * 2) >= response.data.numGames)
+        setShowMore(false);
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
+
   return (
     <div className="page">
       <div className="title">
         HISTORY
       </div>
-      <VStack align="center">
+      <VStack align="center" mb="50px">
           
         {/* Switch Mode Buttons */}
         <HStack display="flex" width="full" justifyContent="left">
           <HistoryButton
             text={'ALL'}
-            onClick={()=>{setMode(); navigate('/history/all')}}
+            onClick={()=>{setMode(); setOffset(0); setShowMore(true); setModeChanged(true); navigate('/history/all')}}
             active={(mode === undefined)}
           />
           <HistoryButton
             text={'CLASSIC'}
-            onClick={()=>{setMode('Classic'); navigate('/history/classic')}}
+            onClick={()=>{setMode('Classic'); setOffset(0); setShowMore(true); setModeChanged(true); navigate('/history/classic')}}
             active={(mode === 'Classic')}
           />
           <HistoryButton
             text={'INFINITE'}
-            onClick={()=>{setMode('Infinite'); navigate('/history/infinite')}}
+            onClick={()=>{setMode('Infinite'); setOffset(0); setShowMore(true); setModeChanged(true); navigate('/history/infinite')}}
             active={(mode === 'Infinite')}
           />
         </HStack>
         
         {/* Games History Table */}
-        <TableContainer width={800} m="50px 0px 50px 0px" boxShadow="0px 0px 10px black">
-          <Table variant='unstyled' size='md'>
+        <TableContainer width={800} boxShadow="0px 0px 10px black">
+          <Table variant='unstyled' size='md' >
             {/* For each game... */}
             {gamesList.map((game, index) =>
               // Add a new row to the table, colored green if the game result was win, red if loss.
@@ -184,6 +206,15 @@ const History = () => {
             )}
           </Table>
         </TableContainer>
+
+        {showMore && 
+          <MainButton
+            text={'SHOW MORE'}
+            onClick={doShowMore}
+            w="120px"
+            m="25px 0px 0px 0px !important"
+          />
+        }
 
         {/* Modal: Open Game Info From History Table */}
         <Modal
@@ -272,7 +303,6 @@ const History = () => {
             : ""
           }
         </Modal>
-
       </VStack>
     </div>
   );
