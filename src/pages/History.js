@@ -227,7 +227,7 @@ const History = () => {
           {(openedGame) ? 
             <ModalContent 
               color="white"
-              bgColor="gray.700"
+              bgColor="gray.800"
             >
               {/* Display game date and mode. */}
               <ModalHeader

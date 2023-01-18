@@ -62,7 +62,7 @@ const Statistics = (props) => {
       <ModalOverlay />
       <ModalContent 
         color="white"
-        bgColor="gray.700"
+        bgColor="gray.800"
       >
         <ModalHeader
           display="flex"
@@ -108,7 +108,7 @@ const Statistics = (props) => {
                   zIndex="-1"
                   size='lg'
                   colorScheme={(index===6) ? 'red' : 'green'}
-                  bgColor="gray.700"
+                  bgColor="gray.800"
                   value={Math.max((item / props.stats.mostFrequent) * 100, 5)}
                   hasStripe={props.numGuesses === index}
                 />
