@@ -3,7 +3,7 @@ import "../styles/navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { instance } from "../Helpers/axiosInstance";
 import ConditionalLink from "../Helpers/conditionalLink";
-import Statistics, { getStats } from "../Components/Statistics"
+import Statistics, { getStats, resetStats } from "../Components/Statistics"
 import HowToPlay, { openHTP } from "../Components/howToPlay";
 
 import {
@@ -243,6 +243,9 @@ function Navbar() {
         <Statistics
           mode={mode}
           stats={stats}
+          resetStats={resetStats}
+          setStats={setStats}
+          username={username}
           onClose={onCloseStatsModal}
           isOpen={isOpenStatsModal}
         />

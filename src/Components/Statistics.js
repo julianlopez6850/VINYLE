@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { instance } from "../Helpers/axiosInstance";
 
 import {
@@ -50,7 +51,43 @@ export const getStats = async (e, loggedIn, username, mode, setStats, onOpen) =>
   onOpen();
 }
 
+export const resetStats = async (e, username, mode, setStats) => {
+  if(e)
+    e.preventDefault();
+  await instance.get(`http://localhost:5000/games/user/stats?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
+      if(response.data.game) {
+        const data = response.data.game;
+        setStats({ numGames: data.numGames,
+          numWins: data.numWins,
+          numLosses: data.numLosses,
+          winPercent: data.winPercent,
+          guessDistribution: data.guessDistribution,
+          avgGuessesPerWin: data.avgGuessesPerWin,
+          mostFrequent: data.mostFrequent
+        });
+      } else {
+        console.log(response.data.message);
+        setStats({ numGames: 0,
+          numWins: 0,
+          numLosses: 0,
+          winPercent: 0,
+          guessDistribution: [0, 0, 0, 0, 0, 0],
+          avgGuessesPerWin: 0,
+          mostFrequent: 1
+        });
+      }
+    }).catch(function(error) {
+      console.log(error);
+    })
+}
+
 const Statistics = (props) => {
+
+  const [mode, setMode] = useState(props.mode)
+
+  useEffect(() => {
+    setMode(props.mode)
+  }, [props.isOpen])
 
   return (
     <Modal
@@ -68,7 +105,7 @@ const Statistics = (props) => {
           display="flex"
           justifyContent="center"
         >
-          {props.mode ? `${props.mode} Mode` : ``}  Statistics
+          {mode ? `${mode} Mode` : ``}  Statistics
         </ModalHeader>
 
         <ModalCloseButton />
@@ -123,6 +160,17 @@ const Statistics = (props) => {
           
         </ModalBody>
         <ModalFooter>
+          {/* Buttons: Switch Current Gamemode of Stats*/}
+          {["Classic", "Infinite", undefined].map((item) => {
+            return (mode !== item) && 
+            <Button colorScheme='blue' mr={3} onClick={(e) => {resetStats(e, props.username, item, props.setStats); setMode(item)}}>
+              {item === undefined ? "All Modes" : item}
+            </Button> || 
+            <Button colorScheme='blue' outline="1px solid white" mr={3} cursor="default" _hover="none" _active="none">
+              {item === undefined ? "All Modes" : item}
+            </Button>
+          })}
+
           <Button colorScheme='blue' mr={3} onClick={props.onClose}>
             Close
           </Button>
