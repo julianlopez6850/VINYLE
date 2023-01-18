@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { instance } from "../Helpers/axiosInstance";
 import ConditionalLink from "../Helpers/conditionalLink";
 import Statistics, { getStats } from "../Components/Statistics"
+import HowToPlay, { openHTP } from "../Components/howToPlay";
 
 import {
   Button,
@@ -33,7 +34,18 @@ function Navbar() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // Statistics Modal useDisclosure
+  const {
+    isOpen: isOpenStatsModal,
+    onOpen: onOpenStatsModal,
+    onClose: onCloseStatsModal
+  } = useDisclosure();
+  // How To Play Drawer useDisclosure
+  const {
+    isOpen: isOpenHTP,
+    onOpen: onOpenHTP,
+    onClose: onCloseHTP
+  } = useDisclosure();
 
   // when the url changes...
   useEffect(() => {
@@ -99,6 +111,7 @@ function Navbar() {
                 value='stats'
                 bgColor="gray.900"
                 _hover={{ bgColor: "gray.600" }}
+                onClick={(e) => openHTP(e, onOpenHTP)}
               >
                 How To Play
               </MenuItem>
@@ -187,7 +200,7 @@ function Navbar() {
                   value='stats'
                   bgColor="gray.900"
                   _hover={{ bgColor: "gray.600" }}
-                  onClick={(e) => getStats(e, loggedIn, username, mode, setStats, onOpen)}
+                  onClick={(e) => getStats(e, loggedIn, username, mode, setStats, onOpenStatsModal)}
                 >
                   Statistics
                 </MenuItem>
@@ -225,8 +238,20 @@ function Navbar() {
             </Button>
           }
         </div>
-        
-        <Statistics mode={mode} stats={stats} onClose={onClose} isOpen={isOpen} />
+
+        {/* Stats Modal */}
+        <Statistics
+          mode={mode}
+          stats={stats}
+          onClose={onCloseStatsModal}
+          isOpen={isOpenStatsModal}
+        />
+
+        {/* How To Play Drawer */}
+        <HowToPlay
+          onClose={onCloseHTP}
+          isOpen={isOpenHTP}
+        />
         
       </div>
     </div>
