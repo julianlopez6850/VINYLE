@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../Components/miniComponents"
-import { instance } from "../Helpers/axiosInstance";
-import Statistics, { getStats } from "../Components/Statistics"
+import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../components/miniComponents"
+import { instance } from "../helpers/axiosInstance";
+import Statistics, { getStats } from "../components/Statistics"
 
 import "../styles/page.css";
 import {

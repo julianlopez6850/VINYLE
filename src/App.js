@@ -2,7 +2,7 @@ import './App.css';
 import { Navigate, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ChakraProvider } from '@chakra-ui/react';
 
-import Navbar from './Components/Navbar';
+import Navbar from './components/Navbar';
 import Classic from './pages/Classic';
 import Infinite from './pages/Infinite';
 import Login from './pages/Login';

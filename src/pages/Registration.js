@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import { loginInstance } from "../Helpers/axiosInstance"
+import { loginInstance } from "../helpers/axiosInstance"
 import axios from 'axios';
 
 import "../styles/page.css";

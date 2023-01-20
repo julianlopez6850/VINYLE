@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { HistoryButton, MainButton } from "../Components/miniComponents"
-import { instance } from "../Helpers/axiosInstance";
+import { HistoryButton, MainButton } from "../components/miniComponents"
+import { instance } from "../helpers/axiosInstance";
 
 import "../styles/page.css";
 import {

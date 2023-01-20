@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../styles/navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { instance } from "../Helpers/axiosInstance";
-import ConditionalLink from "../Helpers/conditionalLink";
+import { instance } from "../helpers/axiosInstance";
+import ConditionalLink from "../helpers/conditionalLink";
 import Settings, { openSettings } from "./Settings";
 import Statistics, { getStats, resetStats } from "./Statistics"; 
 import HowToPlay, { openHTP } from "./HowToPlay";

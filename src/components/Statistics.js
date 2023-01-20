@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { instance } from "../Helpers/axiosInstance";
+import { instance } from "../helpers/axiosInstance";
 
 import {
   Button,

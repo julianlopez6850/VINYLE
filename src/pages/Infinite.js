@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../Components/miniComponents"
-import { instance } from "../Helpers/axiosInstance";
+import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../components/miniComponents"
+import { instance } from "../helpers/axiosInstance";
 
 import "../styles/page.css";
 import {
