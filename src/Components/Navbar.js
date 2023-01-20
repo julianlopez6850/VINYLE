@@ -3,9 +3,9 @@ import "../styles/navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { instance } from "../Helpers/axiosInstance";
 import ConditionalLink from "../Helpers/conditionalLink";
-import Statistics, { getStats, resetStats } from "../Components/Statistics"
-import HowToPlay, { openHTP } from "../Components/howToPlay";
 import Settings, { openSettings } from "./Settings";
+import Statistics, { getStats, resetStats } from "./Statistics"; 
+import HowToPlay, { openHTP } from "./HowToPlay";
 
 import {
   Button,
