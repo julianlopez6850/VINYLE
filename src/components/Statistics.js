@@ -161,16 +161,17 @@ const Statistics = (props) => {
         </ModalBody>
         <ModalFooter>
           {/* Buttons: Switch Current Gamemode of Stats*/}
-          {["Classic", "Infinite", undefined].map((item) => {
-            return (mode !== item) && 
-            <Button colorScheme='blue' mr={3} onClick={(e) => {resetStats(e, props.username, item, props.setStats); setMode(item)}}>
-              {item === undefined ? "All Modes" : item}
-            </Button> || 
-            <Button colorScheme='blue' outline="1px solid white" mr={3} cursor="default" _hover="none" _active="none">
-              {item === undefined ? "All Modes" : item}
-            </Button>
-          })}
-
+          {(props.numGuesses === undefined) &&
+            ["Classic", "Infinite", undefined].map((item) => {
+              return (mode !== item) && 
+              <Button colorScheme='blue' mr={3} onClick={(e) => {resetStats(e, props.username, item, props.setStats); setMode(item)}}>
+                {item === undefined ? "All Modes" : item}
+              </Button> || 
+              <Button colorScheme='blue' outline="1px solid white" mr={3} cursor="default" _hover="none" _active="none">
+                {item === undefined ? "All Modes" : item}
+              </Button>
+            })
+          }
           <Button colorScheme='blue' mr={3} onClick={props.onClose}>
             Close
           </Button>
