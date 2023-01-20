@@ -28,6 +28,18 @@ const Login = () => {
   const toast = useToast();
 
   useEffect(() => {
+    loginInstance.get("http://localhost:5000/auth/profile").then((response) => {
+      if(response.data.success) {
+        navigate('/');
+      }
+    }).catch(function (error) { // catch any errors.
+      if (error.response) {
+        console.log(error.response.data);
+      } else {
+        console.log(error.message);
+      }
+    });
+
     toast.closeAll();
   }, [])
 

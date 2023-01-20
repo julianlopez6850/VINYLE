@@ -20,7 +20,8 @@ const App = () => {
             <Route exact path="/" element={ <Navigate to="/classic" /> } />
             <Route exact path="/classic" element={<Classic/>} />
             <Route exact path="/infinite" element={<Infinite/>} />
-            <Route exact path="/registration" element={<Registration />} />
+            <Route exact path="/register" element={<Registration />} />
+            <Route exact path="/registration" element={ <Navigate to="/register" /> } />
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/history" element={ <Navigate to="/history/all" /> } />
             {["/history/all", "/history/classic", "/history/infinite"].map((path, index) => 
