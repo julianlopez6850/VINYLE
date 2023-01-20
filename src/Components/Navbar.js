@@ -5,6 +5,7 @@ import { instance } from "../Helpers/axiosInstance";
 import ConditionalLink from "../Helpers/conditionalLink";
 import Statistics, { getStats, resetStats } from "../Components/Statistics"
 import HowToPlay, { openHTP } from "../Components/howToPlay";
+import Settings, { openSettings } from "./Settings";
 
 import {
   Button,
@@ -34,6 +35,12 @@ function Navbar() {
 
   const location = useLocation();
   const navigate = useNavigate();
+  // Settings Modal useDisclosure
+  const {
+    isOpen: isOpenSettings,
+    onOpen: onOpenSettings,
+    onClose: onCloseSettings
+  } = useDisclosure();
   // Statistics Modal useDisclosure
   const {
     isOpen: isOpenStatsModal,
@@ -185,6 +192,7 @@ function Navbar() {
                   value='stats'
                   bgColor="gray.900"
                   _hover={{ bgColor: "gray.600" }}
+                  onClick={onOpenSettings}
                 >
                   Settings
                 </MenuItem>
@@ -238,6 +246,15 @@ function Navbar() {
             </Button>
           }
         </div>
+
+        {/* Settings Modal */}
+        <Settings
+          mode={mode}
+          stats={stats}
+          username={username}
+          onClose={onCloseSettings}
+          isOpen={isOpenSettings}
+        />
 
         {/* Stats Modal */}
         <Statistics
