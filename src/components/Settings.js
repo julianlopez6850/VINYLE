@@ -37,6 +37,13 @@ const Settings = (props) => {
   ];
 
   const [difficulty, setDifficulty] = useState({ label: "Normal", value: 0, color: "green" });
+  const [numDays, setNumDays] = useState();
+  
+  useEffect(() => {
+    instance.get("http://localhost:5000/daily/numDays").then((response) => {
+      setNumDays(response.data.days);
+    })
+  }, [numDays])
 
   return (
     <Modal
@@ -130,18 +137,14 @@ const Settings = (props) => {
             </HStack>
 
             <Divider marginBlock="1rem !important" />
-
-            <HStack width="full" justify="right">
-              <Text>
-                #[Insert Daily Number Here]
-              </Text>
-            </HStack>
-
           </VStack>
         </ModalBody>
 
-        <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={props.onClose}>
+        <ModalFooter width="full" display="flex" justifyContent="space-between">
+          <Text color="gray.300">
+            Daily VINYLE #{numDays}
+          </Text>
+          <Button colorScheme='blue' mr={3} onClick={() => {setNumDays(numDays => numDays - 1); props.onClose()}}>
             Close
           </Button>
         </ModalFooter>
