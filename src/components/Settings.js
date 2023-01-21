@@ -23,7 +23,7 @@ import {
 
 const Settings = (props) => {
 
-  const [difficulty, setDifficulty] = useState("normal");
+  const [difficulty, setDifficulty] = useState({label: "normal", value: 0 });
 
   return (
     <Modal
@@ -68,9 +68,9 @@ const Settings = (props) => {
             <Text as='b' marginBlock="0 !important">
               Difficulty:
             </Text>
-            <Tabs colorScheme={(difficulty === "normal") ? "green" : (difficulty === "hard") ? "yellow" : "red"} borderBottom="transparent">
+            <Tabs colorScheme={(difficulty.label === "normal") ? "green" : (difficulty.label === "hard") ? "yellow" : "red"} borderBottom="transparent" defaultIndex={difficulty.value}>
               <TabList >
-                <Tab bg="none" onMouseDown={()=>{setDifficulty("normal")}}>
+                <Tab bg="none" onMouseDown={()=>{setDifficulty({ label: "normal", value: 0 })}}>
                   Normal
                 </Tab>
                 <Tooltip
@@ -84,7 +84,7 @@ const Settings = (props) => {
                     </VStack>
                   }
                 >
-                  <Tab bg="none" onMouseDown={()=>{setDifficulty("hard")}}>
+                  <Tab bg="none" onMouseDown={()=>{setDifficulty({ label: "hard", value: 1 })}}>
                       <Text>
                         Hard
                       </Text>
@@ -102,7 +102,7 @@ const Settings = (props) => {
                     </VStack>
                   }
                 >
-                  <Tab bg="none" onMouseDown={()=>{setDifficulty("extreme")}}>
+                  <Tab bg="none" onMouseDown={()=>{setDifficulty({ label: "extreme", value: 2 })}}>
                       Extreme
                   </Tab>
                 </Tooltip>
