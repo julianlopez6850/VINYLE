@@ -175,11 +175,8 @@ const Settings = (props) => {
 
         <ModalFooter width="full" display="flex" justifyContent="space-between">
           <Text color="gray.300">
-            Daily VINYLE #{numDays}
+            VINYLE #{numDays}
           </Text>
-          <Button colorScheme='blue' mr={3} onClick={() => {setNumDays(numDays => numDays - 1); props.onClose()}}>
-            Close
-          </Button>
         </ModalFooter>
 
       </ModalContent>

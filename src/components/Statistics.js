@@ -105,7 +105,7 @@ const Statistics = (props) => {
           display="flex"
           justifyContent="center"
         >
-          {mode ? `${mode} Mode` : ``}  Statistics
+          {mode ? `${mode} Mode` : `Combined`}  Statistics
         </ModalHeader>
 
         <ModalCloseButton />
@@ -158,22 +158,19 @@ const Statistics = (props) => {
           )}
           
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter justifyContent="center">
           {/* Buttons: Switch Current Gamemode of Stats*/}
           {(props.numGuesses === undefined) &&
-            ["Classic", "Infinite", undefined].map((item, index) => 
+            [undefined, "Classic", "Infinite"].map((item, index) => 
               (mode !== item) && 
-                <Button key={index} colorScheme='blue' mr={3} onClick={(e) => {resetStats(e, props.username, item, props.setStats); setMode(item)}}>
-                  {item === undefined ? "All Modes" : item}
+                <Button key={index} colorScheme='blue' marginInline={2} onClick={(e) => {resetStats(e, props.username, item, props.setStats); setMode(item)}}>
+                  {item === undefined ? "All" : item}
                 </Button> || 
-                <Button key={index} colorScheme='blue' outline="1px solid white" mr={3} cursor="default" _hover="none" _active="none">
-                  {item === undefined ? "All Modes" : item}
+                <Button key={index} colorScheme='blue' outline="1px solid white" marginInline={2} cursor="default" _hover="none" _active="none">
+                  {item === undefined ? "All" : item}
                 </Button>
             )
           }
-          <Button colorScheme='blue' mr={3} onClick={props.onClose}>
-            Close
-          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
