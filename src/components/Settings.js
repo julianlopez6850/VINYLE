@@ -36,8 +36,26 @@ const Settings = (props) => {
     }
   ];
 
+  const [username, setUsername] = useState("");
+  const [darkTheme, setDarkTheme] = useState(true);
+  const [colorblindMode, setColorblindMode] = useState(false);
   const [difficulty, setDifficulty] = useState({ label: "Normal", value: 0, color: "green" });
   const [numDays, setNumDays] = useState();
+
+  useEffect(() => {
+    // check if user is logged in. (if so, get and store username)
+    instance.get("http://localhost:5000/auth/profile").then((response) => {
+      setUsername(response.data.username)
+      setDarkTheme(response.data.settings.darkTheme);
+      setColorblindMode(response.data.settings.colorblindMode);
+      setDifficulty(difficulties[response.data.settings.difficulty]);
+    }).catch(function(error) {
+      if(error.response)
+        console.log(error.response.data);
+      else
+        console.log({ error: "Cannot authenticate user." });
+    });
+  }, [])
   
   useEffect(() => {
     instance.get("http://localhost:5000/daily/numDays").then((response) => {
@@ -45,10 +63,21 @@ const Settings = (props) => {
     })
   }, [numDays])
 
+  useEffect(() => {
+    if(username) {
+      instance.put("http://localhost:5000/auth/settings", {username: username, settings: { darkTheme: darkTheme, colorblindMode: colorblindMode, difficulty: difficulty.value }}).catch((err) => {
+        if(err.response)
+          console.log(err.response.data)
+        else
+          console.log(err.message)
+      })
+    }
+  }, [darkTheme, colorblindMode, difficulty])
+
   return (
     <Modal
       isCentered
-      onClose={props.onClose}
+      onClose={() => {setNumDays(numDays => numDays - 1); props.onClose()}}
       isOpen={props.isOpen}
       motionPreset='slideInBottom'
     >
@@ -73,14 +102,14 @@ const Settings = (props) => {
               <Text>
                 Dark Theme
               </Text>
-              <Switch defaultChecked />
+              <Switch defaultChecked={darkTheme} onChange={() => setDarkTheme(!darkTheme)} />
             </HStack>
             <Divider marginBlock="1rem !important" />
             <HStack width="full" justify="space-between" marginBlock="0 !important">
               <Text>
                 Colorblind Mode
               </Text>
-              <Switch />
+              <Switch defaultChecked={colorblindMode} onChange={() => setColorblindMode(!colorblindMode)} />
             </HStack>
 
             <Divider marginBlock="1rem !important" />
