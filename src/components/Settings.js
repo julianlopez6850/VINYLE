@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { instance } from "../helpers/axiosInstance";
+import { useLocation } from 'react-router-dom';
 
 import {
   Button,
@@ -42,6 +43,8 @@ const Settings = (props) => {
   const [difficulty, setDifficulty] = useState({ label: "Normal", value: 0, color: "green" });
   const [numDays, setNumDays] = useState();
 
+  const location = useLocation();
+
   useEffect(() => {
     // check if user is logged in. (if so, get and store username)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
@@ -55,7 +58,7 @@ const Settings = (props) => {
       else
         console.log({ error: "Cannot authenticate user." });
     });
-  }, [])
+  }, [location])
   
   useEffect(() => {
     instance.get("http://localhost:5000/daily/numDays").then((response) => {
