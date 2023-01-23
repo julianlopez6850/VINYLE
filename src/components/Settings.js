@@ -122,7 +122,7 @@ const Settings = (props) => {
             </Text>
             <Tabs colorScheme={difficulty.color} borderBottom="transparent" defaultIndex={difficulty.value}>
               <TabList >
-                {difficulties.map((item) => 
+                {difficulties.map((item, index) => 
                   <Tooltip
                     hasArrow
                     display="flex"
@@ -132,6 +132,7 @@ const Settings = (props) => {
                         {item.tooltip}
                       </VStack>
                     }
+                    key={index}
                   >
                     <Tab bg="none" onMouseDown={()=>{setDifficulty({ label: item.label, value: item.value, color: item.color })}}>
                         <Text>

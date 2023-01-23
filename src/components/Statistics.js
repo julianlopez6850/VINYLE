@@ -55,30 +55,30 @@ export const resetStats = async (e, username, mode, setStats) => {
   if(e)
     e.preventDefault();
   await instance.get(`http://localhost:5000/games/user/stats?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
-      if(response.data.game) {
-        const data = response.data.game;
-        setStats({ numGames: data.numGames,
-          numWins: data.numWins,
-          numLosses: data.numLosses,
-          winPercent: data.winPercent,
-          guessDistribution: data.guessDistribution,
-          avgGuessesPerWin: data.avgGuessesPerWin,
-          mostFrequent: data.mostFrequent
-        });
-      } else {
-        console.log(response.data.message);
-        setStats({ numGames: 0,
-          numWins: 0,
-          numLosses: 0,
-          winPercent: 0,
-          guessDistribution: [0, 0, 0, 0, 0, 0],
-          avgGuessesPerWin: 0,
-          mostFrequent: 1
-        });
-      }
-    }).catch(function(error) {
-      console.log(error);
-    })
+    if(response.data.game) {
+      const data = response.data.game;
+      setStats({ numGames: data.numGames,
+        numWins: data.numWins,
+        numLosses: data.numLosses,
+        winPercent: data.winPercent,
+        guessDistribution: data.guessDistribution,
+        avgGuessesPerWin: data.avgGuessesPerWin,
+        mostFrequent: data.mostFrequent
+      });
+    } else {
+      console.log(response.data.message);
+      setStats({ numGames: 0,
+        numWins: 0,
+        numLosses: 0,
+        winPercent: 0,
+        guessDistribution: [0, 0, 0, 0, 0, 0],
+        avgGuessesPerWin: 0,
+        mostFrequent: 1
+      });
+    }
+  }).catch(function(error) {
+    console.log(error);
+  })
 }
 
 const Statistics = (props) => {
@@ -137,40 +137,39 @@ const Statistics = (props) => {
           <Text display="flex" justifyContent="center" fontWeight="bold">
             Guess Distribution:
           </Text>
-          {(props.stats.guessDistribution) ? [...props.stats.guessDistribution, props.stats.numLosses].map((item, index) => {
-            return (
-              <Box key={index}>
-                {(index===6) ? "Loss:" : (index + 1) + " Guess Win:"}
-                <Progress
-                  zIndex="-1"
-                  size='lg'
-                  colorScheme={(index===6) ? 'red' : 'green'}
-                  bgColor="gray.800"
-                  value={Math.max((item / props.stats.mostFrequent) * 100, 5)}
-                  hasStripe={props.numGuesses === index}
-                />
-                <Box
-                  m="-21px 0px 0px 5px"
-                  textAlign="left" 
-                >
-                  {item}
-                </Box>
+          {(props.stats.guessDistribution) && [...props.stats.guessDistribution, props.stats.numLosses].map((item, index) => 
+            <Box key={`${mode}${index}`}>
+              {(index===6) ? "Loss:" : (index + 1) + " Guess Win:"}
+              <Progress
+                zIndex="-1"
+                size='lg'
+                colorScheme={(index===6) ? 'red' : 'green'}
+                bgColor="gray.800"
+                value={Math.max((item / props.stats.mostFrequent) * 100, 5)}
+                hasStripe={props.numGuesses === index}
+              />
+              <Box
+                m="-21px 0px 0px 5px"
+                textAlign="left" 
+              >
+                {item}
               </Box>
-          )}) : ""}
+            </Box>
+          )}
           
         </ModalBody>
         <ModalFooter>
           {/* Buttons: Switch Current Gamemode of Stats*/}
           {(props.numGuesses === undefined) &&
-            ["Classic", "Infinite", undefined].map((item) => {
-              return (mode !== item) && 
-              <Button colorScheme='blue' mr={3} onClick={(e) => {resetStats(e, props.username, item, props.setStats); setMode(item)}}>
-                {item === undefined ? "All Modes" : item}
-              </Button> || 
-              <Button colorScheme='blue' outline="1px solid white" mr={3} cursor="default" _hover="none" _active="none">
-                {item === undefined ? "All Modes" : item}
-              </Button>
-            })
+            ["Classic", "Infinite", undefined].map((item, index) => 
+              (mode !== item) && 
+                <Button key={index} colorScheme='blue' mr={3} onClick={(e) => {resetStats(e, props.username, item, props.setStats); setMode(item)}}>
+                  {item === undefined ? "All Modes" : item}
+                </Button> || 
+                <Button key={index} colorScheme='blue' outline="1px solid white" mr={3} cursor="default" _hover="none" _active="none">
+                  {item === undefined ? "All Modes" : item}
+                </Button>
+            )
           }
           <Button colorScheme='blue' mr={3} onClick={props.onClose}>
             Close
