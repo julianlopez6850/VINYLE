@@ -32,6 +32,8 @@ const ClassicGame = () => {
   const [guessIndex, setGuessIndex] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [albumInfo, setAlbumInfo] = useState();
+  const [settings, setSettings] = useState(false);
+  const [colors, setColors] = useState([correctColor, partialColor, incorrectColor]);
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -39,9 +41,10 @@ const ClassicGame = () => {
   useEffect(() => {
     toast.closeAll();
 
-    // check if user is logged in. (if so, get and store username)
+    // check if user is logged in. (if so, get and store username & settings)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
-      setUsername(response.data.username)
+      setUsername(response.data.username);
+      setSettings(response.data.settings);
     }).catch(function(error) {
       if(error.response)
         console.log(error.response.data);
@@ -67,6 +70,15 @@ const ClassicGame = () => {
     const date = new Date();
     setMM_DD_YYYY(`${date.getMonth() + 1}-${date.getDate()}-${date.getFullYear()}`);
   }, [])
+
+  // update colors depending on settings colorblind mode state
+  useEffect(() => {
+    if(settings.colorblindMode) {
+      setColors(["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"])
+    } else {
+      setColors([correctColor, partialColor, incorrectColor])
+    }
+  }, [settings])
 
   useEffect(() => {
     if(MM_DD_YYYY === undefined) {
@@ -322,9 +334,9 @@ const ClassicGame = () => {
       {(prevGuesses[0] !== undefined) ? 
         <MainTable
           columnHeaders={["Guess #", "Album", "Artist(s)", "Release Year"]}
-          correctGuessColor={correctColor}
-          incorrectGuessColor={incorrectColor}
-          partialGuessColor={partialColor}
+          correctGuessColor={colors[0]}
+          partialGuessColor={colors[1]}
+          incorrectGuessColor={colors[2]}
           body={prevGuesses}
           includeFooter={false}
         /> : <></>

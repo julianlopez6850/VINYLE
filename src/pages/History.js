@@ -45,17 +45,20 @@ const History = () => {
   const [offset, setOffset] = useState(0);
   const [showMore, setShowMore] = useState(false);
   const [modeChanged, setModeChanged] = useState(false);
+  const [settings, setSettings] = useState(false);
+  const [colors, setColors] = useState([winColor, lossColor]);
 
   const toast = useToast();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // check if user is logged in. (if so, get and store username)
   useEffect(() => {
     toast.closeAll();
 
+    // check if user is logged in. (if so, get and store username & settings)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
-      setUsername(response.data.username)
+      setUsername(response.data.username);
+      setSettings(response.data.settings);
     }).catch(function(error) {
       if(error.response)
         console.log(error.response.data);
@@ -63,6 +66,15 @@ const History = () => {
         console.log({ error: "Cannot authenticate user." });
     });
   }, [])
+
+  // update colors depending on settings colorblind mode state
+  useEffect(() => {
+    if(settings.colorblindMode) {
+      setColors(["var(--colorblind-correct)", "var(--colorblind-incorrect)"])
+    } else {
+      setColors([winColor, lossColor])
+    }
+  }, [settings])
 
   // get the user's game history, depending on selected mode.
   useEffect(() => {
@@ -154,7 +166,7 @@ const History = () => {
               // Add a new row to the table, colored green if the game result was win, red if loss.
               <Tbody
                 key={index}
-                bgColor={(game.win) ? winColor : lossColor}
+                bgColor={(game.win) ? colors[0] : colors[1]}
                 style={{
                   cursor: "pointer"
                 }}
@@ -170,7 +182,7 @@ const History = () => {
                     <Box
                       w="23px" h="23px"
                       borderRadius="23px"
-                      border={"2px solid " + (game.win ? winColor : lossColor)}
+                      border={"2px solid " + (game.win ? colors[0] : colors[1])}
                       bottom="2" left="70"
                       align="center" justifyContent="center"
                       pos="absolute"
@@ -266,8 +278,8 @@ const History = () => {
                 </Text>
                 <HStack>
                   {openedGame.guesses.map((item, index) => {
-                    return <Box bg={item.guessCorrectness.album ? winColor : lossColor} w="60px" h="60px" display="flex" justifyContent="center" key={index}
-                      border={"2px solid " + (item.guessCorrectness.album ? winColor : lossColor)}  
+                    return <Box bg={item.guessCorrectness.album ? colors[0] : colors[1]} w="60px" h="60px" display="flex" justifyContent="center" key={index}
+                      border={"2px solid " + (item.guessCorrectness.album ? colors[0] : colors[1])}  
                     >
                       <Tooltip
                         maxW="400px"

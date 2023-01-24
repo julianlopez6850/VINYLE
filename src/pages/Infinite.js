@@ -27,15 +27,18 @@ const InfiniteGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
   const [albumInfo, setAlbumInfo] = useState();
+  const [settings, setSettings] = useState(false);
+  const [colors, setColors] = useState([correctColor, partialColor, incorrectColor]);
 
   const toast = useToast();
 
   useEffect(() => {
     toast.closeAll();
 
-    // check if user is logged in. (if so, get and store username)
+    // check if user is logged in. (if so, get and store username & settings)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
-      setUsername(response.data.username)
+      setUsername(response.data.username);
+      setSettings(response.data.settings);
     }).catch(function(error) {
       if(error.response)
         console.log(error.response.data);
@@ -58,6 +61,15 @@ const InfiniteGame = () => {
       })
     })
   }, [])
+
+  // update colors depending on settings colorblind mode state
+  useEffect(() => {
+    if(settings.colorblindMode) {
+      setColors(["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"])
+    } else {
+      setColors([correctColor, partialColor, incorrectColor])
+    }
+  }, [settings])
 
   // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
@@ -255,9 +267,9 @@ const InfiniteGame = () => {
       {(prevGuesses[0] !== undefined) ? 
         <MainTable
           columnHeaders={["Guess #", "Album", "Artist(s)", "Release Year"]}
-          correctGuessColor={correctColor}
-          incorrectGuessColor={incorrectColor}
-          partialGuessColor={partialColor}
+          correctGuessColor={colors[0]}
+          partialGuessColor={colors[1]}
+          incorrectGuessColor={colors[2]}
           body={prevGuesses}
           includeFooter={false}
         /> : <></>

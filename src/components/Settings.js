@@ -40,6 +40,7 @@ const Settings = (props) => {
   const [username, setUsername] = useState("");
   const [darkTheme, setDarkTheme] = useState(true);
   const [colorblindMode, setColorblindMode] = useState(false);
+  const [colors, setColors] = useState(["green", "yellow", "red"]);
   const [difficulty, setDifficulty] = useState({ label: "Normal", value: 0, color: "green" });
   const [numDays, setNumDays] = useState();
 
@@ -75,6 +76,11 @@ const Settings = (props) => {
           console.log(err.message)
       })
     }
+    if(colorblindMode) {
+      setColors(["blue", "yellow", "red"]);
+    } else {
+      setColors(["green", "yellow", "red"]);
+    }
   }, [darkTheme, colorblindMode, difficulty])
 
   return (
@@ -105,14 +111,14 @@ const Settings = (props) => {
               <Text>
                 Dark Theme
               </Text>
-              <Switch defaultChecked={darkTheme} onChange={() => setDarkTheme(!darkTheme)} />
+              <Switch colorScheme={colors[0]} defaultChecked={darkTheme} onChange={() => setDarkTheme(!darkTheme)} />
             </HStack>
             <Divider marginBlock="1rem !important" />
             <HStack width="full" justify="space-between" marginBlock="0 !important">
               <Text>
                 Colorblind Mode
               </Text>
-              <Switch defaultChecked={colorblindMode} onChange={() => setColorblindMode(!colorblindMode)} />
+              <Switch colorScheme={colors[0]} defaultChecked={colorblindMode} onChange={() => setColorblindMode(!colorblindMode)} />
             </HStack>
 
             <Divider marginBlock="1rem !important" />
@@ -120,7 +126,7 @@ const Settings = (props) => {
             <Text as='b' marginBlock="0 !important">
               Difficulty:
             </Text>
-            <Tabs colorScheme={difficulty.color} borderBottom="transparent" defaultIndex={difficulty.value}>
+            <Tabs colorScheme={colors[difficulty.value]} borderBottom="transparent" defaultIndex={difficulty.value}>
               <TabList >
                 {difficulties.map((item, index) => 
                   <Tooltip
