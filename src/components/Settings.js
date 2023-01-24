@@ -108,16 +108,26 @@ const Settings = (props) => {
           <VStack>
 
             <HStack width="full" justify="space-between">
-              <Text>
-                Dark Theme
-              </Text>
+              <VStack>
+                <Text width="full" fontWeight="bold">
+                  Dark Theme
+                </Text>
+                <Text fontSize="14" marginBlock="0 !important">
+                  Darker Background Colors for Reduced Eye Strain
+                </Text>
+              </VStack>
               <Switch colorScheme={colors[0]} defaultChecked={darkTheme} onChange={() => setDarkTheme(!darkTheme)} />
             </HStack>
             <Divider marginBlock="1rem !important" />
             <HStack width="full" justify="space-between" marginBlock="0 !important">
-              <Text>
-                Colorblind Mode
-              </Text>
+              <VStack>
+                <Text width="full" fontWeight="bold">
+                  Colorblind Mode
+                </Text>
+                <Text fontSize="14" marginBlock="0 !important">
+                  High Contrast Colors for Improved Color Vision
+                </Text>
+              </VStack>
               <Switch colorScheme={colors[0]} defaultChecked={colorblindMode} onChange={() => setColorblindMode(!colorblindMode)} />
             </HStack>
 
