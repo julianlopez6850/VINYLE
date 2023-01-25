@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
   Drawer,
   DrawerOverlay,
@@ -12,21 +13,15 @@ import {
   Box,
   Button,
   Image,
+  Divider,
 } from '@chakra-ui/react'
 import { ArrowUpIcon, ArrowDownIcon, MinusIcon } from '@chakra-ui/icons'
+import { instance } from '../helpers/axiosInstance'
+import { GuessRow } from './miniComponents'
 
 import fullArt from "../assets/htp_examples/VINYLE_full.png"
 import firstGuessArt from "../assets/htp_examples/VINYLE_firstGuess.png"
 import lastGuessArt from "../assets/htp_examples/VINYLE_lastGuess.png"
-
-import guessEx1 from "../assets/htp_examples/guess1.png"
-import guessEx2 from "../assets/htp_examples/guess2.png"
-import guessEx3 from "../assets/htp_examples/guess3.png"
-import guessEx4 from "../assets/htp_examples/guess4.png"
-
-const correct = "var(--correct)"
-const incorrect = "var(--incorrect)"
-const partial = "var(--partial)"
 
 export const openHTP = async (e, onOpen) => {
   if(e)
@@ -36,6 +31,26 @@ export const openHTP = async (e, onOpen) => {
 }
 
 const HowToPlay = (props) => {
+
+  const [settings, setSettings] = useState();
+  const [colors, setColors] = useState({colors: ["var(--correct)", "var(--partial)", "var(--incorrect)"], labels: ["Green", "Yellow", "Red"]});
+
+  useEffect(() => {
+    instance.get("http://localhost:5000/auth/profile").then((response) => {
+      setSettings(response.data.settings);
+    }).catch(() => {
+      setColors(["var(--correct)", "var(--partial)", "var(--incorrect)"]);
+    });
+  }, [props.isOpen])
+
+  useEffect(() => {
+    if(settings) {
+      if(settings.colorblindMode)
+        setColors({colors: ["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"], labels: ["Blue", "Orange", "Red"]});
+      else
+        setColors({colors: ["var(--correct)", "var(--partial)", "var(--incorrect)"], labels: ["Green", "Yellow", "Red"]});
+    }
+  }, [settings])
 
   return (
     <Drawer
@@ -70,7 +85,8 @@ const HowToPlay = (props) => {
             - The area you see progressively increases with each guess until you win or lose
             <br/>
             - On the final available attempt, you see the entire bottom-left quarter of the art.
-            <br/>
+            <Text><br/></Text>
+            <Divider/>
             <Box as='b'>
               <Text><br/></Text>
               Example:
@@ -88,25 +104,28 @@ const HowToPlay = (props) => {
               </VStack>
               <Text><br/></Text>
             </Box>
-            <Text fontSize="18">
+            <Divider/>
+            <Text><br/></Text>
+            <Text fontSize="18" mb="15px">
               You also receive these hints each time you make a guess:
-              <Text><br/></Text>
             </Text>
             <Box>
-              <Text as='b' color={correct}>Green</Text> indicates a completely correct property
+              <Text as='b' color={colors.colors[0]}>{colors.labels[0]}</Text> indicates a completely correct property
               <br/>
-              <Text as='b' color={partial}>Yellow</Text> indicates a 'partially correct' property
+              <Text as='b' color={colors.colors[1]}>{colors.labels[1]}</Text> indicates a 'partially correct' property
               <Box ml="15px">
-                <Text as='b' color={partial}>Yellow Artist</Text> indicates that atleast one artist in your guess appears in the answer
+                <Text as='b' color={colors.colors[1]}>{colors.labels[1]} Artist</Text> indicates that atleast one artist in your guess appears in the answer
                 <br/>
-                <Text as='b' color={partial}>Yellow Release Year</Text> indicates your guess is within the correct decade
+                <Text as='b' color={colors.colors[1]}>{colors.labels[1]} Release Year</Text> indicates your guess is within the correct decade
               </Box>
-              <Text as='b' color={incorrect}>Red</Text> indicates a completely incorrect property
+              <Text as='b' color={colors.colors[2]}>{colors.labels[2]}</Text> indicates a completely incorrect property
               <br/>
               <ArrowUpIcon/> indicates the answer release year is newer.
               <br/>
               <ArrowDownIcon/> indicates the answer release year is older.
             </Box>
+            <Text><br/></Text>
+            <Divider/>
             <Box>
               <Text><br/></Text>
               <Text as='b'>
@@ -114,38 +133,74 @@ const HowToPlay = (props) => {
               </Text>
               <VStack align="left" whiteSpace="pre-line" mt="10px">
                 <HStack>
-                  <Text>1)</Text><Image src={guessEx1}/>
+                  <Text>
+                    1)
+                  </Text>
+                  <GuessRow
+                    h="38px"
+                    albumW="250px" artistW="250px" releaseW="85px"
+                    albumBGC={colors.colors[2]} artistBGC={colors.colors[2]} releaseBGC={colors.colors[2]}
+                    album="Thriller" artist="Michael Jackson" release="1982" releaseDir={<ArrowDownIcon/>}
+                  />
                 </HStack>
                 <Text>
-                  <MinusIcon color={incorrect} /> IS NOT 'Thriller'{"\n"}
-                  <MinusIcon color={incorrect} /> IS NOT BY Michael Jackson{"\n"}
-                  <MinusIcon color={incorrect} /> IS AFTER 1980s{"\n"}
+                  <MinusIcon color={colors.colors[2]} /> IS NOT 'Thriller'{"\n"}
+                  <MinusIcon color={colors.colors[2]} /> IS NOT BY Michael Jackson{"\n"}
+                  <MinusIcon color={colors.colors[2]} /> IS BEFORE 1980s{"\n"}
                 </Text>
+
                 <HStack>
-                  <Text>2)</Text><Image src={guessEx2}/>
+                  <Text>
+                    2)
+                  </Text>
+                  <GuessRow
+                    h="38px"
+                    albumW="250px" artistW="250px" releaseW="85px"
+                    albumBGC={colors.colors[2]} artistBGC={colors.colors[1]} releaseBGC={colors.colors[1]}
+                    album="Watch The Throne" artist="JAY-Z, Kanye West" release="2011" releaseDir={<ArrowUpIcon/>}
+                  />
                 </HStack>
                 <Text>
-                  <MinusIcon color={incorrect} /> IS NOT 'Watch The Throne'{"\n"}
-                  <MinusIcon color={partial} /> IS BY JAY-Z, OR Kanye West, OR ANY COMBINATION + OTHER ARTIST(S){"\n"}
-                  <MinusIcon color={partial} /> IS IN 2010s, AFTER 2011{"\n"}
+                  <MinusIcon color={colors.colors[2]} /> IS NOT 'Watch The Throne'{"\n"}
+                  <MinusIcon color={colors.colors[1]} /> IS BY JAY-Z, OR Kanye West, OR ANY COMBINATION + OTHER ARTIST(S){"\n"}
+                  <MinusIcon color={colors.colors[1]} /> IS IN 2010s, AFTER 2011{"\n"}
                 </Text>
+
                 <HStack>
-                  <Text>3)</Text><Image src={guessEx3}/>
+                  <Text>
+                    3)
+                  </Text>
+                  <GuessRow
+                    h="38px"
+                    albumW="250px" artistW="250px" releaseW="85px"
+                    albumBGC={colors.colors[2]} artistBGC={colors.colors[0]} releaseBGC={colors.colors[0]}
+                    album="Talking Book" artist="Stevie Wonder" release="1972" releaseDir={undefined}
+                  />
                 </HStack>
                 <Text>
-                  <MinusIcon color={incorrect} /> IS NOT 'Talking Book'{"\n"}
-                  <MinusIcon color={correct} /> IS BY Stevie Wonder{"\n"}
-                  <MinusIcon color={correct} /> IS RELEASED IN 1972{"\n"}
+                  <MinusIcon color={colors.colors[2]} /> IS NOT 'Talking Book'{"\n"}
+                  <MinusIcon color={colors.colors[0]} /> IS BY Stevie Wonder{"\n"}
+                  <MinusIcon color={colors.colors[0]} /> IS RELEASED IN 1972{"\n"}
                 </Text>
+
                 <HStack>
-                  <Text>4)</Text><Image src={guessEx4}/>
+                  <Text>
+                    4)
+                  </Text>
+                  <GuessRow
+                    h="38px"
+                    albumW="250px" artistW="250px" releaseW="85px"
+                    albumBGC={colors.colors[0]} artistBGC={colors.colors[0]} releaseBGC={colors.colors[0]}
+                    album="Jazz" artist="Queen" release="1978" releaseDir={undefined}
+                  />
                 </HStack>
                 <Text>
-                  <MinusIcon color={correct} /> IS 'Jazz' = YOU WIN!
+                  <MinusIcon color={colors.colors[0]} /> IS 'Jazz' = YOU WIN!
                 </Text>
               </VStack>
               <Text><br/></Text>
               GOOD LUCK, HAVE FUN :)
+
             </Box>
           </Text>
           

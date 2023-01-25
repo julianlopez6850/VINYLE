@@ -7,7 +7,9 @@ import {
   Th,
   Tbody,
   Td,
-  Tfoot,
+  Box,
+  Text,
+  HStack,
 } from '@chakra-ui/react'
 import Select from "react-select";
 
@@ -199,5 +201,29 @@ export const WinLossToast = (props) => {
           isClosable: false
         }) : "" :
     ""
+  )
+}
+
+export const GuessRow = (props) => {
+  return (
+    <Box width={props.w} height={props.h}>
+      <HStack>
+        <Box width={props.albumW} height={props.h} bgColor={props.albumBGC}>
+          <Text pt="6px" pl="15px">
+            {props.album}
+          </Text>
+        </Box>
+        <Box width={props.artistW} height={props.h} bgColor={props.artistBGC}>
+          <Text pt="6px" pl="15px">
+            {props.artist}
+          </Text>
+        </Box>
+        <Box width={props.releaseW} height={props.h} bgColor={props.releaseBGC}>
+          <Text align="center"  pt="6px">
+            {props.releaseDir}{props.release}
+          </Text>
+        </Box>
+      </HStack>
+    </Box>
   )
 }
