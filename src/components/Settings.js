@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { instance } from "../helpers/axiosInstance";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import {
   Button,
@@ -43,8 +43,16 @@ const Settings = (props) => {
   const [colors, setColors] = useState(["green", "yellow", "red"]);
   const [difficulty, setDifficulty] = useState({ label: "Normal", value: 0, color: "green" });
   const [numDays, setNumDays] = useState();
+  const [initialValues, setInitialValues] = useState();
 
+  const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if(props.isOpen) {
+      setInitialValues([darkTheme, colorblindMode, difficulty.value])
+    }
+  }, [props.isOpen])
 
   useEffect(() => {
     // check if user is logged in. (if so, get and store username)
@@ -86,7 +94,17 @@ const Settings = (props) => {
   return (
     <Modal
       isCentered
-      onClose={() => {setNumDays(numDays => numDays - 1); props.onClose()}}
+      onClose={() => {
+        // Refresh page if a setting is updated
+        if(JSON.stringify([darkTheme, colorblindMode, difficulty.value]) !== JSON.stringify(initialValues)) {
+          navigate(
+            location.pathname.includes("/infinite") ? '/inf' : 
+            location.pathname.includes("/history") ? '/history' : '/'
+          ); 
+        }
+        setNumDays(numDays => numDays - 1); 
+        props.onClose()
+      }}
       isOpen={props.isOpen}
       motionPreset='slideInBottom'
     >
@@ -150,7 +168,7 @@ const Settings = (props) => {
                     }
                     key={index}
                   >
-                    <Tab bg="none" onMouseDown={()=>{setDifficulty({ label: item.label, value: item.value, color: item.color })}}>
+                    <Tab bg="none" onMouseDown={() => setDifficulty({ label: item.label, value: item.value, color: item.color })}>
                         <Text>
                           {item.label}
                         </Text>

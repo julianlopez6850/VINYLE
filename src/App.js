@@ -19,6 +19,7 @@ const App = () => {
           <Routes>
             <Route exact path="/" element={ <Navigate to="/classic" /> } />
             <Route exact path="/classic" element={<Classic/>} />
+            <Route exact path="/inf" element={ <Navigate to="/infinite" /> } />
             <Route exact path="/infinite" element={<Infinite/>} />
             <Route exact path="/register" element={<Registration />} />
             <Route exact path="/registration" element={ <Navigate to="/register" /> } />
