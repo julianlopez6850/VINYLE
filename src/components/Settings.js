@@ -49,6 +49,10 @@ const Settings = (props) => {
   const location = useLocation();
 
   useEffect(() => {
+    instance.get("http://localhost:5000/daily/numDays").then((response) => {
+      setNumDays(response.data.days);
+    })
+    
     if(props.isOpen) {
       setInitialValues([darkTheme, colorblindMode, difficulty.value])
     }
@@ -68,12 +72,6 @@ const Settings = (props) => {
         console.log({ error: "Cannot authenticate user." });
     });
   }, [location])
-  
-  useEffect(() => {
-    instance.get("http://localhost:5000/daily/numDays").then((response) => {
-      setNumDays(response.data.days);
-    })
-  }, [numDays])
 
   useEffect(() => {
     if(username) {
@@ -102,7 +100,6 @@ const Settings = (props) => {
             location.pathname.includes("/history") ? '/history' : '/'
           ); 
         }
-        setNumDays(numDays => numDays - 1); 
         props.onClose()
       }}
       isOpen={props.isOpen}
