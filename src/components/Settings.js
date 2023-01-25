@@ -131,7 +131,7 @@ const Settings = (props) => {
                   Darker Background Colors for Reduced Eye Strain
                 </Text>
               </VStack>
-              <Switch colorScheme={colors[0]} defaultChecked={darkTheme} onChange={() => setDarkTheme(!darkTheme)} />
+              <Switch isDisabled colorScheme={colors[0]} defaultChecked={darkTheme} onChange={() => setDarkTheme(!darkTheme)} />
             </HStack>
             <Divider marginBlock="1rem !important" />
             <HStack width="full" justify="space-between" marginBlock="0 !important">
@@ -165,7 +165,7 @@ const Settings = (props) => {
                     }
                     key={index}
                   >
-                    <Tab bg="none" onMouseDown={() => setDifficulty({ label: item.label, value: item.value, color: item.color })}>
+                    <Tab isDisabled bg="none" onMouseDown={() => setDifficulty({ label: item.label, value: item.value, color: item.color })}>
                       <Text>
                         {item.label}
                       </Text>
