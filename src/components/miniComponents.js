@@ -178,29 +178,28 @@ export const MainTable = (props) => {
 
 export const WinLossToast = (props) => {
   return (
-    (props.showToast) ?
-    (props.win) ?
-      (!props.toast.isActive(' ')) ?
-        props.toast({
-          position: 'top',
-          id: ' ',
-          title: 'VICTORY',
-          description: `You guessed the correct album in ${props.numGuesses} ${(props.numGuesses === 1) ? "try" : "tries"}!`,
-          status: 'success',
-          duration: 5000,
-          isClosable: false
-        }) : "" :
-      (!props.toast.isActive('')) ?
-        props.toast({
-          position: 'top',
-          id: '',
-          title: 'DEFEAT',
-          description: 'You failed to guess the correct album',
-          status: 'error',
-          duration: 5000,
-          isClosable: false
-        }) : "" :
-    ""
+    (props.showToast) &&
+      ((props.win) ?
+        ((!props.toast.isActive(' ')) &&
+          props.toast({
+            position: 'top',
+            id: ' ',
+            title: 'VICTORY',
+            description: `You guessed the correct album in ${props.numGuesses} ${(props.numGuesses === 1) ? "try" : "tries"}!`,
+            status: 'success',
+            duration: 5000,
+            isClosable: false
+          })) :
+        ((!props.toast.isActive('')) &&
+          props.toast({
+            position: 'top',
+            id: '',
+            title: 'DEFEAT',
+            description: 'You failed to guess the correct album',
+            status: 'error',
+            duration: 5000,
+            isClosable: false
+          })))
   )
 }
 

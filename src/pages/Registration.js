@@ -274,9 +274,9 @@ const Registration = () => {
 
       {/* REGISTRATION TOAST NOTIFICATIONS */}
       {
-        (request) ?
-          (error) ?
-            (!toast.isActive(' ')) ?
+        (request) &&
+          ((error) ?
+            ((!toast.isActive(' ')) &&
               toast({
                 position: 'top',
                 id: ' ',
@@ -285,8 +285,8 @@ const Registration = () => {
                 status: 'error',
                 duration: 5000,
                 isClosable: false
-              }) : "" :
-            (!toast.isActive('')) ?
+              })) :
+            ((!toast.isActive('')) &&
               toast({
                 position: 'top',
                 id: '',
@@ -295,8 +295,7 @@ const Registration = () => {
                 status: 'success',
                 duration: 2000,
                 isClosable: false
-              }) : "" :
-        ""
+              })))
       }
     </div>
   );

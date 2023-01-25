@@ -297,7 +297,7 @@ const ClassicGame = () => {
         GUESS THE ALBUM FROM ITS ART
       </div>
       <div className="albumArt" >
-        <img src={(chosenAlbumID) ? `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}` : ""} />
+        <img src={(chosenAlbumID) && `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`} />
       </div>
       {(gameOver && albumInfo) && <VStack spacing="0" fontSize="20" mt="10px">
         <Text fontWeight="bold">

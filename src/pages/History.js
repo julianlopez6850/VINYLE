@@ -196,7 +196,7 @@ const History = () => {
                     {/* Display Album name, artist, and release year. */}
                     <VStack align="left" spacing="0">
                       {[game.album,game.artists,game.releaseYear].map((item, index) => {
-                        return <Text key={index} fontWeight={(index === 0) ? "bold" : ""}>
+                        return <Text key={index} fontWeight={(index === 0) && "bold"}>
                             {item}
                           </Text>
                       })}
@@ -207,7 +207,7 @@ const History = () => {
                     {/* Display Game mode and date. */}
                     <VStack align="center" spacing="0">
                       {[game.mode,game.date].map((item, index) => {
-                        return <Text key={index} fontWeight={(index === 0) ? "bold" : ""}>
+                        return <Text key={index} fontWeight={(index === 0) && "bold"}>
                             {item.toUpperCase()}
                           </Text>
                       })}
@@ -236,7 +236,7 @@ const History = () => {
           motionPreset='slideInBottom'
         >
           <ModalOverlay />
-          {(openedGame) ? 
+          {(openedGame) && 
             <ModalContent 
               color="white"
               bgColor="gray.800"
@@ -266,7 +266,7 @@ const History = () => {
                   mb="10px"
                 >
                   {[openedGame.album,openedGame.artists,openedGame.releaseYear].map((item, index) => {
-                    return <Text key={index} fontWeight={(index === 0) ? "bold" : ""}>
+                    return <Text key={index} fontWeight={(index === 0) && "bold"}>
                         {item}
                       </Text>
                   })}
@@ -312,7 +312,6 @@ const History = () => {
                 </Button>
               </ModalFooter>
             </ModalContent>
-            : ""
           }
         </Modal>
       </VStack>

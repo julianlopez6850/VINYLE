@@ -169,9 +169,9 @@ const Settings = (props) => {
                     key={index}
                   >
                     <Tab bg="none" onMouseDown={() => setDifficulty({ label: item.label, value: item.value, color: item.color })}>
-                        <Text>
-                          {item.label}
-                        </Text>
+                      <Text>
+                        {item.label}
+                      </Text>
                     </Tab>
                   </Tooltip>
                 )}

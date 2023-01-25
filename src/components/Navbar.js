@@ -3,7 +3,7 @@ import "../styles/navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { instance } from "../helpers/axiosInstance";
 import ConditionalLink from "../helpers/conditionalLink";
-import Settings, { openSettings } from "./Settings";
+import Settings from "./Settings";
 import Statistics, { getStats, resetStats } from "./Statistics"; 
 import HowToPlay, { openHTP } from "./HowToPlay";
 
@@ -13,9 +13,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
   MenuDivider,
   IconButton,
   useDisclosure,
