@@ -159,9 +159,10 @@ const Settings = (props) => {
                     display="flex"
                     bg='var(--background-color)'
                     label={
-                      <VStack spacing="-1" fontWeight="bold">
-                        {item.tooltip}
-                      </VStack>
+                      (item.tooltip) &&
+                        <VStack spacing="-1" fontWeight="bold">
+                          {item.tooltip}
+                        </VStack>
                     }
                     key={index}
                   >
