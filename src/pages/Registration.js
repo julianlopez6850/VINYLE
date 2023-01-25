@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import { loginInstance } from "../helpers/axiosInstance"
+import { authInstance } from "../helpers/axiosInstance"
 import axios from 'axios';
 
 import "../styles/page.css";
@@ -36,7 +36,7 @@ const Registration = () => {
   const isInvalid = (passwordMismatch || passwordTooSmall || (usernameError != ""))
 
   useEffect(() => {
-    loginInstance.get("http://localhost:5000/auth/profile").then((response) => {
+    authInstance.get("http://localhost:5000/auth/profile").then((response) => {
       if(response.data.success) {
         navigate('/');
       }
@@ -82,7 +82,7 @@ const Registration = () => {
   // this function is called when the user pressed the REGISTER button.
   const tryRegister = () => {
     // post the username and password combination to the server, to be added to the users table.
-    loginInstance.post("http://localhost:5000/auth/register", { username: username, password: password.password }).then(() => {
+    authInstance.post("http://localhost:5000/auth/register", { username: username, password: password.password }).then(() => {
       setRequest(true);
     }).catch(function (error) { // catch any errors.
       console.log("An error occurred while trying to register...");
@@ -101,7 +101,7 @@ const Registration = () => {
   }
 
   const handleError = () => {
-    loginInstance.post("http://localhost:5000/auth/register").catch(function () { 
+    authInstance.post("http://localhost:5000/auth/register").catch(function () { 
       setErrorMessage('Make sure to follow all registration directions');
       toast.close(' ');
       setRequest(true);

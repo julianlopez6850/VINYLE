@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import { loginInstance } from "../helpers/axiosInstance"
+import { authInstance } from "../helpers/axiosInstance"
 
 import "../styles/page.css";
 
@@ -28,7 +28,7 @@ const Login = () => {
   const toast = useToast();
 
   useEffect(() => {
-    loginInstance.get("http://localhost:5000/auth/profile").then((response) => {
+    authInstance.get("http://localhost:5000/auth/profile").then((response) => {
       if(response.data.success) {
         navigate('/');
       }
@@ -46,7 +46,7 @@ const Login = () => {
   // this function is called when the user presses the LOGIN button.
   const tryLogin = () => {
     // send username and password combo to backend...
-    loginInstance.post("http://localhost:5000/auth/login", { username: username, password: password}).then(() => {
+    authInstance.post("http://localhost:5000/auth/login", { username: username, password: password}).then(() => {
       setRequest(true);
     }).catch(function (error) { // catch any errors.
       if (error.response) {
