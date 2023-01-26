@@ -40,6 +40,7 @@ const InfiniteGame = () => {
       setSettings(response.data.settings);
       setUsername(response.data.username);
     }).catch(function(error) {
+      setColors([correctColor, partialColor, incorrectColor]);
       if(error.response)
         console.log(error.response.data);
       else
