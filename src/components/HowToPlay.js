@@ -39,7 +39,7 @@ const HowToPlay = (props) => {
     instance.get("http://localhost:5000/auth/profile").then((response) => {
       setSettings(response.data.settings);
     }).catch(() => {
-      setColors(["var(--correct)", "var(--partial)", "var(--incorrect)"]);
+      setColors({colors: ["var(--correct)", "var(--partial)", "var(--incorrect)"], labels: ["Green", "Yellow", "Red"]});
     });
   }, [props.isOpen])
 
