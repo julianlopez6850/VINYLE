@@ -84,9 +84,15 @@ export const resetStats = async (e, username, mode, setStats) => {
 const Statistics = (props) => {
 
   const [mode, setMode] = useState(props.mode)
+  const [colorblindMode, setColorblindMode] = useState();
 
   useEffect(() => {
     setMode(props.mode)
+
+    // check if user is logged in. (if so, get and store state of colorblind mode setting)
+    instance.get("http://localhost:5000/auth/profile").then((response) => {
+      setColorblindMode(response.data.settings.colorblindMode);
+    })
   }, [props.isOpen])
 
   return (
@@ -143,7 +149,7 @@ const Statistics = (props) => {
               <Progress
                 zIndex="-1"
                 size='lg'
-                colorScheme={(index===6) ? 'red' : 'green'}
+                colorScheme={(index===6) ? 'red' : (colorblindMode) ? 'blue' : 'green'}
                 bgColor="gray.800"
                 value={Math.max((item / props.stats.mostFrequent) * 100, 5)}
                 hasStripe={props.numGuesses === index}
