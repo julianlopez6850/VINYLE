@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../components/miniComponents"
+import { MainButton, AlbumSelect, MainTable, WinLossToast, ClassicResults } from "../components/miniComponents"
 import { instance } from "../helpers/axiosInstance";
 import Statistics, { getStats } from "../components/Statistics"
 
@@ -343,6 +343,19 @@ const ClassicGame = () => {
           incorrectGuessColor={colors[2]}
           body={prevGuesses}
           includeFooter={false}
+        />
+      }
+      {/* View & Share Results */}
+      {(colors !== undefined) &&
+        <ClassicResults
+          date={MM_DD_YYYY}
+          isOpen={gameOver}
+          win={win}
+          guesses={prevGuesses.length}
+          album={albumInfo}
+          colorblindMode={settings ? settings.colorblindMode : false}
+          winColor={colors[0]}
+          loseColor={colors[2]}
         />
       }
       {/* WIN/LOSS TOAST NOTIFICATIONS */}

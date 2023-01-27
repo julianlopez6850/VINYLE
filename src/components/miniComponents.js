@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   TableContainer,
@@ -10,14 +12,21 @@ import {
   Box,
   Text,
   HStack,
+  VStack,
+  Progress,
+  Divider,
+  Skeleton,
 } from '@chakra-ui/react'
 import Select from "react-select";
+import Countdown from '../helpers/countdown';
 
 import {
   ArrowUpIcon,
   ArrowDownIcon,
   CloseIcon,
+  CopyIcon,
 } from '@chakra-ui/icons'
+import { instance } from "../helpers/axiosInstance";
 
 export const MainButton = (props) => {
   return (
@@ -224,5 +233,134 @@ export const GuessRow = (props) => {
         </Box>
       </HStack>
     </Box>
+  )
+}
+
+export const ClassicResults = (props) => {
+
+  const [gameData, setGameData] = useState();
+
+  // GET the Current Day's Classic VINYLE Game Stats to Compare With Other Users
+  useEffect(() => {
+    instance.get(`http://localhost:5000/daily?date=${props.date}`).then((response) => {
+      setGameData(response.data.game);
+    })
+  }, [props.isOpen])
+
+  // Copy Share Text to Clipboard...
+  const doShare = () => {
+    // implement doShare code...
+  }
+
+  const navigate = useNavigate();
+
+  return (
+    (props.isOpen) &&
+      <Box w="400px" paddingBlock="10px" mb="50px" align="center" border="3px solid var(--gray-600)" borderRadius="10px" borderColor={(props.win) ? props.winColor : props.loseColor} bg="gray.900">
+        <Text fontWeight="bold" fontSize="24px">
+          {(props.win) ? "Congratulations!" : "Not This Time..."}
+        </Text>
+        <Text>
+          {(props.win) ? `You won today's Classic VINYLE in ${props.guesses} ${props.guesses === 1 ? 'guess' : 'guesses'}!` : "Come back tommorrow for another shot at it!"}
+        </Text>
+
+        <Divider border="1px solid" borderColor="white" w="250px" marginBlock="10px"/>
+
+        {(gameData) && (
+          <VStack>
+            <Text whiteSpace="pre-line">
+                {`You are the ${gameData.numPlayed}${(gameData.numPlayed % 10 === 1) ? `st` : (gameData.numPlayed % 10 === 2) ? `nd` : (gameData.numPlayed % 10 === 3) ? `rd` : `th`} to play today's Classic VINYLE
+                Here is how you stacked up against all players:`}
+            </Text>
+            <VStack w="350px" h="200px" mt="10px" display="flex" spacing="5px">
+              {[gameData.num1Guess, gameData.num2Guess, gameData.num3Guess, gameData.num4Guess, gameData.num5Guess, gameData.num6Guess, gameData.numLosses].map((item, index) => 
+                <HStack key={`${index}`} align="center">
+                  <Text>
+                    {(index===6) ? "X:" : (index + 1) + ":" }
+                  </Text>
+                  <Box w="300px" zIndex="1" textAlign="left" >
+                    <Progress
+                      mt="5px"
+                      justifyContent="left"
+                      zIndex="-1"
+                      size='lg'
+                      colorScheme={(index===6) ? 'red' : 'black'}
+                      bgColor={(index===6) ? props.loseColor : props.winColor}
+                      width={(gameData) ? `${Math.max((item / gameData.mostFrequent) * 300, 20)}px` : "300px"}
+                      value={100}
+                      hasStripe={(props.win) ? props.guesses - 1 === index : index === 6}
+                    />
+                    <Box
+                      m="-21px 0px 0px 5px"
+                      textAlign="left" 
+                    >
+                      {item}
+                    </Box>
+                  </Box>
+                </HStack>
+              )}
+            </VStack>
+          </VStack>
+        ) || (
+          <VStack height="256px" spacing="2.5">
+            <Skeleton height='18px' width="300px"/>
+            <Text>LOADING CLASSIC GAME DATA...</Text>
+            <Skeleton height='18px' width="300px"/>
+            <Skeleton height='18px' width="300px"/>
+            <Skeleton height='18px' width="300px"/>
+            <Skeleton height='18px' width="300px"/>
+            <Skeleton height='18px' width="300px"/>
+            <Skeleton height='18px' width="300px"/>
+            <Skeleton height='18px' width="300px"/>
+          </VStack>
+        )}
+        <Button
+          w="125px"
+          m="5px 0px 0px 0px"
+          color="white"
+          bgColor="gray.700"
+          border="1px solid black"
+          _hover={{
+            border:"1px solid var(--gray-600)"
+          }}
+          _active={{}}
+          onClick={doShare}
+        >
+          <CopyIcon/><Text whiteSpace="pre-wrap">{`   SHARE`}</Text>
+        </Button>
+
+        <Divider border="1px solid" borderColor="white" w="250px" marginBlock="10px"/>
+
+        <VStack w="300px" display="flex" spacing="0">
+          <Text fontWeight="semibold">
+            Time Until Next Classic VINYLE:
+          </Text>
+          <Text fontSize="36px">
+            <Countdown
+              isOpen={props.isOpen}
+            />
+          </Text>
+        </VStack>
+
+        <Divider border="1px solid" borderColor="white" w="250px" marginBlock="10px"/>
+
+        <Text fontWeight="semibold">
+          In the mean time, you can...
+        </Text>
+        <Button
+          w="175px"
+          m="5px 0px 10px 0px"
+          color="white"
+          bgColor="gray.700"
+          border="1px solid black"
+          _hover={{
+            border:"1px solid var(--gray-600)"
+          }}
+          _active={{}}
+          onClick={() => navigate('/infinite')}
+        >
+          PLAY INFINITE MODE
+        </Button>
+      </Box>
   )
 }
