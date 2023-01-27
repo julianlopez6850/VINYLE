@@ -61,11 +61,11 @@ const Countdown = (props) => {
   return(
     <Box width="200px">
       <HStack justify="center">
-          <span>{hours < 10 ? "0" : ""}{hours ? hours : "0"}</span>
+          <span>{(hours && hours < 10) ? "0" : ""}{hours ? hours : "00"}</span>
           <span>:</span>
-          <span>{mins < 10 ? "0" : ""}{mins ? mins : "0"}</span>
+          <span>{(mins && mins < 10) ? "0" : ""}{mins ? mins : "00"}</span>
           <span>:</span>
-          <span>{secs < 10  ? "0" : ""}{secs ? secs : "0"}</span>
+          <span>{(secs && secs < 10)  ? "0" : ""}{secs ? secs : "00"}</span>
       </HStack>
     </Box>
   )
