@@ -403,3 +403,85 @@ export const ClassicResults = (props) => {
       </Box>
   )
 }
+
+export const ShareInfinite = (props) => {
+
+  const [shareText, setShareText] = useState();
+  const [gameData, setGameData] = useState();
+
+  const toast = useToast();
+
+  useEffect(() => {
+    var string = ""
+    props.guesses.forEach((guess) => {
+      if(guess.guessCorrectness.album)
+        string += '🟩'
+      else
+        string += '🟥'
+      if(guess.guessCorrectness.artist === "correct")
+        string += '🟩'
+      else if(guess.guessCorrectness.artist === "partial")
+        string += '🟨'
+      else
+        string += '🟥'
+      if(guess.guessCorrectness.releaseYear === "correct")
+        string += '🟩'
+      else if(guess.guessCorrectness.releaseYear === "decade")
+        string += '🟨'
+      else
+        string += '🟥'
+      string += "\n"
+    })
+    setShareText(`${props.win ? 'I won this' : 'I lost this'} Infinite VINYLE ${props.win ? 'in ' + props.numGuesses + '/6!' : '.'} Check it out!\n${string}http://localhost:3000/shared/${props.id}`)
+  }, [props.isOpen])
+
+  // Copy Share Text to Clipboard...
+  const doShare = () => {
+    // implement doShare code...
+    if(shareText) {
+      navigator.clipboard.writeText(shareText)
+
+      if(!toast.isActive('')) {
+        toast({
+          position: 'top',
+          id: '',
+          title: 'Results copied to clipboard',
+          status: 'info',
+          duration: 1000,
+          isClosable: false
+        })
+      }
+    }
+  }
+
+  const navigate = useNavigate();
+
+  return (
+    (props.isOpen) &&
+      <Box w="400px" paddingBlock="10px" mb="50px" align="center" border="3px solid var(--gray-600)" borderRadius="10px" borderColor={(props.win) ? props.winColor : props.loseColor} bg="gray.900">
+        <Text fontWeight="bold" fontSize="24px">
+          SHARE THIS GAME
+        </Text>
+        <Text whiteSpace="pre-line">
+          {shareText}
+        </Text>
+
+        <Divider border="1px solid" borderColor="white" w="250px" marginBlock="10px"/>
+        
+        <Button
+          w="125px"
+          m="5px 0px 0px 0px"
+          color="white"
+          bgColor="gray.700"
+          border="1px solid black"
+          _hover={{
+            border:"1px solid var(--gray-600)"
+          }}
+          _active={{}}
+          onClick={doShare}
+        >
+          <CopyIcon/><Text whiteSpace="pre-wrap">{`   SHARE`}</Text>
+        </Button>
+      </Box>
+  )
+}

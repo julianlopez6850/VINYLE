@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 
-import { MainButton, AlbumSelect, MainTable, WinLossToast } from "../components/miniComponents"
+import { MainButton, AlbumSelect, MainTable, WinLossToast, ShareInfinite } from "../components/miniComponents"
 import { instance } from "../helpers/axiosInstance";
 
 import "../styles/page.css";
@@ -16,8 +17,11 @@ const incorrectColor = "var(--incorrect)";
 const partialColor = "var(--partial)";
 
 const InfiniteGame = () => {
+
+  const location = useLocation();
+  
   // A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
-  const [chosenAlbumID, setChosenAlbumID] = useState(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
+  const [chosenAlbumID, setChosenAlbumID] = useState((location.pathname.includes("/shared")) ? location.pathname.slice(8) : Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
 
   const [username, setUsername] = useState("");
   const [Albums, setAlbums] = useState([]);
@@ -225,7 +229,7 @@ const InfiniteGame = () => {
   return (
     <div className="page">
       <div className="title">
-        INFINITE
+        {location.pathname.includes("/shared") ? "SHARED GAME" : "INFINITE"}
       </div>
       <div className="subtitle">
         GUESS THE ALBUM FROM ITS ART
@@ -276,6 +280,20 @@ const InfiniteGame = () => {
           incorrectGuessColor={colors[2]}
           body={prevGuesses}
           includeFooter={false}
+        />
+      }
+      {/* View & Share Results */}
+      {(colors !== undefined) &&
+        <ShareInfinite
+          isOpen={gameOver}
+          id={chosenAlbumID}
+          win={win}
+          numGuesses={prevGuesses.length}
+          guesses={prevGuesses}
+          album={albumInfo}
+          colorblindMode={settings ? settings.colorblindMode : false}
+          winColor={colors[0]}
+          loseColor={colors[2]}
         />
       }
       {/* WIN/LOSS TOAST NOTIFICATIONS */}
