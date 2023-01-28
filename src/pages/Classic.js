@@ -250,23 +250,15 @@ const ClassicGame = () => {
           } else {
             // add the game data to the games table in the DB.
             instance.post("http://localhost:5000/games", data).then((response) => {
-              if(response.data.success) {
-                if(win)
-                  console.log("YOU WON!");
-                else
-                  console.log("YOU LOST.");
-                console.log("Game data saved into VINYLE_DB.");
-                setShowToast(true);
-                setTimeout(() => {
-                  getStats(undefined, !(username === undefined), username, "Classic", setStats, onOpen);
-                }, 1500);
-              }
+              if(win)
+                console.log("YOU WON!");
               else
-              {
-                console.log("Game data failed to save. Error:");
-                if(response.data.error)
-                  console.log(response.data.error);
-              }
+                console.log("YOU LOST.");
+              console.log("Game data saved into VINYLE_DB.");
+              setShowToast(true);
+              setTimeout(() => {
+                getStats(undefined, !(username === undefined), username, "Classic", setStats, onOpen);
+              }, 1500);
             }).catch(function(error) {
               console.log("Game data failed to save. Error:");
               console.log(error.response.data);
@@ -351,7 +343,8 @@ const ClassicGame = () => {
           date={MM_DD_YYYY}
           isOpen={gameOver}
           win={win}
-          guesses={prevGuesses.length}
+          numGuesses={prevGuesses.length}
+          guesses={prevGuesses}
           album={albumInfo}
           colorblindMode={settings ? settings.colorblindMode : false}
           winColor={colors[0]}

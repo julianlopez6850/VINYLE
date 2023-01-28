@@ -16,6 +16,7 @@ import {
   Progress,
   Divider,
   Skeleton,
+  useToast,
 } from '@chakra-ui/react'
 import Select from "react-select";
 import Countdown from '../helpers/countdown';
@@ -239,9 +240,15 @@ export const GuessRow = (props) => {
 export const ClassicResults = (props) => {
 
   const [gameData, setGameData] = useState();
+  const [numDays, setNumDays] = useState();
+
+  const toast = useToast();
 
   // GET the Current Day's Classic VINYLE Game Stats to Compare With Other Users
   useEffect(() => {
+    instance.get("http://localhost:5000/daily/numDays").then((response) => {
+      setNumDays(response.data.days);
+    })
     instance.get(`http://localhost:5000/daily?date=${props.date}`).then((response) => {
       setGameData(response.data.game);
     })
@@ -250,6 +257,38 @@ export const ClassicResults = (props) => {
   // Copy Share Text to Clipboard...
   const doShare = () => {
     // implement doShare code...
+    var string = ""
+    props.guesses.forEach((guess) => {
+      if(guess.guessCorrectness.album)
+        string += '\t🟩'
+      else
+        string += '\t🟥'
+      if(guess.guessCorrectness.artist === "correct")
+        string += '🟩'
+      else if(guess.guessCorrectness.artist === "partial")
+        string += '🟨'
+      else
+        string += '🟥'
+      if(guess.guessCorrectness.releaseYear === "correct")
+        string += '🟩'
+      else if(guess.guessCorrectness.releaseYear === "decade")
+        string += '🟨'
+      else
+        string += '🟥'
+      string += "\n"
+    })
+    navigator.clipboard.writeText(`Classic VINYLE #${numDays} : ${props.win ? props.numGuesses : 'X'}/6\n${string}[INSERT URL HERE]`)
+
+    if(!toast.isActive('')) {
+      toast({
+        position: 'top',
+        id: '',
+        title: 'Results copied to clipboard',
+        status: 'info',
+        duration: 1000,
+        isClosable: false
+      })
+    }
   }
 
   const navigate = useNavigate();
@@ -261,7 +300,7 @@ export const ClassicResults = (props) => {
           {(props.win) ? "Congratulations!" : "Not This Time..."}
         </Text>
         <Text>
-          {(props.win) ? `You won today's Classic VINYLE in ${props.guesses} ${props.guesses === 1 ? 'guess' : 'guesses'}!` : "Come back tommorrow for another shot at it!"}
+          {(props.win) ? `You won today's Classic VINYLE in ${props.numGuesses} ${props.numGuesses === 1 ? 'guess' : 'guesses'}!` : "Come back tommorrow for another shot at it!"}
         </Text>
 
         <Divider border="1px solid" borderColor="white" w="250px" marginBlock="10px"/>
