@@ -34,6 +34,7 @@ const ClassicGame = () => {
   const [albumInfo, setAlbumInfo] = useState();
   const [settings, setSettings] = useState();
   const [colors, setColors] = useState();
+  const [isOpenShareResults, setIsOpenShareResults] = useState(false);
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -244,6 +245,9 @@ const ClassicGame = () => {
 
         // if this game has not already been saved to the DB, save it.
         instance.get(`http://localhost:5000/games/user/hasGame?username=${data.username}&mode=${data.mode}&date=${data.date}`).then((response) => {
+          setTimeout(() => {
+            setIsOpenShareResults(true);
+          }, 500);
           if(response.data.value) {
             console.log("The data from this game has already been saved into VINYLE_DB.");
             return;
@@ -258,7 +262,7 @@ const ClassicGame = () => {
               setShowToast(true);
               setTimeout(() => {
                 getStats(undefined, !(username === undefined), username, "Classic", setStats, onOpen);
-              }, 1500);
+              }, 500);
             }).catch(function(error) {
               console.log("Game data failed to save. Error:");
               console.log(error.response.data);
@@ -341,7 +345,7 @@ const ClassicGame = () => {
       {(colors !== undefined) &&
         <ClassicResults
           date={MM_DD_YYYY}
-          isOpen={gameOver}
+          isOpen={gameOver && isOpenShareResults}
           win={win}
           numGuesses={prevGuesses.length}
           guesses={prevGuesses}
