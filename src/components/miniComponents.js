@@ -308,7 +308,12 @@ export const ClassicResults = (props) => {
         {(gameData) && (
           <VStack>
             <Text whiteSpace="pre-line">
-                {`You are the ${gameData.numPlayed}${(gameData.numPlayed % 10 === 1) ? `st` : (gameData.numPlayed % 10 === 2) ? `nd` : (gameData.numPlayed % 10 === 3) ? `rd` : `th`} to play today's Classic VINYLE
+                {`You are the ${gameData.numPlayed}${
+                  (gameData.numPlayed % 10 === 1 && gameData.numPlayed % 100 !== 11) ? `st` : 
+                  (gameData.numPlayed % 10 === 2 && gameData.numPlayed % 100 !== 12) ? `nd` : 
+                  (gameData.numPlayed % 10 === 3 && gameData.numPlayed % 100 !== 13) ? `rd` : 
+                  `th`
+                } to play today's Classic VINYLE
                 Here is how you stacked up against all players:`}
             </Text>
             <VStack w="350px" h="200px" mt="10px" display="flex" spacing="5px">
