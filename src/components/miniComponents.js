@@ -241,6 +241,7 @@ export const ClassicResults = (props) => {
 
   const [gameData, setGameData] = useState();
   const [numDays, setNumDays] = useState();
+  const [nthPlayed, setNthPlayed] = useState();
 
   const toast = useToast();
 
@@ -251,6 +252,12 @@ export const ClassicResults = (props) => {
     })
     instance.get(`http://localhost:5000/daily?date=${props.date}`).then((response) => {
       setGameData(response.data.game);
+    if(localStorage.getItem(response.data.game.date.slice(0,10) + "nthPlayed")) {
+      setNthPlayed(localStorage.getItem(response.data.game.date.slice(0,10) + "nthPlayed"));
+    } else {
+      setNthPlayed(response.data.game.numPlayed);
+      localStorage.setItem(response.data.game.date.slice(0,10) + "nthPlayed", response.data.game.numPlayed);
+    }
     })
   }, [props.isOpen])
 
@@ -308,10 +315,10 @@ export const ClassicResults = (props) => {
         {(gameData) && (
           <VStack>
             <Text whiteSpace="pre-line">
-                {`You are the ${gameData.numPlayed}${
-                  (gameData.numPlayed % 10 === 1 && gameData.numPlayed % 100 !== 11) ? `st` : 
-                  (gameData.numPlayed % 10 === 2 && gameData.numPlayed % 100 !== 12) ? `nd` : 
-                  (gameData.numPlayed % 10 === 3 && gameData.numPlayed % 100 !== 13) ? `rd` : 
+                {`You are the ${nthPlayed}${
+                  (nthPlayed % 10 === 1 && nthPlayed % 100 !== 11) ? `st` : 
+                  (nthPlayed % 10 === 2 && nthPlayed % 100 !== 12) ? `nd` : 
+                  (nthPlayed % 10 === 3 && nthPlayed % 100 !== 13) ? `rd` : 
                   `th`
                 } to play today's Classic VINYLE
                 Here is how you stacked up against all players:`}
