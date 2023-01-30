@@ -130,62 +130,6 @@ export const AlbumSelect = (props) => {
   )
 }
 
-export const MainTable = (props) => {
-
-  // styling for column headers
-  const widths=["60px", "500px", "400px", "120px"]
-  const columnHeaders = props.columnHeaders.map((header, index) => {
-    return { text: header, width: widths[index] }
-  })
-
-  const correct = props.correctGuessColor;
-  const incorrect = props.incorrectGuessColor;
-  const partial = props.partialGuessColor;
-
-  return (
-    <TableContainer width={1080} m="30px 0px 50px 0px" overflowX="hidden">
-      <Table variant='unstyled' size='md'>
-        <Thead>
-          <Tr>
-            {columnHeaders.map((header, index) => {
-              return <Th key={index} p="0" textAlign="center" color='white' w={header.width}>{header.text}</Th>
-            })}
-          </Tr>
-        </Thead>
-        {props.body.slice(0).reverse().map((item, index) =>
-          <Tbody key={index}>
-            <Tr borderBlock="20px solid var(--background-color)">
-              <Td borderEnd="8px solid var(--background-color)" bgColor="var(--gray-600)" textAlign="center">
-                {props.body.length - index}
-              </Td>
-              <Td borderEnd="8px solid var(--background-color)" p="0" pl="25px" bgColor={(item.guessCorrectness.album) ? correct : incorrect}>
-                {(item.albumName) || <CloseIcon/>}
-              </Td>
-              <Td borderEnd="8px solid var(--background-color)" p="0" pl="25px" bgColor={(item.guessCorrectness.artist) ? (item.guessCorrectness.artist === "correct") ? correct : partial : incorrect}>
-                {(item.artists) ? 
-                  item.artists.map((artist, index) => `${artist}${(index !== item.artists.length - 1) ? `, ` : ``}`) : 
-                  <CloseIcon/>
-                }
-              </Td>
-              <Td bgColor={(item.guessCorrectness.releaseYear) ? (item.guessCorrectness.releaseYear === "correct") ? correct : partial : incorrect} textAlign="center">
-                {(item.releaseYear) ? 
-                  ((item.guessCorrectness.releaseYear === "correct") ? 
-                    <></> : 
-                    ((item.guessCorrectness.releaseYearDirection === "later") ? 
-                      <ArrowUpIcon/> : 
-                      <ArrowDownIcon/>)) : 
-                  <CloseIcon/>
-                }
-                {item.releaseYear}
-              </Td>
-            </Tr>
-          </Tbody>
-        )}
-      </Table>
-    </TableContainer>
-  )
-}
-
 export const WinLossToast = (props) => {
   return (
     (props.showToast) &&
@@ -218,17 +162,62 @@ export const GuessRow = (props) => {
     <Box width={props.w} height={props.h}>
       <HStack>
         <Box width={props.albumW} height={props.h} bgColor={props.albumBGC}>
-          <Text pt="6px" pl="15px">
+          <Text pt="6px" pl="15px" align="left">
             {props.album}
           </Text>
         </Box>
         <Box width={props.artistW} height={props.h} bgColor={props.artistBGC}>
-          <Text pt="6px" pl="15px">
+          <Text pt="6px" pl="15px" align="left">
             {props.artist}
           </Text>
         </Box>
         <Box width={props.releaseW} height={props.h} bgColor={props.releaseBGC}>
           <Text align="center"  pt="6px">
+            {props.releaseDir}{props.release}
+          </Text>
+        </Box>
+      </HStack>
+    </Box>
+  )
+}
+
+export const MainTableHeader = (props) => {
+  return (
+      props.columnHeaders &&
+        <Table variant='unstyled' size='md' mt={props.mt} mb={props.mb}>
+          {props.columnHeaders.map((header, index) => {
+            return <Th key={index} p="0" textAlign="center" color='white' w={header.width}>{header.text}</Th>
+          })}
+        </Table>
+  )
+}
+
+export const MainGuessRow = (props) => {
+  return (
+    <Box width={props.w} height={props.h} marginBlock={props.mBlock}>
+      <HStack spacing="0px">
+        {props.guessNum &&
+          <Box width={props.guessW} height={props.h} borderLeftRadius={props.borderRadius} bgColor="var(--gray-600)" textAlign="center">
+            <Text pt={props.pt}>
+              {props.guessNum}
+            </Text>
+          </Box>
+        }
+        <Box w="1px" h={props.h} background="white"/>
+        <Box width={props.albumW} height={props.h} bgColor={props.albumBGC}>
+          <Text pt={props.pt} pl={props.pl} align="left">
+            {props.album}
+          </Text>
+        </Box>
+        <Box w="1px" h={props.h} background="white"/>
+        <Box width={props.artistW} height={props.h} bgColor={props.artistBGC}>
+          <Text pt={props.pt} pl={props.pl} align="left">
+            {props.artist}
+          </Text>
+        </Box>
+        <Box w="1px" h={props.h} background="white"/>
+        <Box width={props.releaseW} height={props.h} borderRightRadius={props.borderRadius} bgColor={props.releaseBGC}>
+          <Text align="center"  pt={props.pt}>
             {props.releaseDir}{props.release}
           </Text>
         </Box>

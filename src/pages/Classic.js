@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import { MainButton, AlbumSelect, MainTable, WinLossToast, ClassicResults } from "../components/miniComponents"
+import { MainButton, AlbumSelect, MainTableHeader, MainGuessRow, WinLossToast, ClassicResults } from "../components/miniComponents"
 import { instance } from "../helpers/axiosInstance";
 import Statistics, { getStats } from "../components/Statistics"
 
@@ -11,7 +11,9 @@ import {
   useDisclosure,
   VStack,
   Text,
+  Box,
 } from "@chakra-ui/react";
+import { ArrowDownIcon, ArrowUpIcon, CloseIcon } from "@chakra-ui/icons";
 
 const correctColor = "var(--correct)";
 const incorrectColor = "var(--incorrect)";
@@ -332,14 +334,74 @@ const ClassicGame = () => {
       <br />
       {/* Guess Table */}
       {(prevGuesses[0] !== undefined && colors !== undefined && chosenAlbumID) && 
-        <MainTable
-          columnHeaders={["Guess #", "Album", "Artist(s)", "Release Year"]}
-          correctGuessColor={colors[0]}
-          partialGuessColor={colors[1]}
-          incorrectGuessColor={colors[2]}
-          body={prevGuesses}
-          includeFooter={false}
-        />
+        <Box mb="50px">
+          <MainTableHeader
+            w="1083px"
+            mt="30px"
+            mb="-10px"
+            columnHeaders={[
+              {text: "Guess #", width: "60px"}, 
+              {text: "Album", width: "500px"}, 
+              {text: "Artist(s)", width: "400px"}, 
+              {text: "Release Year", width: "120px"}
+            ]}
+          />
+          {prevGuesses.slice(0).reverse().map((guess, index) => 
+            <MainGuessRow
+              w="1083px"
+              h="50px"
+              pt="12px"
+              pl="25px"
+              mBlock="20px"
+              borderRadius="10px"
+              guessW="60px"
+              albumW="500px"
+              artistW="400px"
+              releaseW="120px"
+              columnHeaders={[
+                {text: "Guess #", width: "60px"}, 
+                {text: "Album", width: "500px"}, 
+                {text: "Artist(s)", width: "400px"}, 
+                {text: "Release Year", width: "120px"}
+              ]}
+              albumBGC={guess.guessCorrectness.album ? 
+                colors[0] : 
+                colors[2]
+              }
+              artistBGC={guess.guessCorrectness.artist === "correct" ? 
+                colors[0] : 
+                guess.guessCorrectness.artist === "partial" ? 
+                  colors[1] : 
+                  colors[2]
+              }
+              releaseBGC={guess.guessCorrectness.releaseYear === "correct" ? 
+                colors[0] : 
+                guess.guessCorrectness.releaseYear === "decade" ? 
+                  colors[1] : 
+                  colors[2]
+              }
+              guessNum={prevGuesses.length - index}
+              album={guess.albumName ? 
+                guess.albumName : 
+                <CloseIcon/>
+              }
+              artist={guess.artists ? 
+                guess.artists.map((artist, index) => `${artist}${(index !== guess.artists.length - 1) ? `, ` : ``}`) : 
+                <CloseIcon/>
+              }
+              release={guess.releaseYear ? 
+                guess.releaseYear : 
+                <CloseIcon/>
+              }
+              releaseDir={guess.guessCorrectness.releaseYearDirection ? 
+                guess.guessCorrectness.releaseYearDirection === "earlier" ? 
+                  <ArrowDownIcon/> : 
+                    <ArrowUpIcon/> : 
+                    undefined
+              }
+            />
+          )}
+        </Box>
       }
       {/* View & Share Results */}
       {(colors !== undefined) &&
