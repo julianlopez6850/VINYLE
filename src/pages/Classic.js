@@ -344,6 +344,7 @@ const ClassicGame = () => {
       {/* View & Share Results */}
       {(colors !== undefined) &&
         <ClassicResults
+          username={username}
           date={MM_DD_YYYY}
           isOpen={gameOver && isOpenShareResults}
           win={win}

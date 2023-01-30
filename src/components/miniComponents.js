@@ -252,11 +252,11 @@ export const ClassicResults = (props) => {
     })
     instance.get(`http://localhost:5000/daily?date=${props.date}`).then((response) => {
       setGameData(response.data.game);
-    if(localStorage.getItem(response.data.game.date.slice(0,10) + "nthPlayed")) {
-      setNthPlayed(localStorage.getItem(response.data.game.date.slice(0,10) + "nthPlayed"));
+    if(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed")) {
+      setNthPlayed(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed"));
     } else {
       setNthPlayed(response.data.game.numPlayed);
-      localStorage.setItem(response.data.game.date.slice(0,10) + "nthPlayed", response.data.game.numPlayed);
+      localStorage.setItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed", response.data.game.numPlayed);
     }
     })
   }, [props.isOpen])
