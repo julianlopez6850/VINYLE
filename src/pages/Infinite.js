@@ -26,6 +26,7 @@ const InfiniteGame = () => {
   const [chosenAlbumID, setChosenAlbumID] = useState((location.pathname.includes("/shared")) ? location.pathname.slice(8) : Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
 
   const [username, setUsername] = useState("");
+  const [art, setArt] = useState();
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
   const [numGuesses, setNumGuesses] = useState(0);
@@ -79,6 +80,14 @@ const InfiniteGame = () => {
       }
     }
   }, [settings])
+
+  useEffect(() => {
+    if(chosenAlbumID) {
+      axios.get(`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`).then((response) => {
+        setArt(response.data.artURL);
+      })
+    }
+  }, [chosenAlbumID, numGuesses])
 
   // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
@@ -237,7 +246,7 @@ const InfiniteGame = () => {
         GUESS THE ALBUM FROM ITS ART
       </div>
       <div className="albumArt" >
-        <img src={`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`} />
+        <img src={art} />
       </div>
       {(gameOver && albumInfo) && <VStack spacing="0" fontSize="20" mt="10px">
         <Text fontWeight="bold">

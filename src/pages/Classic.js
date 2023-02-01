@@ -21,6 +21,7 @@ const partialColor = "var(--partial)";
 
 const ClassicGame = () => {
   const [chosenAlbumID, setChosenAlbumID] = useState();
+  const [art, setArt] = useState();
   const [username, setUsername] = useState("");
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
@@ -125,6 +126,14 @@ const ClassicGame = () => {
         console.log({ error: "An error occurred fetching today's daily classic game." });
     })
   }, [MM_DD_YYYY, username])
+
+  useEffect(() => {
+    if(chosenAlbumID) {
+      axios.get(`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`).then((response) => {
+        setArt(response.data.artURL);
+      })
+    }
+  }, [chosenAlbumID, numGuesses])
 
   // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
@@ -296,7 +305,7 @@ const ClassicGame = () => {
         GUESS THE ALBUM FROM ITS ART
       </div>
       <div className="albumArt" >
-        <img src={(chosenAlbumID) && `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`} />
+        <img src={art} />
       </div>
       {(gameOver && albumInfo) && <VStack spacing="0" fontSize="20" mt="10px">
         <Text fontWeight="bold">
