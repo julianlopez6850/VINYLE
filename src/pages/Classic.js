@@ -36,6 +36,7 @@ const ClassicGame = () => {
   const [showToast, setShowToast] = useState(false);
   const [albumInfo, setAlbumInfo] = useState();
   const [settings, setSettings] = useState();
+  const [rotation, setRotation] = useState();
   const [colors, setColors] = useState();
   const [isOpenShareResults, setIsOpenShareResults] = useState(false);
 
@@ -84,6 +85,9 @@ const ClassicGame = () => {
       } else {
         setColors([correctColor, partialColor, incorrectColor])
       }
+      settings.difficulty === 2 ? 
+        setRotation(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) % 2 === 0 ? 'rotate(90deg)' : 'rotate(-90deg)') : 
+        setRotation('rotate(0deg)')
     }
   }, [settings])
 
@@ -305,7 +309,13 @@ const ClassicGame = () => {
         GUESS THE ALBUM FROM ITS ART
       </div>
       <div className="albumArt" >
-        <img src={art} />
+        <img 
+          src={art}
+          style={{
+            filter: (settings && (settings.difficulty > 0) ? 'grayscale(100%) ' : '') + (settings && (settings.difficulty === 2) ? 'invert(1)' : ''),
+            transform: rotation
+          }}
+        />
       </div>
       {(gameOver && albumInfo) && <VStack spacing="0" fontSize="20" mt="10px">
         <Text fontWeight="bold">

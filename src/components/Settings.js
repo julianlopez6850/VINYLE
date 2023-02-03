@@ -166,7 +166,7 @@ const Settings = (props) => {
                     }
                     key={index}
                   >
-                    <Tab isDisabled bg="none" onMouseDown={() => setDifficulty({ label: item.label, value: item.value, color: item.color })}>
+                    <Tab bg="none" onMouseDown={() => setDifficulty({ label: item.label, value: item.value, color: item.color })}>
                       <Text>
                         {item.label}
                       </Text>
@@ -175,6 +175,9 @@ const Settings = (props) => {
                 )}
               </TabList>
             </Tabs>
+            <Text fontSize="12px" _hover={{cursor:"default"}}>
+              Note: Your statistics may be negatively impacted by increasing difficulty.
+            </Text>
 
             <Divider marginBlock="1rem !important" />
 
