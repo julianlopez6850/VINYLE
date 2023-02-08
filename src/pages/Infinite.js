@@ -26,7 +26,6 @@ const InfiniteGame = () => {
   const [chosenAlbumID, setChosenAlbumID] = useState((location.pathname.includes("/shared")) ? location.pathname.slice(8) : Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
 
   const [username, setUsername] = useState("");
-  const [art, setArt] = useState();
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
   const [numGuesses, setNumGuesses] = useState(0);
@@ -84,14 +83,6 @@ const InfiniteGame = () => {
         setRotation('rotate(0deg)')
     }
   }, [settings])
-
-  useEffect(() => {
-    if(chosenAlbumID) {
-      axios.get(`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`).then((response) => {
-        setArt(response.data.artURL);
-      })
-    }
-  }, [chosenAlbumID, numGuesses])
 
   // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
@@ -225,8 +216,6 @@ const InfiniteGame = () => {
       saveGame().catch((err) => {
         console.log(err);
       })
-
-      setNumGuesses(6);
     }
   }, [gameOver])
 
@@ -252,7 +241,7 @@ const InfiniteGame = () => {
       </div>
       <div className="albumArt" >
         <img 
-          src={art}
+          src={(chosenAlbumID) && (gameOver) ? `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=6` : `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`}
           style={{
             filter: (settings && (settings.difficulty > 0) ? 'grayscale(100%) ' : '') + (settings && (settings.difficulty === 2) ? 'invert(1)' : ''),
             transform: rotation

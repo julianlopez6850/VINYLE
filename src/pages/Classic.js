@@ -21,7 +21,6 @@ const partialColor = "var(--partial)";
 
 const ClassicGame = () => {
   const [chosenAlbumID, setChosenAlbumID] = useState();
-  const [art, setArt] = useState();
   const [username, setUsername] = useState("");
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
@@ -130,14 +129,6 @@ const ClassicGame = () => {
         console.log({ error: "An error occurred fetching today's daily classic game." });
     })
   }, [MM_DD_YYYY, username])
-
-  useEffect(() => {
-    if(chosenAlbumID) {
-      axios.get(`http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`).then((response) => {
-        setArt(response.data.artURL);
-      })
-    }
-  }, [chosenAlbumID, numGuesses])
 
   // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
@@ -295,8 +286,6 @@ const ClassicGame = () => {
       saveGame().catch((err) => {
         console.log(err);
       })
-
-      setNumGuesses(6);
     }
   }, [gameOver, chosenAlbumID])
 
@@ -310,7 +299,7 @@ const ClassicGame = () => {
       </div>
       <div className="albumArt" >
         <img 
-          src={art}
+          src={(chosenAlbumID) && (gameOver) ? `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=6` : `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`}
           style={{
             filter: (settings && (settings.difficulty > 0) ? 'grayscale(100%) ' : '') + (settings && (settings.difficulty === 2) ? 'invert(1)' : ''),
             transform: rotation
