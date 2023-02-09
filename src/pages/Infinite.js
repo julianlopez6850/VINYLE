@@ -241,7 +241,7 @@ const InfiniteGame = () => {
       </div>
       <div className="albumArt" >
         <img 
-          src={(chosenAlbumID) && (gameOver) ? `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=6` : `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`}
+          src={(chosenAlbumID) && ((gameOver) ? `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=6` : `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`)}
           style={{
             filter: (settings && (settings.difficulty > 0) ? 'grayscale(100%) ' : '') + (settings && (settings.difficulty === 2) ? 'invert(1)' : ''),
             transform: rotation
