@@ -53,7 +53,7 @@ const Countdown = (props) => {
         d.setHours(24, 0, 0);
         console.log(d);
         setTarget(new Date(Date.parse(d)));
-        navigate("/")
+        setTimeout(navigate("/"), 1000);
       }
     }
   }, [hours, mins, secs])
