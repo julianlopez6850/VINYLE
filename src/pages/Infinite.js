@@ -192,15 +192,8 @@ const InfiniteGame = () => {
         }
 
         // add the game data to the games table in the DB.
-        instance.post("http://localhost:5000/games", data).then((response) => {
-          if(response.data.success)
-            console.log("Game data saved into VINYLE_DB.")
-          else
-          {
-            console.log("Game data failed to save. Error:");
-            if(response.data.error)
-              console.log(response.data.error);
-          }
+        instance.post("http://localhost:5000/games", data).then(() => {
+          console.log("Game data saved into VINYLE_DB.")
         }).catch(function(error) {
           console.log("Game data failed to save. Error:");
           console.log(error.response.data);
@@ -214,6 +207,7 @@ const InfiniteGame = () => {
     }
   }, [gameOver])
 
+  // this function is called when the user presses the NEW GAME button.
   const restartGame = () => {
     setChosenAlbumID(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
     setGuess();
@@ -371,14 +365,13 @@ const InfiniteGame = () => {
         numGuesses={numGuesses}
       />
       {/* NEW GAME Button */}
-      {
-        (gameOver) &&
-          <MainButton
-            text={'NEW GAME'}
-            onClick={() => {restartGame()}}
-            m='0px 0px 50px 0px'
-            w="fit-content"
-          />
+      {(gameOver) &&
+        <MainButton
+          text={'NEW GAME'}
+          onClick={() => {restartGame()}}
+          m='0px 0px 50px 0px'
+          w="fit-content"
+        />
       }
     </div>
   );

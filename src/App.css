@@ -1,13 +1,13 @@
 :root {
   --background-color: #16161a;
   --navbar-color: #111111;
+  --navbar-color-2: #808080;
   --correct: #38a169;
   --partial: #a7a747;
   --incorrect: #e53e3e;
   --colorblind-correct: #3182ce;
   --colorblind-partial: #fb9900;
   --colorblind-incorrect: #ca0000;
-  --navbar-color-2: #808080;
   --gray-700: #2d3748;
   --gray-600: #4a5568;
   --select-hovered: #666666;

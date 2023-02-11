@@ -77,8 +77,7 @@ function Navbar() {
   // this function will handle logging out the user.
   const logout = async (e) => {
     e.preventDefault();
-    if(loggedIn)
-    {
+    if(loggedIn) {
       await instance.post('http://localhost:5000/auth/logout').then((response) => {
         console.log("User logged out.");
         setLoggedIn(false);
@@ -143,6 +142,7 @@ function Navbar() {
         </div>
 
         <div className="content-middle">
+          {/* if gamemode is not classic, VINYLE page title becomes a link to the main page.*/}
           <Button
             padding={"inherit"}
             fontSize={48}
@@ -151,19 +151,16 @@ function Navbar() {
             _hover={{ background: "transparent", color: "blue.500" }}
             _active={{ background: "transparent" }}
           >
-            {
-              // if gamemode is not classic, VINYLE page title becomes a link to the main page.
-              <ConditionalLink
-                to="/"
-                condition={(location.pathname.includes("/classic") && !(location.pathname.includes("/history")))}
-                style={{
-                  height:"inherit",
-                  padding:"0px 10px 0px 10px"
-                }}
-              >
-                VINYLE
-              </ConditionalLink>
-            }
+            <ConditionalLink
+              to="/"
+              condition={(location.pathname.includes("/classic") && !(location.pathname.includes("/history")))}
+              style={{
+                height:"inherit",
+                padding:"0px 10px 0px 10px"
+              }}
+            >
+              VINYLE
+            </ConditionalLink>
           </Button>
         </div>
 

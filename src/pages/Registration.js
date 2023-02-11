@@ -37,9 +37,7 @@ const Registration = () => {
 
   useEffect(() => {
     authInstance.get("http://localhost:5000/auth/profile").then((response) => {
-      if(response.data.success) {
-        navigate('/');
-      }
+      navigate('/');
     }).catch(function (error) { // catch any errors.
       if (error.response) {
         console.log(error.response.data);
@@ -54,8 +52,7 @@ const Registration = () => {
   // this function will run when the username input is updated and check if the input is a valid username.
   const trySetUsername = (input) => {
     // check if the input is within 3 and 15 characters.
-    if(input.length < 3 || input.length > 15)
-    {
+    if(input.length < 3 || input.length > 15) {
       setUsername("");
       setUsernameError("Username must be between 3 and 15 characters.");
       return;
@@ -64,15 +61,10 @@ const Registration = () => {
     }
     // check if the username is available.
     axios.get(`http://localhost:5000/auth/isUsernameAvailable?username=${input}`).then(response => {
-      console.log(response);
-      console.log(response.data.result);
-      if (!response.data.result)
-      {
+      if (!response.data.result) {
         setUsername("");
         setUsernameError("Username is already taken.");
-      }
-      else
-      {
+      } else {
         setUsername(input);
         setUsernameError("");
       }
@@ -273,29 +265,28 @@ const Registration = () => {
       <Link to="/login" style={{textDecoration:"underline"}} onClick={() => {toast.close(' ')}}> Already have an account? Login here! </Link>
 
       {/* REGISTRATION TOAST NOTIFICATIONS */}
-      {
-        (request) &&
-          ((error) ?
-            ((!toast.isActive(' ')) &&
-              toast({
-                position: 'top',
-                id: ' ',
-                title: 'ERROR',
-                description: errorMessage,
-                status: 'error',
-                duration: 5000,
-                isClosable: false
-              })) :
-            ((!toast.isActive('')) &&
-              toast({
-                position: 'top',
-                id: '',
-                title: 'SUCCESS',
-                description: `Welcome to VINYLE, ${username}.`,
-                status: 'success',
-                duration: 2000,
-                isClosable: false
-              })))
+      {(request) &&
+        ((error) ?
+          ((!toast.isActive(' ')) &&
+            toast({
+              position: 'top',
+              id: ' ',
+              title: 'ERROR',
+              description: errorMessage,
+              status: 'error',
+              duration: 5000,
+              isClosable: false
+            })) :
+          ((!toast.isActive('')) &&
+            toast({
+              position: 'top',
+              id: '',
+              title: 'SUCCESS',
+              description: `Welcome to VINYLE, ${username}.`,
+              status: 'success',
+              duration: 2000,
+              isClosable: false
+            })))
       }
     </div>
   );

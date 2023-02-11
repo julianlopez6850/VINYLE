@@ -29,9 +29,7 @@ const Login = () => {
 
   useEffect(() => {
     authInstance.get("http://localhost:5000/auth/profile").then((response) => {
-      if(response.data.success) {
-        navigate('/');
-      }
+      navigate('/');
     }).catch(function (error) { // catch any errors.
       if (error.response) {
         console.log(error.response.data);
@@ -169,29 +167,28 @@ const Login = () => {
 
       
       {/* LOGIN TOAST NOTIFICATIONS */}
-      {
-        (request) &&
-          ((error) ?
-            ((!toast.isActive(' ')) &&
-              toast({
-                position: 'top',
-                id: ' ',
-                title: 'ERROR',
-                description: errorMessage,
-                status: 'error',
-                duration: 5000,
-                isClosable: false
-              })) :
-            ((!toast.isActive('')) &&
-              toast({
-                position: 'top',
-                id: '',
-                title: 'SUCCESS',
-                description: `You are now logged in as ${username}.`,
-                status: 'success',
-                duration: 2000,
-                isClosable: false
-              })))
+      {(request) &&
+        ((error) ?
+          ((!toast.isActive(' ')) &&
+            toast({
+              position: 'top',
+              id: ' ',
+              title: 'ERROR',
+              description: errorMessage,
+              status: 'error',
+              duration: 5000,
+              isClosable: false
+            })) :
+          ((!toast.isActive('')) &&
+            toast({
+              position: 'top',
+              id: '',
+              title: 'SUCCESS',
+              description: `You are now logged in as ${username}.`,
+              status: 'success',
+              duration: 2000,
+              isClosable: false
+            })))
       }
     </div>
   );

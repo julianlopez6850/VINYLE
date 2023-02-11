@@ -252,8 +252,6 @@ const ClassicGame = () => {
           guesses: prevGuesses
         }
 
-        console.log({gameOver: gameOver, chosenAlbumID: chosenAlbumID})
-
         // if this game has not already been saved to the DB, save it.
         instance.get(`http://localhost:5000/games/user/hasGame?username=${data.username}&mode=${data.mode}&date=${data.date}`).then((response) => {
           setTimeout(() => {
@@ -264,7 +262,7 @@ const ClassicGame = () => {
             return;
           } else {
             // add the game data to the games table in the DB.
-            instance.post("http://localhost:5000/games", data).then((response) => {
+            instance.post("http://localhost:5000/games", data).then(() => {
               if(win)
                 console.log("YOU WON!");
               else

@@ -20,8 +20,7 @@ import {
 export const getStats = async (e, loggedIn, username, mode, setStats, onOpen) => {
   if(e)
     e.preventDefault();
-  if(loggedIn)
-  {
+  if(loggedIn) {
     await instance.get(`http://localhost:5000/games/user/stats?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
       if(response.data.game) {
         const data = response.data.game;
