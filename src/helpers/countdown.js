@@ -19,7 +19,6 @@ const Countdown = (props) => {
   }, [])
 
   useEffect(() => {
-    console.log(target)
     if(target) {
       const interval = setInterval(() => {
         const now = new Date();

@@ -152,11 +152,6 @@ const ClassicGame = () => {
     if(storage) {
       setStorage(false);
     } else if (numGuesses > 0 && !gameOver) {
-      console.log("GUESS " + numGuesses + ": ");
-      console.log(guess);
-      console.log("PREVIOUS GUESSES:");
-      console.log(prevGuesses);
-
       // if guess is not undefined (if user made a guess)...
       if (guess) {
         const guessID = guess.value
