@@ -1,4 +1,4 @@
-import { Box, HStack, VStack } from "@chakra-ui/react";
+import { Box, HStack, Button } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,6 +7,7 @@ const Countdown = (props) => {
   const [mins, setMins] = useState();
   const [secs, setSecs] = useState();
   const [target, setTarget] = useState();
+  const [playNext, setPlayNext] = useState(false);
 
   const navigate = useNavigate();
 
@@ -49,14 +50,18 @@ const Countdown = (props) => {
   useEffect(() => {
     if(hours <= 0 && mins <= 0 && secs <= 0) {
       if(props.isOpen) {
-        var d = new Date();
-        d.setHours(24, 0, 0);
-        console.log(d);
-        setTarget(new Date(Date.parse(d)));
-        setTimeout(navigate("/"), 1000);
+        setPlayNext(true);
       }
     }
   }, [hours, mins, secs])
+
+  const doPlayNext = () => {
+    var d = new Date();
+    d.setHours(24, 0, 0);
+    console.log(d);
+    setTarget(new Date(Date.parse(d)));
+    setTimeout(navigate("/"), 1000);
+  }
 
   return(
     <Box width="200px">
@@ -67,6 +72,22 @@ const Countdown = (props) => {
           <span>:</span>
           <span>{(secs && secs < 10)  ? "0" : ""}{secs ? secs : "00"}</span>
       </HStack>
+      {(playNext) && 
+        <Button
+          w="175px"
+          m="5px 0px 10px 0px"
+          color="white"
+          bgColor="gray.700"
+          border="1px solid black"
+          _hover={{
+            border:"1px solid var(--gray-600)"
+          }}
+          _active={{}}
+          onClick = {() => {doPlayNext()}}
+        >
+          Play New Classic
+        </Button>
+      }
     </Box>
   )
 }
