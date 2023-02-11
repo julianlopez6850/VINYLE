@@ -19,9 +19,12 @@ import { ArrowUpIcon, ArrowDownIcon, MinusIcon } from '@chakra-ui/icons'
 import { instance } from '../helpers/axiosInstance'
 import { GuessRow } from './miniComponents'
 
-import fullArt from "../assets/htp_examples/VINYLE_full.png"
-import firstGuessArt from "../assets/htp_examples/VINYLE_firstGuess.png"
-import lastGuessArt from "../assets/htp_examples/VINYLE_lastGuess.png"
+import FullArt from "../assets/htp_examples/VINYLE_full.png"
+import FirstGuessArt from "../assets/htp_examples/VINYLE_firstGuess.png"
+import LastGuessArt from "../assets/htp_examples/VINYLE_lastGuess.png"
+import ColorblindFullArt from "../assets/htp_examples/VINYLE_full_colorblind.png"
+import ColorblindFirstGuessArt from "../assets/htp_examples/VINYLE_firstGuess_colorblind.png"
+import ColorblindLastGuessArt from "../assets/htp_examples/VINYLE_lastGuess_colorblind.png"
 
 export const openHTP = async (e, onOpen) => {
   if(e)
@@ -34,6 +37,7 @@ const HowToPlay = (props) => {
 
   const [settings, setSettings] = useState();
   const [colors, setColors] = useState({colors: ["var(--correct)", "var(--partial)", "var(--incorrect)"], labels: ["Green", "Yellow", "Red"]});
+  const [exampleImage, setExampleImage] = useState({ full: FullArt, first: FirstGuessArt, last: LastGuessArt })
 
   useEffect(() => {
     instance.get("http://localhost:5000/auth/profile").then((response) => {
@@ -45,10 +49,13 @@ const HowToPlay = (props) => {
 
   useEffect(() => {
     if(settings) {
-      if(settings.colorblindMode)
+      if(settings.colorblindMode) {
         setColors({colors: ["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"], labels: ["Blue", "Orange", "Red"]});
-      else
+        setExampleImage({ full: ColorblindFullArt, first: ColorblindFirstGuessArt, last: ColorblindLastGuessArt });
+      } else {
         setColors({colors: ["var(--correct)", "var(--partial)", "var(--incorrect)"], labels: ["Green", "Yellow", "Red"]});
+        setExampleImage({ full: FullArt, first: FirstGuessArt, last: LastGuessArt });
+      }
     }
   }, [settings])
 
@@ -76,14 +83,14 @@ const HowToPlay = (props) => {
 
         <DrawerBody>
           <Box display="flex" flexDirection="column">
-            <Text fontSize="18">
+            <Text fontSize="18" mb="5px">
               Guess the VINYLE in 6 tries.
             </Text>
-            - You begin with the bottom-left 1% of an album's cover art.
+            - You begin by viewing a small portion of the album's cover art.
             <br/>
             - The area you see progressively increases with each guess until you win or lose
             <br/>
-            - On the final available attempt, you see the entire bottom-left quarter of the art.
+            - On your final available attempt, you are able to see most of the album art.
             <Text><br/></Text>
             <Divider/>
             <Box as='b'>
@@ -96,9 +103,9 @@ const HowToPlay = (props) => {
                   <Text w="150px" >Full Art</Text>
                 </HStack>
                 <HStack spacing="25px">
-                  <Image src={firstGuessArt} w="150px" />
-                  <Image src={lastGuessArt} w="150px" />
-                  <Image src={fullArt} w="150px" />
+                  <Image src={exampleImage.first} w="150px" />
+                  <Image src={exampleImage.last} w="150px" />
+                  <Image src={exampleImage.full} w="150px" />
                 </HStack>
               </VStack>
               <Text><br/></Text>
@@ -111,7 +118,7 @@ const HowToPlay = (props) => {
             <Box>
               <Text as='b' color={colors.colors[0]}>{colors.labels[0]}</Text> indicates a completely correct property
               <br/>
-              <Text as='b' color={colors.colors[1]}>{colors.labels[1]}</Text> indicates a 'partially correct' property
+              <Text as='b' color={colors.colors[1]}>{colors.labels[1]}</Text> indicates a 'partially correct' property:
               <Box ml="15px">
                 <Text as='b' color={colors.colors[1]}>{colors.labels[1]} Artist</Text> indicates that atleast one artist in your guess appears in the answer
                 <br/>
