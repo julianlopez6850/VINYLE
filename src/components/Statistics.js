@@ -92,7 +92,12 @@ const Statistics = (props) => {
     // check if user is logged in. (if so, get and store state of colorblind mode setting)
     instance.get("http://localhost:5000/auth/profile").then((response) => {
       setColorblindMode(response.data.settings.colorblindMode);
-    })
+    }).catch(function(error) {
+      if(error.response)
+        console.log(error.response.data);
+      else
+        console.log({ error: "Cannot authenticate user." });
+    });
   }, [props.isOpen])
 
   return (
