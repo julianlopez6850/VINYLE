@@ -185,9 +185,13 @@ export const MainTableHeader = (props) => {
   return (
       props.columnHeaders &&
         <Table variant='unstyled' size='md' mt={props.mt} mb={props.mb}>
-          {props.columnHeaders.map((header, index) => {
-            return <Th key={index} p="0" textAlign="center" color='white' w={header.width}>{header.text}</Th>
-          })}
+          <Thead>
+            <Tr>
+              {props.columnHeaders.map((header, index) => {
+                return <Th key={index} p="0" textAlign="center" color='white' w={header.width}>{header.text}</Th>
+              })}
+            </Tr>
+          </Thead>
         </Table>
   )
 }
@@ -377,12 +381,12 @@ export const ClassicResults = (props) => {
           <Text fontWeight="semibold">
             Time Until Next Classic VINYLE:
           </Text>
-          <Text fontSize="36px">
+          <Box fontSize="36px">
             <Countdown
               isOpen={props.isOpen}
               date={props.date}
             />
-          </Text>
+          </Box>
         </VStack>
 
         <Divider border="1px solid" borderColor="white" w="250px" marginBlock="10px"/>
