@@ -380,6 +380,7 @@ export const ClassicResults = (props) => {
           <Text fontSize="36px">
             <Countdown
               isOpen={props.isOpen}
+              date={props.date}
             />
           </Text>
         </VStack>
