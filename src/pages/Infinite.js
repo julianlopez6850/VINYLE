@@ -303,6 +303,7 @@ const InfiniteGame = () => {
               albumW="500px"
               artistW="400px"
               releaseW="120px"
+              key={index}
               columnHeaders={[
                 {text: "Guess #", width: "60px"}, 
                 {text: "Album", width: "500px"}, 
