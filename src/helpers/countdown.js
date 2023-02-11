@@ -13,11 +13,8 @@ const Countdown = (props) => {
 
   useEffect(() => {
     const dateArr = props.date.split('-');
-    console.log(dateArr[2] + '-' + dateArr[0] + '-' + dateArr[1]);
     var d = new Date(dateArr[2] + '-' + dateArr[0] + '-' + (parseInt(dateArr[1]) + 1));
-    console.log(d);
     d.setHours(24, 0, 0);
-    console.log(d);
     setTarget(new Date(d));
   }, [])
 
@@ -61,7 +58,6 @@ const Countdown = (props) => {
   const doPlayNext = () => {
     var d = new Date();
     d.setHours(24, 0, 0);
-    console.log(d);
     setTarget(new Date(Date.parse(d)));
     setTimeout(navigate("/"), 1000);
   }
