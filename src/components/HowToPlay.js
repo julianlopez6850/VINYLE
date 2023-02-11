@@ -75,10 +75,9 @@ const HowToPlay = (props) => {
         <DrawerCloseButton />
 
         <DrawerBody>
-          <Text display="flex" flexDirection="column">
+          <Box display="flex" flexDirection="column">
             <Text fontSize="18">
               Guess the VINYLE in 6 tries.
-              <Text><br/></Text>
             </Text>
             - You begin with the bottom-left 1% of an album's cover art.
             <br/>
@@ -202,7 +201,7 @@ const HowToPlay = (props) => {
               GOOD LUCK, HAVE FUN :)
 
             </Box>
-          </Text>
+          </Box>
           
         </DrawerBody>
         <DrawerFooter>
