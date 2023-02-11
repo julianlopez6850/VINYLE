@@ -90,6 +90,7 @@ const ClassicGame = () => {
     }
   }, [settings])
 
+  // Check if the user has already played the daily Classic game. (Check if the results are stored in settings or localStorage)
   useEffect(() => {
     if(MM_DD_YYYY === undefined) {
       return;
@@ -117,7 +118,14 @@ const ClassicGame = () => {
       setNumGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses.length)
       setPrevGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses)
     }
+  }, [MM_DD_YYYY, username])
 
+  // If there is no daily Classic game posted for the current day, POST one. Then, GET the Album ID of the daily Classic game.
+  useEffect(() => {
+    if(MM_DD_YYYY === undefined) {
+      return;
+    }
+    
     axios.post('http://localhost:5000/daily', { date: MM_DD_YYYY }).then(() => {
       axios.get(`http://localhost:5000/daily/id?date=${MM_DD_YYYY}`).then((response) => {
         setChosenAlbumID(response.data.albumID);
@@ -128,7 +136,7 @@ const ClassicGame = () => {
       else
         console.log({ error: "An error occurred fetching today's daily classic game." });
     })
-  }, [MM_DD_YYYY, username])
+  }, [MM_DD_YYYY])
 
   // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
@@ -243,6 +251,8 @@ const ClassicGame = () => {
           numGuesses: numGuesses,
           guesses: prevGuesses
         }
+
+        console.log({gameOver: gameOver, chosenAlbumID: chosenAlbumID})
 
         // if this game has not already been saved to the DB, save it.
         instance.get(`http://localhost:5000/games/user/hasGame?username=${data.username}&mode=${data.mode}&date=${data.date}`).then((response) => {
