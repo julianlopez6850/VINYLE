@@ -16,6 +16,8 @@ import {
   MenuDivider,
   IconButton,
   useDisclosure,
+  MenuGroup,
+  Text,
 } from '@chakra-ui/react'
 
 import {
@@ -97,8 +99,8 @@ function Navbar() {
         <div className="content-left">
         <Menu closeOnSelect={false}>
           <MenuButton
-            ml="5"
-            mr="5"
+            ml="1.25rem"
+            mr="1.25rem"
             colorScheme='white'
             as={IconButton}
             aria-label='Options'
@@ -111,6 +113,7 @@ function Navbar() {
               color="white"
             >
               <MenuItem
+                fontSize="16px"
                 value='stats'
                 bgColor="gray.900"
                 _hover={{ bgColor: "gray.600" }}
@@ -121,22 +124,32 @@ function Navbar() {
 
               <MenuDivider/>
 
-              <MenuItem
-                value='stats'
-                bgColor="gray.900"
-                _hover={{ bgColor: "gray.600" }}
-                onClick={() => {navigate('/classic')}}
+              <MenuGroup
+                mt="0"
+                textAlign="left"
+                fontWeight="bold"
+                title="Game Modes"
+                textSizeAdjust="auto"
               >
-                Classic
-              </MenuItem>
-              <MenuItem
-                value='logout'
-                bgColor="gray.900"
-                _hover={{ bgColor: "gray.600" }}
-                onClick={() => {navigate('/infinite')}}
-              >
-                Infinite
-              </MenuItem>
+                <MenuItem
+                  fontSize="16px"
+                  value='stats'
+                  bgColor="gray.900"
+                  _hover={{ bgColor: "gray.600" }}
+                  onClick={() => {navigate('/classic')}}
+                >
+                  Classic
+                </MenuItem>
+                <MenuItem
+                  fontSize="16px"
+                  value='logout'
+                  bgColor="gray.900"
+                  _hover={{ bgColor: "gray.600" }}
+                  onClick={() => {navigate('/infinite')}}
+                >
+                  Infinite
+                </MenuItem>
+              </MenuGroup>
             </MenuList>
           </Menu>
         </div>
@@ -171,18 +184,38 @@ function Navbar() {
                 as={Button}
                 colorScheme='black'
                 border='1px solid white'
-                ml="5"
-                mr="5"
+                ml="1.25rem"
+                mr="2.5rem"
                 width="50"
                 _hover={{ bgColor: "gray.800" }}
               >
-                {username}
+                <SettingsIcon/>
               </MenuButton>
               <MenuList
-                bgColor="gray.900"
+                bgColor="gray.900" width="100px" 
                 color="white"
               >
+                <MenuGroup
+                  mb="0"
+                  textAlign="left"
+                  fontSize="16px"
+                  fontWeight="normal"
+                  title="Signed in as"
+                />
+                <MenuGroup
+                  mt="0"
+                  textAlign="left"
+                  fontWeight="bold"
+                  title={
+                    <Text fontSize="14px" w="200px">
+                      {username}
+                    </Text>
+                  }
+                  textSizeAdjust="auto"
+                />
+                <MenuDivider/>
                 <MenuItem
+                  fontSize="16px"
                   value='stats'
                   bgColor="gray.900"
                   _hover={{ bgColor: "gray.600" }}
@@ -191,6 +224,7 @@ function Navbar() {
                   Settings
                 </MenuItem>
                 <MenuItem
+                  fontSize="16px"
                   value='stats'
                   bgColor="gray.900"
                   _hover={{ bgColor: "gray.600" }}
@@ -199,6 +233,7 @@ function Navbar() {
                   History
                 </MenuItem>
                 <MenuItem
+                  fontSize="16px"
                   value='stats'
                   bgColor="gray.900"
                   _hover={{ bgColor: "gray.600" }}
@@ -208,6 +243,7 @@ function Navbar() {
                 </MenuItem>
                 <MenuDivider/>
                 <MenuItem
+                  fontSize="16px"
                   value='logout'
                   bgColor="gray.900"
                   _hover={{ bgColor: "gray.600" }}
@@ -228,8 +264,8 @@ function Navbar() {
                 to="/login" 
                 style={{
                   width:"15",
-                  paddingLeft:"10px",
-                  paddingRight:"10px",
+                  paddingLeft:"1.25rem",
+                  paddingRight:"2.5rem",
                   height:"inherit", 
                   display:"inherit",
                   alignItems:"center"
