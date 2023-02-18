@@ -57,7 +57,7 @@ const History = () => {
     toast.closeAll();
 
     // check if user is logged in. (if so, get and store username & settings)
-    instance.get("http://localhost:5000/auth/profile").then((response) => {
+    instance.get("https://vinyle.herokuapp.com/auth/profile").then((response) => {
       setUsername(response.data.username);
       setSettings(response.data.settings);
     }).catch(function(error) {
@@ -80,7 +80,7 @@ const History = () => {
   // get the user's game history, depending on selected mode.
   useEffect(() => {
     if(username !== undefined) {
-      instance.get(`http://localhost:5000/games/user/hasGame?username=${username}${(mode) ? `&mode=${mode}` : ``}&offset=${offset}&limit=${limit}`).then((response) => {
+      instance.get(`https://vinyle.herokuapp.com/games/user/hasGame?username=${username}${(mode) ? `&mode=${mode}` : ``}&offset=${offset}&limit=${limit}`).then((response) => {
         if(gamesList[0] === undefined)
           setShowMore(true);
         if(modeChanged) {

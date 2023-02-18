@@ -36,7 +36,7 @@ const Registration = () => {
   const isInvalid = (passwordMismatch || passwordTooSmall || (usernameError != ""))
 
   useEffect(() => {
-    authInstance.get("http://localhost:5000/auth/profile").then((response) => {
+    authInstance.get("https://vinyle.herokuapp.com/auth/profile").then((response) => {
       navigate('/');
     }).catch(function (error) { // catch any errors.
       if (error.response) {
@@ -60,7 +60,7 @@ const Registration = () => {
       setUsernameError("");
     }
     // check if the username is available.
-    axios.get(`http://localhost:5000/auth/isUsernameAvailable?username=${input}`).then(response => {
+    axios.get(`https://vinyle.herokuapp.com/auth/isUsernameAvailable?username=${input}`).then(response => {
       if (!response.data.result) {
         setUsername("");
         setUsernameError("Username is already taken.");
@@ -74,7 +74,7 @@ const Registration = () => {
   // this function is called when the user pressed the REGISTER button.
   const tryRegister = () => {
     // post the username and password combination to the server, to be added to the users table.
-    authInstance.post("http://localhost:5000/auth/register", { username: username, password: password.password }).then(() => {
+    authInstance.post("https://vinyle.herokuapp.com/auth/register", { username: username, password: password.password }).then(() => {
       setRequest(true);
     }).catch(function (error) { // catch any errors.
       console.log("An error occurred while trying to register...");
@@ -93,7 +93,7 @@ const Registration = () => {
   }
 
   const handleError = () => {
-    authInstance.post("http://localhost:5000/auth/register").catch(function () { 
+    authInstance.post("https://vinyle.herokuapp.com/auth/register").catch(function () { 
       setErrorMessage('Make sure to follow all registration directions');
       toast.close(' ');
       setRequest(true);

@@ -56,7 +56,7 @@ function Navbar() {
   // when the url changes...
   useEffect(() => {
     // check if user is logged in. (if so, get and store username)
-    instance.get("http://localhost:5000/auth/profile").then((response) => {
+    instance.get("https://vinyle.herokuapp.com/auth/profile").then((response) => {
       setLoggedIn(true);
       setUsername(response.data.username)
     }).catch(function(error) {
@@ -80,7 +80,7 @@ function Navbar() {
   const logout = async (e) => {
     e.preventDefault();
     if(loggedIn) {
-      await instance.post('http://localhost:5000/auth/logout').then((response) => {
+      await instance.post('https://vinyle.herokuapp.com/auth/logout').then((response) => {
         console.log("User logged out.");
         setLoggedIn(false);
       }).catch(function(error) {

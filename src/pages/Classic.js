@@ -46,7 +46,7 @@ const ClassicGame = () => {
     toast.closeAll();
 
     // check if user is logged in. (if so, get and store username & settings)
-    instance.get("http://localhost:5000/auth/profile").then((response) => {
+    instance.get("https://vinyle.herokuapp.com/auth/profile").then((response) => {
       setSettings(response.data.settings);
       setUsername(response.data.username);
     }).catch(function(error) {
@@ -59,7 +59,7 @@ const ClassicGame = () => {
 
     setAlbums([]);
     // get all of the albums from the database to be shown in our Select component later.
-    axios.get('http://localhost:5000/albums/all').then((response) => {
+    axios.get('https://vinyle.herokuapp.com/albums/all').then((response) => {
       response.data.map((album) => {
         var artists = '';
         album.artists.forEach((artist, index) => {
@@ -97,7 +97,7 @@ const ClassicGame = () => {
     }
 
     if(username) {
-      instance.get(`http://localhost:5000/games/user/hasGame?username=${username}&mode=classic&date=${MM_DD_YYYY}`).then((response) => {
+      instance.get(`https://vinyle.herokuapp.com/games/user/hasGame?username=${username}&mode=classic&date=${MM_DD_YYYY}`).then((response) => {
         if(response.data.value) {
           setStorage(true);
           setNumGuesses(response.data.games[0].numGuesses)
@@ -126,8 +126,8 @@ const ClassicGame = () => {
       return;
     }
     
-    axios.post('http://localhost:5000/daily', { date: MM_DD_YYYY }).then(() => {
-      axios.get(`http://localhost:5000/daily/id?date=${MM_DD_YYYY}`).then((response) => {
+    axios.post('https://vinyle.herokuapp.com/daily', { date: MM_DD_YYYY }).then(() => {
+      axios.get(`https://vinyle.herokuapp.com/daily/id?date=${MM_DD_YYYY}`).then((response) => {
         setChosenAlbumID(response.data.albumID);
       })
     }).catch((error) => {
@@ -164,9 +164,9 @@ const ClassicGame = () => {
       if (guess) {
         const guessID = guess.value
         // get the info of the album where the album id = guess.value
-        axios.get(`http://localhost:5000/albums?id=${guessID}`).then((response) => {
+        axios.get(`https://vinyle.herokuapp.com/albums?id=${guessID}`).then((response) => {
           // compare the guess with the answer album
-          axios.get(`http://localhost:5000/albums/compare?id=${chosenAlbumID}&guess_albumID=${guessID}`).then((compareRes) => {
+          axios.get(`https://vinyle.herokuapp.com/albums/compare?id=${chosenAlbumID}&guess_albumID=${guessID}`).then((compareRes) => {
             // store response data into object, to be saved into prevGuesses state
             const guessCorrectness = {
               album: compareRes.data.correct,
@@ -231,7 +231,7 @@ const ClassicGame = () => {
 
         // get the spotify ID of the answer album.
         var albumID;
-        await axios.get(`http://localhost:5000/albums?id=${chosenAlbumID}`).then((response) => {
+        await axios.get(`https://vinyle.herokuapp.com/albums?id=${chosenAlbumID}`).then((response) => {
           albumID = response.data.album.albumID;
           setAlbumInfo(response.data.album)
         }).catch((error) => {
@@ -253,7 +253,7 @@ const ClassicGame = () => {
         }
 
         // if this game has not already been saved to the DB, save it.
-        instance.get(`http://localhost:5000/games/user/hasGame?username=${data.username}&mode=${data.mode}&date=${data.date}`).then((response) => {
+        instance.get(`https://vinyle.herokuapp.com/games/user/hasGame?username=${data.username}&mode=${data.mode}&date=${data.date}`).then((response) => {
           setTimeout(() => {
             setIsOpenShareResults(true);
           }, 500);
@@ -262,7 +262,7 @@ const ClassicGame = () => {
             return;
           } else {
             // add the game data to the games table in the DB.
-            instance.post("http://localhost:5000/games", data).then(() => {
+            instance.post("https://vinyle.herokuapp.com/games", data).then(() => {
               if(win)
                 console.log("YOU WON!");
               else
@@ -302,7 +302,7 @@ const ClassicGame = () => {
       </div>
       <div className="albumArt" >
         <img 
-          src={(chosenAlbumID) && ((gameOver) ? `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=6` : `http://localhost:5000/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`)}
+          src={(chosenAlbumID) && ((gameOver) ? `https://vinyle.herokuapp.com/albums/art?id=${chosenAlbumID}&guessNum=6` : `https://vinyle.herokuapp.com/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`)}
           style={{
             filter: (settings && (settings.difficulty > 0) ? 'grayscale(100%) ' : '') + (settings && (settings.difficulty === 2) ? 'invert(1)' : ''),
             transform: rotation

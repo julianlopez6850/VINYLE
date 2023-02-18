@@ -21,7 +21,7 @@ export const getStats = async (e, loggedIn, username, mode, setStats, onOpen) =>
   if(e)
     e.preventDefault();
   if(loggedIn) {
-    await instance.get(`http://localhost:5000/games/user/stats?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
+    await instance.get(`https://vinyle.herokuapp.com/games/user/stats?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
       if(response.data.game) {
         const data = response.data.game;
         setStats({ numGames: data.numGames,
@@ -53,7 +53,7 @@ export const getStats = async (e, loggedIn, username, mode, setStats, onOpen) =>
 export const resetStats = async (e, username, mode, setStats) => {
   if(e)
     e.preventDefault();
-  await instance.get(`http://localhost:5000/games/user/stats?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
+  await instance.get(`https://vinyle.herokuapp.com/games/user/stats?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then(async (response) => {
     if(response.data.game) {
       const data = response.data.game;
       setStats({ numGames: data.numGames,
@@ -89,7 +89,7 @@ const Statistics = (props) => {
     setMode(props.mode)
 
     // check if user is logged in. (if so, get and store state of colorblind mode setting)
-    instance.get("http://localhost:5000/auth/profile").then((response) => {
+    instance.get("https://vinyle.herokuapp.com/auth/profile").then((response) => {
       setColorblindMode(response.data.settings.colorblindMode);
     }).catch(function(error) {
       if(error.response)
