@@ -47,6 +47,7 @@ const History = () => {
   const [modeChanged, setModeChanged] = useState(false);
   const [settings, setSettings] = useState(false);
   const [colors, setColors] = useState([winColor, lossColor]);
+  const [numGames, setNumGames] = useState();
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -86,6 +87,7 @@ const History = () => {
           setGamesList([]);
           setModeChanged(false);
         }
+        setNumGames(response.data.numGames);
         if(response.data.numGames <= 20)
           setShowMore(false);
         response.data.games.forEach((game) => {
@@ -122,14 +124,10 @@ const History = () => {
   }
 
   const doShowMore = () => {
-    instance.get(`http://localhost:5000/games/user/hasGame?username=${username}${(mode) ? `&mode=${mode}` : ``}`).then((response) => {
-      if(response.data.numGames > offset)
-        setOffset(offset => offset + 20);
-      if(offset + (limit * 2) >= response.data.numGames)
-        setShowMore(false);
-    }).catch((error) => {
-      console.log(error);
-    })
+    if(numGames > offset)
+      setOffset(offset => offset + 20);
+    if(offset + (limit * 2) >= numGames)
+      setShowMore(false);
   }
 
   return (
