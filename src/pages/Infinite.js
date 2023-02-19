@@ -43,7 +43,7 @@ const InfiniteGame = () => {
     toast.closeAll();
 
     // check if user is logged in. (if so, get and store username & settings)
-    instance.get("https://vinyle.herokuapp.com/auth/profile").then((response) => {
+    instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
       setSettings(response.data.settings);
       setUsername(response.data.username);
     }).catch(function(error) {
@@ -56,7 +56,7 @@ const InfiniteGame = () => {
     
     setAlbums([]);
     // get all of the albums from the database to be shown in our Select component later.
-    axios.get('https://vinyle.herokuapp.com/albums/all').then((response) => {
+    axios.get(`${process.env.REACT_APP_API_URL}/albums/all`).then((response) => {
       response.data.map((album) => {
         var artists = '';
         album.artists.forEach((artist, index) => {
@@ -108,9 +108,9 @@ const InfiniteGame = () => {
       if (guess) {
         const guessID = guess.value
         // get the info of the album where the album id = guess.value
-        axios.get(`https://vinyle.herokuapp.com/albums?id=${guessID}`).then((response) => {
+        axios.get(`${process.env.REACT_APP_API_URL}/albums?id=${guessID}`).then((response) => {
           // compare the guess with the answer album
-          axios.get(`https://vinyle.herokuapp.com/albums/compare?id=${chosenAlbumID}&guess_albumID=${guessID}`).then((compareRes) => {
+          axios.get(`${process.env.REACT_APP_API_URL}/albums/compare?id=${chosenAlbumID}&guess_albumID=${guessID}`).then((compareRes) => {
             // store response data into object, to be saved into prevGuesses state
             const guessCorrectness = {
               album: compareRes.data.correct,
@@ -174,7 +174,7 @@ const InfiniteGame = () => {
 
         // get the spotify ID of the answer album.
         var albumID;
-        await axios.get(`https://vinyle.herokuapp.com/albums?id=${chosenAlbumID}`).then((response) => {
+        await axios.get(`${process.env.REACT_APP_API_URL}/albums?id=${chosenAlbumID}`).then((response) => {
           albumID = response.data.album.albumID;
           setAlbumInfo(response.data.album)
         })
@@ -192,7 +192,7 @@ const InfiniteGame = () => {
         }
 
         // add the game data to the games table in the DB.
-        instance.post("https://vinyle.herokuapp.com/games", data).then(() => {
+        instance.post(`${process.env.REACT_APP_API_URL}/games`, data).then(() => {
           console.log("Game data saved into VINYLE_DB.")
         }).catch(function(error) {
           console.log("Game data failed to save. Error:");
@@ -230,7 +230,7 @@ const InfiniteGame = () => {
       </div>
       <div className="albumArt" >
         <img 
-          src={(chosenAlbumID) && ((gameOver) ? `https://vinyle.herokuapp.com/albums/art?id=${chosenAlbumID}&guessNum=6` : `https://vinyle.herokuapp.com/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`)}
+          src={(chosenAlbumID) && ((gameOver) ? `${process.env.REACT_APP_API_URL}/albums/art?id=${chosenAlbumID}&guessNum=6` : `${process.env.REACT_APP_API_URL}/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`)}
           style={{
             filter: (settings && (settings.difficulty > 0) ? 'grayscale(100%) ' : '') + (settings && (settings.difficulty === 2) ? 'invert(1)' : ''),
             transform: rotation

@@ -240,11 +240,11 @@ export const ClassicResults = (props) => {
 
   // GET the Current Day's Classic VINYLE Game Stats to Compare With Other Users
   useEffect(() => {
-    instance.get("https://vinyle.herokuapp.com/daily/numDays").then((response) => {
+    instance.get(`${process.env.REACT_APP_API_URL}/daily/numDays`).then((response) => {
       setNumDays(response.data.days);
     })
     if(props.isOpen) {
-      instance.get(`https://vinyle.herokuapp.com/daily?date=${props.date}`).then((response) => {
+      instance.get(`${process.env.REACT_APP_API_URL}/daily?date=${props.date}`).then((response) => {
         setGameData(response.data.game);
       if(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed")) {
         setNthPlayed(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed"));

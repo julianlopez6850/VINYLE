@@ -28,7 +28,7 @@ const Login = () => {
   const toast = useToast();
 
   useEffect(() => {
-    authInstance.get("https://vinyle.herokuapp.com/auth/profile").then((response) => {
+    authInstance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
       navigate('/');
     }).catch(function (error) { // catch any errors.
       if (error.response) {
@@ -44,7 +44,7 @@ const Login = () => {
   // this function is called when the user presses the LOGIN button.
   const tryLogin = () => {
     // send username and password combo to backend...
-    authInstance.post("https://vinyle.herokuapp.com/auth/login", { username: username, password: password}).then(() => {
+    authInstance.post(`${process.env.REACT_APP_API_URL}/auth/login`, { username: username, password: password}).then(() => {
       setRequest(true);
     }).catch(function (error) { // catch any errors.
       if (error.response) {

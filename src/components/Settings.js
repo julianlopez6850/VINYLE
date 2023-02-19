@@ -49,7 +49,7 @@ const Settings = (props) => {
   const location = useLocation();
 
   useEffect(() => {
-    instance.get("https://vinyle.herokuapp.com/daily/numDays").then((response) => {
+    instance.get(`${process.env.REACT_APP_API_URL}/daily/numDays`).then((response) => {
       setNumDays(response.data.days);
     })
     
@@ -60,7 +60,7 @@ const Settings = (props) => {
 
   useEffect(() => {
     // check if user is logged in. (if so, get and store username)
-    instance.get("https://vinyle.herokuapp.com/auth/profile").then((response) => {
+    instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
       setUsername(response.data.username)
       setDarkTheme(response.data.settings.darkTheme);
       setColorblindMode(response.data.settings.colorblindMode);
@@ -75,7 +75,7 @@ const Settings = (props) => {
 
   useEffect(() => {
     if(username) {
-      instance.put("https://vinyle.herokuapp.com/auth/settings", {username: username, settings: { darkTheme: darkTheme, colorblindMode: colorblindMode, difficulty: difficulty.value }}).catch((err) => {
+      instance.put(`${process.env.REACT_APP_API_URL}/auth/settings`, {username: username, settings: { darkTheme: darkTheme, colorblindMode: colorblindMode, difficulty: difficulty.value }}).catch((err) => {
         if(err.response)
           console.log(err.response.data)
         else

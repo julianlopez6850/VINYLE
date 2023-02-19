@@ -40,7 +40,7 @@ const HowToPlay = (props) => {
   const [exampleImage, setExampleImage] = useState({ full: FullArt, first: FirstGuessArt, last: LastGuessArt })
 
   useEffect(() => {
-    instance.get("https://vinyle.herokuapp.com/auth/profile").then((response) => {
+    instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
       setSettings(response.data.settings);
     }).catch(() => {
       setColors({colors: ["var(--correct)", "var(--partial)", "var(--incorrect)"], labels: ["Green", "Yellow", "Red"]});
