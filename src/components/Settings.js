@@ -198,7 +198,9 @@ const Settings = (props) => {
                   borderColor:"white"
                 }}
                 _active={{}}
-                onClick={()=>{/* INSERT EMAIL CODE HERE */}}
+                onClick={()=>{
+                  window.location.href = "mailto:support@playvinyle.com?subject=VINYLE Feedback&body="
+                }}
               >
                 Email
               </Button>
