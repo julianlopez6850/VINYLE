@@ -262,9 +262,9 @@ export const ClassicResults = (props) => {
     var string = ""
     props.guesses.forEach((guess) => {
       if(guess.guessCorrectness.album)
-        string += '\t🟩'
+        string += '🟩'
       else
-        string += '\t🟥'
+        string += '🟥'
       if(guess.guessCorrectness.artist === "correct")
         string += '🟩'
       else if(guess.guessCorrectness.artist === "partial")
@@ -279,7 +279,7 @@ export const ClassicResults = (props) => {
         string += '🟥'
       string += "\n"
     })
-    navigator.clipboard.writeText(`Classic VINYLE #${numDays} : ${props.win ? props.numGuesses : 'X'}/6\n${string}[INSERT URL HERE]`)
+    navigator.clipboard.writeText(`Classic VINYLE #${numDays} : ${props.win ? props.numGuesses : 'X'}/6\n${string}playvinyle.com`)
 
     if(!toast.isActive('')) {
       toast({
@@ -440,7 +440,7 @@ export const ShareInfinite = (props) => {
         string += '🟥'
       string += "\n"
     })
-    setShareText(`${props.win ? 'I won this' : 'I lost this'} Infinite VINYLE ${props.win ? 'in ' + props.numGuesses + '/6!' : '.'} Check it out!\n${string}http://localhost:3000/shared/${props.id}`)
+    setShareText(`${props.win ? 'I won this' : 'I lost this'} Infinite VINYLE ${props.win ? 'in ' + props.numGuesses + '/6!' : '.'} Check it out!\n${string}playvinyle.com/shared/${props.id}`)
   }, [props.isOpen])
 
   // Copy Share Text to Clipboard...
