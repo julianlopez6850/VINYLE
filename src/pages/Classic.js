@@ -126,8 +126,8 @@ const ClassicGame = () => {
       return;
     }
     
-    axios.post(`${process.env.REACT_APP_API_URL}/daily`, { date: MM_DD_YYYY }).then(() => {
-      axios.get(`${process.env.REACT_APP_API_URL}/daily/id?date=${MM_DD_YYYY}`).then((response) => {
+    axios.post(`${process.env.REACT_APP_API_URL}/daily`).then(() => {
+      axios.get(`${process.env.REACT_APP_API_URL}/daily/id`).then((response) => {
         setChosenAlbumID(response.data.albumID);
       })
     }).catch((error) => {
