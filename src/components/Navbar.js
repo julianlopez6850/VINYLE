@@ -129,7 +129,6 @@ function Navbar() {
                 textAlign="left"
                 fontWeight="bold"
                 title="Game Modes"
-                textSizeAdjust="auto"
               >
                 <MenuItem
                   fontSize="16px"
@@ -206,12 +205,9 @@ function Navbar() {
                   mt="0"
                   textAlign="left"
                   fontWeight="bold"
-                  title={
-                    <Text fontSize="14px" w="200px">
-                      {username}
-                    </Text>
-                  }
-                  textSizeAdjust="auto"
+                  fontSize="14px"
+                  mr="5px"
+                  title={username}
                 />
                 <MenuDivider/>
                 <MenuItem
