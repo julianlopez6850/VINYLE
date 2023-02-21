@@ -14,7 +14,8 @@ const Countdown = (props) => {
   useEffect(() => {
     const dateArr = props.date.split('-');
     var d = new Date(dateArr[2] + '-' + dateArr[0] + '-' + (parseInt(dateArr[1]) + 1));
-    d.setHours(24, 0, 0);
+    const offset_hr = (d.getTimezoneOffset() / 60.0) - 5;
+    d.setHours(24 - offset_hr, 0, 0);
     setTarget(new Date(d));
   }, [])
 
@@ -64,11 +65,11 @@ const Countdown = (props) => {
   return(
     <Box width="200px">
       <HStack justify="center">
-          <span>{(hours && hours < 10) ? "0" : ""}{hours ? hours : "00"}</span>
-          <span>:</span>
-          <span>{(mins && mins < 10) ? "0" : ""}{mins ? mins : "00"}</span>
-          <span>:</span>
-          <span>{(secs && secs < 10)  ? "0" : ""}{secs ? secs : "00"}</span>
+        <span>{(hours && hours < 10) ? "0" : ""}{hours ? hours : "00"}</span>
+        <span>:</span>
+        <span>{(mins && mins < 10) ? "0" : ""}{mins ? mins : "00"}</span>
+        <span>:</span>
+        <span>{(secs && secs < 10)  ? "0" : ""}{secs ? secs : "00"}</span>
       </HStack>
       {(playNext) && 
         <Button
