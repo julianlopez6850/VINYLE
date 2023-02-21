@@ -1,6 +1,6 @@
 import './App.css';
 import { Navigate, BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Text } from '@chakra-ui/react';
 
 import Navbar from './components/Navbar';
 import Classic from './pages/Classic';
@@ -31,6 +31,9 @@ const App = () => {
             )}
           </Routes>
         </Router>
+        <Text color="gray.300" position="absolute" bottom="10px">
+          playvinyle.com – 2023
+        </Text>
       </div>
     </ChakraProvider>
   );

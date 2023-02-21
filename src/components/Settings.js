@@ -214,6 +214,9 @@ const Settings = (props) => {
           <Text color="gray.300">
             VINYLE #{numDays}
           </Text>
+          <Text color="gray.300">
+            v{process.env.REACT_APP_VERSION}
+          </Text>
         </ModalFooter>
 
       </ModalContent>
