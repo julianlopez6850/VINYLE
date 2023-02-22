@@ -1,6 +1,6 @@
 {
   "name": "albumle",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^2.0.13",
