@@ -151,8 +151,8 @@ function Navbar() {
             _active={{ background: "transparent" }}
           >
             <ConditionalLink
-              to="/"
-              condition={(location.pathname.includes("/classic") && !(location.pathname.includes("/history")))}
+              to="/classic"
+              condition={!(location.pathname === "/classic")}
               style={{
                 height:"inherit",
                 padding:"0px 10px 0px 10px"
