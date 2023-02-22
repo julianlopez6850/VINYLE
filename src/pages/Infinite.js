@@ -184,7 +184,7 @@ const InfiniteGame = () => {
         let data = {
           username: username,
           mode: "infinite",
-          date: `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`,
+          date: `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`,
           albumID: albumID,
           win: win,
           numGuesses: numGuesses,
