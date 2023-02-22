@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
 
 import { MainButton, AlbumSelect, MainTableHeader, MainGuessRow, WinLossToast, ShareInfinite } from "../components/miniComponents"
 import { instance } from "../helpers/axiosInstance";
@@ -44,7 +43,7 @@ const InfiniteGame = () => {
     
     setAlbums([]);
     // get all of the albums from the database to be shown in our Select component later.
-    axios.get(`${process.env.REACT_APP_API_URL}/albums/all`).then((response) => {
+    instance.get(`${process.env.REACT_APP_API_URL}/albums/all`).then((response) => {
       response.data.map((album) => {
         var artists = '';
         album.artists.forEach((artist, index) => {
@@ -94,9 +93,9 @@ const InfiniteGame = () => {
       if (guess) {
         const guessID = guess.value
         // get the info of the album where the album id = guess.value
-        axios.get(`${process.env.REACT_APP_API_URL}/albums?id=${guessID}`).then((response) => {
+        instance.get(`${process.env.REACT_APP_API_URL}/albums?id=${guessID}`).then((response) => {
           // compare the guess with the answer album
-          axios.get(`${process.env.REACT_APP_API_URL}/albums/compare?id=${chosenAlbumID}&guess_albumID=${guessID}`).then((compareRes) => {
+          instance.get(`${process.env.REACT_APP_API_URL}/albums/compare?id=${chosenAlbumID}&guess_albumID=${guessID}`).then((compareRes) => {
             // store response data into object, to be saved into prevGuesses state
             const guessCorrectness = {
               album: compareRes.data.correct,
@@ -160,7 +159,7 @@ const InfiniteGame = () => {
 
         // get the spotify ID of the answer album.
         var albumID;
-        await axios.get(`${process.env.REACT_APP_API_URL}/albums?id=${chosenAlbumID}`).then((response) => {
+        await instance.get(`${process.env.REACT_APP_API_URL}/albums?id=${chosenAlbumID}`).then((response) => {
           albumID = response.data.album.albumID;
           setAlbumInfo(response.data.album)
         })

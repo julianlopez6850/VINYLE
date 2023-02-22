@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom";
 import { authInstance } from "../helpers/axiosInstance"
-import axios from 'axios';
 
 import "../styles/page.css";
 
@@ -60,7 +59,7 @@ const Registration = () => {
       setUsernameError("");
     }
     // check if the username is available.
-    axios.get(`${process.env.REACT_APP_API_URL}/auth/isUsernameAvailable?username=${input}`).then(response => {
+    authInstance.get(`${process.env.REACT_APP_API_URL}/auth/isUsernameAvailable?username=${input}`).then(response => {
       if (!response.data.result) {
         setUsername("");
         setUsernameError("Username is already taken.");
