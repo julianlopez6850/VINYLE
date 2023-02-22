@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "../styles/navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { instance } from "../helpers/axiosInstance";
@@ -6,6 +6,7 @@ import ConditionalLink from "../helpers/conditionalLink";
 import Settings from "./Settings";
 import Statistics, { getStats, resetStats } from "./Statistics"; 
 import HowToPlay, { openHTP } from "./HowToPlay";
+import { profileContext } from '../helpers/profileContext';
 
 import {
   Button,
@@ -26,9 +27,7 @@ import {
 } from '@chakra-ui/icons'
 
 function Navbar() {
-
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
+  const { profile, setProfile } = useContext(profileContext);
   const [stats, setStats] = useState({});
   const [mode, setMode] = useState();
 
@@ -55,18 +54,6 @@ function Navbar() {
 
   // when the url changes...
   useEffect(() => {
-    // check if user is logged in. (if so, get and store username)
-    instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
-      setLoggedIn(true);
-      setUsername(response.data.username)
-    }).catch(function(error) {
-      setLoggedIn(false);
-      if(error.response)
-        console.log(error.response.data);
-      else
-        console.log({ error: "Cannot authenticate user." });
-    });
-
     // set mode depending on pathname
     if(location.pathname.includes("/classic"))
       setMode("Classic");
@@ -79,10 +66,10 @@ function Navbar() {
   // this function will handle logging out the user.
   const logout = async (e) => {
     e.preventDefault();
-    if(loggedIn) {
+    if(profile.loggedIn) {
       await instance.post(`${process.env.REACT_APP_API_URL}/auth/logout`).then((response) => {
         console.log("User logged out.");
-        setLoggedIn(false);
+        setProfile({ loggedIn: false, username: undefined, settings: { darkTheme: true, colorblindMode: false, difficulty: 0 } });
       }).catch(function(error) {
         if(error.response)
           console.log(error.response.data);
@@ -177,7 +164,7 @@ function Navbar() {
         </div>
 
         <div className="content-right">
-          {loggedIn ? 
+          {profile.loggedIn ? 
             <Menu closeOnSelect={false}>
               <MenuButton
                 as={Button}
@@ -207,7 +194,7 @@ function Navbar() {
                   fontWeight="bold"
                   fontSize="14px"
                   mr="5px"
-                  title={username}
+                  title={profile.username}
                 />
                 <MenuDivider/>
                 <MenuItem
@@ -233,7 +220,7 @@ function Navbar() {
                   value='stats'
                   bgColor="gray.900"
                   _hover={{ bgColor: "gray.600" }}
-                  onClick={(e) => getStats(e, loggedIn, username, mode, setStats, onOpenStatsModal)}
+                  onClick={(e) => getStats(e, profile.loggedIn, profile.username, mode, setStats, onOpenStatsModal)}
                 >
                   Statistics
                 </MenuItem>
@@ -277,7 +264,7 @@ function Navbar() {
         <Settings
           mode={mode}
           stats={stats}
-          username={username}
+          username={profile.username}
           onClose={onCloseSettings}
           isOpen={isOpenSettings}
         />
@@ -285,10 +272,11 @@ function Navbar() {
         {/* Stats Modal */}
         <Statistics
           mode={mode}
+          colorblindMode={profile.settings.colorblindMode}
           stats={stats}
           resetStats={resetStats}
           setStats={setStats}
-          username={username}
+          username={profile.username}
           onClose={onCloseStatsModal}
           isOpen={isOpenStatsModal}
         />
@@ -297,6 +285,7 @@ function Navbar() {
         <HowToPlay
           onClose={onCloseHTP}
           isOpen={isOpenHTP}
+          colorblindMode={profile.settings.colorblindMode}
         />
         
       </div>

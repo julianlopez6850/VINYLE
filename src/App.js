@@ -1,6 +1,8 @@
+import React, { useState } from 'react';
 import './App.css';
 import { Navigate, BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ChakraProvider, Text } from '@chakra-ui/react';
+import { profileContext } from './helpers/profileContext';
 
 import Navbar from './components/Navbar';
 import Classic from './pages/Classic';
@@ -11,9 +13,12 @@ import History from './pages/History'
 
 const App = () => {
 
+  const [profile, setProfile] = useState({ loggedIn: false, username: undefined, settings: { darkTheme: true, colorblindMode: false, difficulty: 0 } });
+
   return (
     <ChakraProvider>
       <div className="App">
+        <profileContext.Provider value = {{ profile, setProfile }}>
         <Router>
           <Navbar />
           <Routes>
@@ -30,7 +35,7 @@ const App = () => {
               <Route path={path} element={<History />} key={index} />
             )}
           </Routes>
-        </Router>
+        </Router></profileContext.Provider>
         <Text color="gray.300" position="absolute" bottom="10px">
           playvinyle.com – 2023
         </Text>

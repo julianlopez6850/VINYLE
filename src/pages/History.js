@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { HistoryButton, MainButton } from "../components/miniComponents"
 import { instance } from "../helpers/axiosInstance";
+import { profileContext } from '../helpers/profileContext';
 
 import "../styles/page.css";
 import {
@@ -37,7 +38,7 @@ const winColor = "var(--correct)";
 const lossColor = "var(--incorrect)";
 
 const History = () => {
-  const [username, setUsername] = useState();
+  const { profile, setProfile } = useContext(profileContext);
   const [mode, setMode] = useState();
   const [gamesList, setGamesList] = useState([])
   const [openedGame, setOpenedGame] = useState();
@@ -45,7 +46,6 @@ const History = () => {
   const [offset, setOffset] = useState(0);
   const [showMore, setShowMore] = useState(false);
   const [modeChanged, setModeChanged] = useState(false);
-  const [settings, setSettings] = useState(false);
   const [colors, setColors] = useState([winColor, lossColor]);
   const [numGames, setNumGames] = useState();
 
@@ -55,32 +55,21 @@ const History = () => {
 
   useEffect(() => {
     toast.closeAll();
-
-    // check if user is logged in. (if so, get and store username & settings)
-    instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
-      setUsername(response.data.username);
-      setSettings(response.data.settings);
-    }).catch(function(error) {
-      if(error.response)
-        console.log(error.response.data);
-      else
-        console.log({ error: "Cannot authenticate user." });
-    });
   }, [])
 
   // update colors depending on settings colorblind mode state
   useEffect(() => {
-    if(settings.colorblindMode) {
+    if(profile.settings.colorblindMode) {
       setColors(["var(--colorblind-correct)", "var(--colorblind-incorrect)"])
     } else {
       setColors([winColor, lossColor])
     }
-  }, [settings])
+  }, [profile.settings])
 
   // get the user's game history, depending on selected mode.
   useEffect(() => {
-    if(username !== undefined) {
-      instance.get(`${process.env.REACT_APP_API_URL}/games/user/hasGame?username=${username}${(mode) ? `&mode=${mode}` : ``}&offset=${offset}&limit=${limit}`).then((response) => {
+    if(profile.username !== undefined) {
+      instance.get(`${process.env.REACT_APP_API_URL}/games/user/hasGame?username=${profile.username}${(mode) ? `&mode=${mode}` : ``}&offset=${offset}&limit=${limit}`).then((response) => {
         if(gamesList[0] === undefined)
           setShowMore(true);
         if(modeChanged) {
@@ -115,7 +104,7 @@ const History = () => {
         console.log(error);
       })
     }
-  }, [username, mode, offset, limit])
+  }, [profile.username, mode, offset, limit])
 
   // this method is called to open up a game that the user clicks on from the history table.
   const openGame = (game) => {

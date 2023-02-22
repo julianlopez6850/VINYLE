@@ -34,30 +34,18 @@ export const openHTP = async (e, onOpen) => {
 }
 
 const HowToPlay = (props) => {
-
-  const [settings, setSettings] = useState();
   const [colors, setColors] = useState({colors: ["var(--correct)", "var(--partial)", "var(--incorrect)"], labels: ["Green", "Yellow", "Red"]});
   const [exampleImage, setExampleImage] = useState({ full: FullArt, first: FirstGuessArt, last: LastGuessArt })
 
   useEffect(() => {
-    instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
-      setSettings(response.data.settings);
-    }).catch(() => {
+    if(props.colorblindMode) {
+      setColors({colors: ["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"], labels: ["Blue", "Orange", "Red"]});
+      setExampleImage({ full: ColorblindFullArt, first: ColorblindFirstGuessArt, last: ColorblindLastGuessArt });
+    } else {
       setColors({colors: ["var(--correct)", "var(--partial)", "var(--incorrect)"], labels: ["Green", "Yellow", "Red"]});
-    });
-  }, [props.isOpen])
-
-  useEffect(() => {
-    if(settings) {
-      if(settings.colorblindMode) {
-        setColors({colors: ["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"], labels: ["Blue", "Orange", "Red"]});
-        setExampleImage({ full: ColorblindFullArt, first: ColorblindFirstGuessArt, last: ColorblindLastGuessArt });
-      } else {
-        setColors({colors: ["var(--correct)", "var(--partial)", "var(--incorrect)"], labels: ["Green", "Yellow", "Red"]});
-        setExampleImage({ full: FullArt, first: FirstGuessArt, last: LastGuessArt });
-      }
+      setExampleImage({ full: FullArt, first: FirstGuessArt, last: LastGuessArt });
     }
-  }, [settings])
+  }, [props.isOpen])
 
   return (
     <Drawer

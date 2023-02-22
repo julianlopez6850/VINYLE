@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
 import { MainButton, AlbumSelect, MainTableHeader, MainGuessRow, WinLossToast, ShareInfinite } from "../components/miniComponents"
 import { instance } from "../helpers/axiosInstance";
+import { profileContext } from '../helpers/profileContext';
 
 import "../styles/page.css";
 import {
@@ -25,7 +26,7 @@ const InfiniteGame = () => {
   // A random integer is chosen, the backend will choose a random album from the database as the answer using this integer.
   const [chosenAlbumID, setChosenAlbumID] = useState((location.pathname.includes("/shared")) ? location.pathname.slice(8) : Math.floor(Math.random() * Number.MAX_SAFE_INTEGER));
 
-  const [username, setUsername] = useState("");
+  const { profile, setProfile } = useContext(profileContext);
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
   const [numGuesses, setNumGuesses] = useState(0);
@@ -33,7 +34,6 @@ const InfiniteGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [win, setWin] = useState(false);
   const [albumInfo, setAlbumInfo] = useState();
-  const [settings, setSettings] = useState();
   const [rotation, setRotation] = useState();
   const [colors, setColors] = useState();
 
@@ -41,18 +41,6 @@ const InfiniteGame = () => {
 
   useEffect(() => {
     toast.closeAll();
-
-    // check if user is logged in. (if so, get and store username & settings)
-    instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
-      setSettings(response.data.settings);
-      setUsername(response.data.username);
-    }).catch(function(error) {
-      setColors([correctColor, partialColor, incorrectColor]);
-      if(error.response)
-        console.log(error.response.data);
-      else
-        console.log({ error: "Cannot authenticate user." });
-    });
     
     setAlbums([]);
     // get all of the albums from the database to be shown in our Select component later.
@@ -72,17 +60,15 @@ const InfiniteGame = () => {
 
   // update colors depending on settings colorblind mode state
   useEffect(() => {
-    if(settings !== undefined) {
-      if(settings.colorblindMode) {
-        setColors(["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"])
-      } else {
-        setColors([correctColor, partialColor, incorrectColor])
-      }
-      settings.difficulty === 2 ? 
-        setRotation(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) % 2 === 0 ? 'rotate(90deg)' : 'rotate(-90deg)') : 
-        setRotation('rotate(0deg)')
+    if(profile.settings.colorblindMode) {
+      setColors(["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"])
+    } else {
+      setColors([correctColor, partialColor, incorrectColor])
     }
-  }, [settings])
+    profile.settings.difficulty === 2 ? 
+      setRotation(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) % 2 === 0 ? 'rotate(90deg)' : 'rotate(-90deg)') : 
+      setRotation('rotate(0deg)')
+  }, [profile])
 
   // this function is called when the user presses the GUESS button.
   const checkGuess = () => {
@@ -182,7 +168,7 @@ const InfiniteGame = () => {
         let d = new Date(); // save todays Date.
         // this data object will be passed to the POST request to save the game data into the DB.
         let data = {
-          username: username,
+          username: profile.username,
           mode: "infinite",
           date: `${d.getMonth() + 1}-${d.getDate()}-${d.getFullYear()}`,
           albumID: albumID,
@@ -216,7 +202,7 @@ const InfiniteGame = () => {
     setGameOver(false);
     setWin(false);
     setAlbumInfo();
-    settings.difficulty === 2 && setRotation(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) % 2 === 0 ? 'rotate(90deg)' : 'rotate(-90deg)')
+    profile.settings.difficulty === 2 && setRotation(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) % 2 === 0 ? 'rotate(90deg)' : 'rotate(-90deg)')
     toast.closeAll();
   }
 
@@ -232,7 +218,7 @@ const InfiniteGame = () => {
         <img 
           src={(chosenAlbumID) && ((gameOver) ? `${process.env.REACT_APP_API_URL}/albums/art?id=${chosenAlbumID}&guessNum=6` : `${process.env.REACT_APP_API_URL}/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`)}
           style={{
-            filter: (settings && (settings.difficulty > 0) ? 'grayscale(100%) ' : '') + (settings && (settings.difficulty === 2) ? 'invert(1)' : ''),
+            filter: (profile.settings.difficulty > 0 ? 'grayscale(100%) ' : '') + (profile.settings.difficulty === 2 ? 'invert(1)' : ''),
             transform: rotation
           }}
         />
@@ -352,7 +338,7 @@ const InfiniteGame = () => {
           numGuesses={prevGuesses.length}
           guesses={prevGuesses}
           album={albumInfo}
-          colorblindMode={settings ? settings.colorblindMode : false}
+          colorblindMode={profile.settings.colorblindMode}
           winColor={colors[0]}
           loseColor={colors[2]}
         />

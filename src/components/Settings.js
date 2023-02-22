@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { instance } from "../helpers/axiosInstance";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { profileContext } from '../helpers/profileContext';
 
 import {
   Button,
@@ -37,35 +38,41 @@ const Settings = (props) => {
     }
   ];
 
-  const [username, setUsername] = useState("");
+  const { profile, setProfile } = useContext(profileContext);
   const [darkTheme, setDarkTheme] = useState(true);
   const [colorblindMode, setColorblindMode] = useState(false);
   const [colors, setColors] = useState(["green", "yellow", "red"]);
   const [difficulty, setDifficulty] = useState({ label: "Normal", value: 0, color: "green" });
   const [numDays, setNumDays] = useState();
-  const [initialValues, setInitialValues] = useState();
 
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    instance.get(`${process.env.REACT_APP_API_URL}/daily/numDays`).then((response) => {
-      setNumDays(response.data.days);
-    })
-    
-    if(props.isOpen) {
-      setInitialValues([darkTheme, colorblindMode, difficulty.value])
-    }
-  }, [props.isOpen])
-
-  useEffect(() => {
-    // check if user is logged in. (if so, get and store username)
+    // check if user is logged in. (if so, get and store profile info)
     instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
-      setUsername(response.data.username)
+      setProfile({ loggedIn: true, username: response.data.username, settings: response.data.settings });
       setDarkTheme(response.data.settings.darkTheme);
       setColorblindMode(response.data.settings.colorblindMode);
       setDifficulty(difficulties[response.data.settings.difficulty]);
     }).catch(function(error) {
+      setProfile({ loggedIn: false, username: undefined, settings: { darkTheme: true, colorblindMode: false, difficulty: 0 } });
+      if(error.response)
+        console.log(error.response.data);
+      else
+        console.log({ error: "Cannot authenticate user." });
+    });
+    
+    instance.get(`${process.env.REACT_APP_API_URL}/daily/numDays`).then((response) => {
+      setNumDays(response.data.days);
+    })
+  }, [props.isOpen])
+
+  useEffect(() => {
+    // check if user is logged in. (if so, get and store profile info)
+    instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
+      setProfile({ loggedIn: true, username: response.data.username, settings: response.data.settings });
+    }).catch(function(error) {
+      setProfile({ loggedIn: false, username: undefined, settings: { darkTheme: true, colorblindMode: false, difficulty: 0 } });
       if(error.response)
         console.log(error.response.data);
       else
@@ -74,8 +81,11 @@ const Settings = (props) => {
   }, [location])
 
   useEffect(() => {
-    if(username) {
-      instance.put(`${process.env.REACT_APP_API_URL}/auth/settings`, {username: username, settings: { darkTheme: darkTheme, colorblindMode: colorblindMode, difficulty: difficulty.value }}).catch((err) => {
+    setProfile({ loggedIn: profile.loggedIn, username: profile.username, settings: { darkTheme: darkTheme, colorblindMode: colorblindMode, difficulty: difficulty.value } })
+
+    if(profile.username) {
+      instance.put(`${process.env.REACT_APP_API_URL}/auth/settings`, { username: profile.username, settings: { darkTheme: darkTheme, colorblindMode: colorblindMode, difficulty: difficulty.value }})
+      .catch((err) => {
         if(err.response)
           console.log(err.response.data)
         else
@@ -92,16 +102,7 @@ const Settings = (props) => {
   return (
     <Modal
       isCentered
-      onClose={() => {
-        // Refresh page if a setting is updated
-        if(JSON.stringify([darkTheme, colorblindMode, difficulty.value]) !== JSON.stringify(initialValues)) {
-          navigate(
-            location.pathname.includes("/infinite") ? '/inf' : 
-            location.pathname.includes("/history") ? '/history' : '/'
-          ); 
-        }
-        props.onClose()
-      }}
+      onClose={() => { props.onClose() }}
       isOpen={props.isOpen}
       motionPreset='slideInBottom'
     >
@@ -143,7 +144,7 @@ const Settings = (props) => {
                   High Contrast Colors for Improved Color Vision
                 </Text>
               </VStack>
-              <Switch colorScheme={colors[0]} defaultChecked={colorblindMode} onChange={() => setColorblindMode(!colorblindMode)} />
+              <Switch colorScheme={colors[0]} defaultChecked={profile.settings.colorblindMode} onChange={() => setColorblindMode(!colorblindMode)} />
             </HStack>
 
             <Divider marginBlock="1rem !important" />
@@ -151,7 +152,7 @@ const Settings = (props) => {
             <Text as='b' marginBlock="0 !important">
               Difficulty:
             </Text>
-            <Tabs colorScheme={colors[difficulty.value]} borderBottom="transparent" defaultIndex={difficulty.value}>
+            <Tabs colorScheme={colors[difficulty.value]} borderBottom="transparent" defaultIndex={profile.settings.difficulty}>
               <TabList >
                 {difficulties.map((item, index) => 
                   <Tooltip

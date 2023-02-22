@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 
 import { MainButton, AlbumSelect, MainTableHeader, MainGuessRow, WinLossToast, ClassicResults } from "../components/miniComponents"
 import { instance } from "../helpers/axiosInstance";
 import Statistics, { getStats } from "../components/Statistics"
+import { profileContext } from '../helpers/profileContext';
 
 import "../styles/page.css";
 import {
@@ -20,8 +21,8 @@ const incorrectColor = "var(--incorrect)";
 const partialColor = "var(--partial)";
 
 const ClassicGame = () => {
+  const { profile, setProfile } = useContext(profileContext);
   const [chosenAlbumID, setChosenAlbumID] = useState();
-  const [username, setUsername] = useState("");
   const [Albums, setAlbums] = useState([]);
   const [guess, setGuess] = useState();
   const [numGuesses, setNumGuesses] = useState(0);
@@ -34,7 +35,6 @@ const ClassicGame = () => {
   const [guessIndex, setGuessIndex] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [albumInfo, setAlbumInfo] = useState();
-  const [settings, setSettings] = useState();
   const [rotation, setRotation] = useState();
   const [colors, setColors] = useState();
   const [isOpenShareResults, setIsOpenShareResults] = useState(false);
@@ -44,18 +44,6 @@ const ClassicGame = () => {
 
   useEffect(() => {
     toast.closeAll();
-
-    // check if user is logged in. (if so, get and store username & settings)
-    instance.get(`${process.env.REACT_APP_API_URL}/auth/profile`).then((response) => {
-      setSettings(response.data.settings);
-      setUsername(response.data.username);
-    }).catch(function(error) {
-      setColors([correctColor, partialColor, incorrectColor]);
-      if(error.response)
-        console.log(error.response.data);
-      else
-        console.log({ error: "Cannot authenticate user." });
-    });
 
     setAlbums([]);
     // get all of the albums from the database to be shown in our Select component later.
@@ -78,17 +66,15 @@ const ClassicGame = () => {
 
   // update colors depending on settings colorblind mode state
   useEffect(() => {
-    if(settings !== undefined) {
-      if(settings.colorblindMode) {
-        setColors(["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"])
-      } else {
-        setColors([correctColor, partialColor, incorrectColor])
-      }
-      settings.difficulty === 2 ? 
-        setRotation(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) % 2 === 0 ? 'rotate(90deg)' : 'rotate(-90deg)') : 
-        setRotation('rotate(0deg)')
+    if(profile.settings.colorblindMode) {
+      setColors(["var(--colorblind-correct)", "var(--colorblind-partial)", "var(--colorblind-incorrect)"])
+    } else {
+      setColors([correctColor, partialColor, incorrectColor])
     }
-  }, [settings])
+    profile.settings.difficulty === 2 ? 
+      setRotation(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) % 2 === 0 ? 'rotate(90deg)' : 'rotate(-90deg)') : 
+      setRotation('rotate(0deg)')
+  }, [profile])
 
   // Check if the user has already played the daily Classic game. (Check if the results are stored in settings or localStorage)
   useEffect(() => {
@@ -96,8 +82,8 @@ const ClassicGame = () => {
       return;
     }
 
-    if(username) {
-      instance.get(`${process.env.REACT_APP_API_URL}/games/user/hasGame?username=${username}&mode=classic&date=${MM_DD_YYYY}`).then((response) => {
+    if(profile.username) {
+      instance.get(`${process.env.REACT_APP_API_URL}/games/user/hasGame?username=${profile.username}&mode=classic&date=${MM_DD_YYYY}`).then((response) => {
         if(response.data.value) {
           setStorage(true);
           setNumGuesses(response.data.games[0].numGuesses)
@@ -118,7 +104,7 @@ const ClassicGame = () => {
       setNumGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses.length)
       setPrevGuesses(JSON.parse(localStorage.getItem(MM_DD_YYYY)).guesses)
     }
-  }, [MM_DD_YYYY, username])
+  }, [MM_DD_YYYY, profile.username])
 
   // If there is no daily Classic game posted for the current day, POST one. Then, GET the Album ID of the daily Classic game.
   useEffect(() => {
@@ -243,7 +229,7 @@ const ClassicGame = () => {
 
         // this data object will be passed to the POST request to save the game data into the DB.
         let data = {
-          username: username,
+          username: profile.username,
           mode: "classic",
           date: MM_DD_YYYY,
           albumID: albumID,
@@ -270,7 +256,7 @@ const ClassicGame = () => {
               console.log("Game data saved into VINYLE_DB.");
               setShowToast(true);
               setTimeout(() => {
-                getStats(undefined, !(username === undefined), username, "Classic", setStats, onOpen);
+                getStats(undefined, !(profile.username === undefined), profile.username, "Classic", setStats, onOpen);
               }, 500);
             }).catch(function(error) {
               console.log("Game data failed to save. Error:");
@@ -304,7 +290,7 @@ const ClassicGame = () => {
         <img 
           src={(chosenAlbumID) && ((gameOver) ? `${process.env.REACT_APP_API_URL}/albums/art?id=${chosenAlbumID}&guessNum=6` : `${process.env.REACT_APP_API_URL}/albums/art?id=${chosenAlbumID}&guessNum=${numGuesses}`)}
           style={{
-            filter: (settings && (settings.difficulty > 0) ? 'grayscale(100%) ' : '') + (settings && (settings.difficulty === 2) ? 'invert(1)' : ''),
+            filter: (profile.settings.difficulty > 0 ? 'grayscale(100%) ' : '') + (profile.settings.difficulty === 2 ? 'invert(1)' : ''),
             transform: rotation
           }}
         />
@@ -418,14 +404,14 @@ const ClassicGame = () => {
       {/* View & Share Results */}
       {(colors !== undefined) &&
         <ClassicResults
-          username={username}
+          username={profile.username}
           date={MM_DD_YYYY}
           isOpen={gameOver && isOpenShareResults}
           win={win}
           numGuesses={prevGuesses.length}
           guesses={prevGuesses}
           album={albumInfo}
-          colorblindMode={settings ? settings.colorblindMode : false}
+          colorblindMode={profile.settings.colorblindMode}
           winColor={colors[0]}
           loseColor={colors[2]}
         />
@@ -440,6 +426,7 @@ const ClassicGame = () => {
       {/* Statistics Modal: Shown after game is completed */}
       <Statistics
         mode="Classic"
+        colorblindMode={profile.settings.colorblindMode}
         stats={stats}
         onClose={onClose}
         isOpen={isOpen}
