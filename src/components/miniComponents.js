@@ -153,7 +153,7 @@ export const WinLossToast = (props) => {
             status: 'error',
             duration: 5000,
             isClosable: false
-          })))
+          }))) &&  props.setShowToast(false)
   )
 }
 

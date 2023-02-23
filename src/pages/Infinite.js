@@ -35,6 +35,7 @@ const InfiniteGame = () => {
   const [albumInfo, setAlbumInfo] = useState();
   const [rotation, setRotation] = useState();
   const [colors, setColors] = useState();
+  const [showToast, setShowToast] = useState(false);
 
   const toast = useToast();
 
@@ -153,6 +154,8 @@ const InfiniteGame = () => {
   useEffect(() => {
     // if gameOver...
     if (gameOver) {
+
+      setShowToast(true);
 
       // async function to save game data.
       const saveGame = async () => {
@@ -346,6 +349,7 @@ const InfiniteGame = () => {
       <WinLossToast
         toast={toast}
         showToast={gameOver}
+        setShowToast={setShowToast}
         win={win}
         numGuesses={numGuesses}
       />

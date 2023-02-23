@@ -32,10 +32,10 @@ const ClassicGame = () => {
   const [storage, setStorage] = useState(false);
   const [stats, setStats] = useState({});
   const [guessIndex, setGuessIndex] = useState(0);
-  const [showToast, setShowToast] = useState(false);
   const [albumInfo, setAlbumInfo] = useState();
   const [rotation, setRotation] = useState();
   const [colors, setColors] = useState();
+  const [showToast, setShowToast] = useState(false);
   const [isOpenShareResults, setIsOpenShareResults] = useState(false);
 
   const toast = useToast();
@@ -419,6 +419,7 @@ const ClassicGame = () => {
       <WinLossToast
         toast={toast}
         showToast={showToast}
+        setShowToast={setShowToast}
         win={win}
         numGuesses={numGuesses}
       />
