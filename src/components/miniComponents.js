@@ -246,13 +246,18 @@ export const ClassicResults = (props) => {
     if(props.isOpen) {
       instance.get(`${process.env.REACT_APP_API_URL}/daily?date=${props.date}`).then((response) => {
         // if user is not logged in, simulate game stats to include the user's stats (if user is logged in, their stats will already be included).
+        var gameData = response.data.game;
         if(props.username === undefined) {
-          response.data.game.numPlayed = parseInt(response.data.game.numPlayed) + 1;
+          gameData.numPlayed = parseInt(gameData.numPlayed) + 1;
           (props.win) ?
-            response.data.game[`num${props.numGuesses}Guess`] = parseInt(response.data.game[`num${props.numGuesses}Guess`]) + 1 :
-            response.data.game.numLosses = parseInt(response.data.game.numLosses) + 1;
+            gameData[`num${props.numGuesses}Guess`] = parseInt(gameData[`num${props.numGuesses}Guess`]) + 1 :
+            gameData.numLosses = parseInt(gameData.numLosses) + 1;
+
+          if(gameData[`num${props.numGuesses}Guess`] > gameData.mostFrequent)
+            gameData.mostFrequent = gameData[`num${props.numGuesses}Guess`];
         }
-        setGameData(response.data.game);
+        
+        setGameData(gameData);
         if(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed")) {
           setNthPlayed(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed"));
         } else {
