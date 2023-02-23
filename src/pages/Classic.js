@@ -263,6 +263,9 @@ const ClassicGame = () => {
             });
           }
         }).catch((error) => {
+          setTimeout(() => {
+            setIsOpenShareResults(true);
+          }, 500);
           if(error.response)
             console.log(error.response.data);
           else

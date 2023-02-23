@@ -245,13 +245,20 @@ export const ClassicResults = (props) => {
     })
     if(props.isOpen) {
       instance.get(`${process.env.REACT_APP_API_URL}/daily?date=${props.date}`).then((response) => {
+        // if user is not logged in, simulate game stats to include the user's stats (if user is logged in, their stats will already be included).
+        if(props.username === undefined) {
+          response.data.game.numPlayed = parseInt(response.data.game.numPlayed) + 1;
+          (props.win) ?
+            response.data.game[`num${props.numGuesses}Guess`] = parseInt(response.data.game[`num${props.numGuesses}Guess`]) + 1 :
+            response.data.game.numLosses = parseInt(response.data.game.numLosses) + 1;
+        }
         setGameData(response.data.game);
-      if(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed")) {
-        setNthPlayed(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed"));
-      } else {
-        setNthPlayed(response.data.game.numPlayed);
-        localStorage.setItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed", response.data.game.numPlayed);
-      }
+        if(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed")) {
+          setNthPlayed(localStorage.getItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed"));
+        } else {
+          setNthPlayed(response.data.game.numPlayed);
+          localStorage.setItem(props.username + response.data.game.date.slice(0,10) + "nthPlayed", response.data.game.numPlayed);
+        }
       })
     }
   }, [props.isOpen])
@@ -334,7 +341,7 @@ export const ClassicResults = (props) => {
                       bgColor={(index===6) ? props.loseColor : props.winColor}
                       width={(gameData) ? `${Math.max((item / gameData.mostFrequent) * 300, 20)}px` : "300px"}
                       value={100}
-                      hasStripe={(props.win) ? props.guesses - 1 === index : index === 6}
+                      hasStripe={(props.win) ? props.numGuesses - 1 === index : index === 6}
                     />
                     <Box
                       m="-21px 0px 0px 5px"
