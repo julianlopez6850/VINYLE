@@ -348,7 +348,7 @@ const InfiniteGame = () => {
       {/* WIN/LOSS TOAST NOTIFICATIONS */}
       <WinLossToast
         toast={toast}
-        showToast={gameOver}
+        showToast={showToast}
         setShowToast={setShowToast}
         win={win}
         numGuesses={numGuesses}
