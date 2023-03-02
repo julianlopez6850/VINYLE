@@ -41,6 +41,14 @@ const ClassicGame = () => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // this event listener will stop an enter press from re-firing a previously clicked button.
+  window.addEventListener('keydown', function (e) {
+    if ((e.keyIdentifier === 'U+000A' || e.keyIdentifier === 'Enter' || e.keyCode === 13) && e.target.nodeName !== 'BODY') {
+      e.preventDefault();
+      return false;
+    }
+  }, true);
+
   useEffect(() => {
     toast.closeAll();
 
@@ -279,6 +287,16 @@ const ClassicGame = () => {
       })
     }
   }, [gameOver, chosenAlbumID])
+
+  // this will handle any enter key press to call checkGuess() function.
+  useEffect(() => {
+    const keyPressed = (e) => {
+      if (e.key === "Enter")
+        checkGuess();
+    };
+    document.addEventListener('keydown', keyPressed, true);
+    return () => document.removeEventListener('keydown', keyPressed, true);
+  });
 
   return (
     <div className="page">

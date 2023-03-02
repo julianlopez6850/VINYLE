@@ -39,6 +39,14 @@ const InfiniteGame = () => {
 
   const toast = useToast();
 
+  // this event listener will stop an enter press from re-firing a previously clicked button.
+  window.addEventListener('keydown', function (e) {
+    if ((e.keyIdentifier === 'U+000A' || e.keyIdentifier === 'Enter' || e.keyCode === 13) && e.target.nodeName !== 'BODY') {
+      e.preventDefault();
+      return false;
+    }
+  }, true);
+
   useEffect(() => {
     toast.closeAll();
     
@@ -207,6 +215,16 @@ const InfiniteGame = () => {
     profile.settings.difficulty === 2 && setRotation(Math.floor(Math.random() * Number.MAX_SAFE_INTEGER) % 2 === 0 ? 'rotate(90deg)' : 'rotate(-90deg)')
     toast.closeAll();
   }
+
+  // this will handle any enter key press to call checkGuess() function.
+  useEffect(() => {
+    const keyPressed = (e) => {
+      if (e.key === "Enter")
+        checkGuess();
+    };
+    document.addEventListener('keydown', keyPressed, true);
+    return () => document.removeEventListener('keydown', keyPressed, true);
+  });
 
   return (
     <div className="page">
