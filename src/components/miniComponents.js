@@ -17,6 +17,7 @@ import {
   Divider,
   Skeleton,
   useToast,
+  useMediaQuery,
 } from '@chakra-ui/react'
 import Select from "react-select";
 import Countdown from '../helpers/countdown';
@@ -74,6 +75,9 @@ export const HistoryButton = (props) => {
 }
 
 export const AlbumSelect = (props) => {
+
+  const [isSmallerThan750] = useMediaQuery('(max-width: 750px)');
+
   return (
     <Select
       className="select"
@@ -81,8 +85,13 @@ export const AlbumSelect = (props) => {
       value={props.value}
       onChange={props.onChange}
       styles={{
+        container: (baseStyles) => ({
+          ...baseStyles,
+          maxWidth: isSmallerThan750 ? '300px' : '',
+        }),
         control: (baseStyles) => ({
           ...baseStyles,
+          width:isSmallerThan750 ? '300px' : '',
           backgroundColor: 'var(--gray-700)',
           borderColor: 'black',
           '&:hover': {
@@ -182,13 +191,40 @@ export const GuessRow = (props) => {
 }
 
 export const MainTableHeader = (props) => {
+
+  const [isSmallerThan1200] = useMediaQuery('(max-width: 1200px)');
+  const [isSmallerThan1000] = useMediaQuery('(max-width: 1000px)');
+  const [isSmallerThan750] = useMediaQuery('(max-width: 750px)');
+  const [isSmallerThan500] = useMediaQuery('(max-width: 500px)');
+  const [subtractWidth, setSubtractWidth] = useState(0);
+  const [fontSize, setFontSize] = useState(16);
+
+  useEffect(() => {
+    if(isSmallerThan500) {
+      setSubtractWidth(760);
+      setFontSize(9);
+    } else if(isSmallerThan750) {
+      setSubtractWidth(600);
+      setFontSize(10);
+    } else if(isSmallerThan1000) {
+      setSubtractWidth(400);
+      setFontSize(10);
+    } else if(isSmallerThan1200) {
+      setSubtractWidth(200);
+      setFontSize(12);
+    } else {
+      setSubtractWidth(0);
+      setFontSize(12);
+    }
+  }, [isSmallerThan500, isSmallerThan750, isSmallerThan1000, isSmallerThan1200, subtractWidth]);
+
   return (
       props.columnHeaders &&
-        <Table variant='unstyled' size='md' mt={props.mt} mb={props.mb}>
+        <Table variant='unstyled' size='md' w={(parseInt(props.w) - subtractWidth) + "px"} mt={props.mt} mb={props.mb}>
           <Thead>
             <Tr>
               {props.columnHeaders.map((header, index) => {
-                return <Th key={index} p="0" textAlign="center" color='white' w={header.width}>{header.text}</Th>
+                return <Th key={index} p="0" textAlign="center" color='white' w={header.width} fontSize={fontSize}>{header.text}</Th>
               })}
             </Tr>
           </Thead>
@@ -197,31 +233,70 @@ export const MainTableHeader = (props) => {
 }
 
 export const MainGuessRow = (props) => {
+
+  const [isSmallerThan1200] = useMediaQuery('(max-width: 1200px)');
+  const [isSmallerThan1000] = useMediaQuery('(max-width: 1000px)');
+  const [isSmallerThan750] = useMediaQuery('(max-width: 750px)');
+  const [isSmallerThan500] = useMediaQuery('(max-width: 500px)');
+  const [subtractWidth, setSubtractWidth] = useState(0);
+  const [subtractHeight, setSubtractHeight] = useState(0);
+  const [subtractPadding, setSubtractPadding] = useState(0);
+  const [fontSize, setFontSize] = useState(16);
+
+  useEffect(() => {
+    if(isSmallerThan500) {
+      setSubtractWidth(760);
+      setSubtractHeight(15);
+      setSubtractPadding(20);
+      setFontSize(9);
+    } else if(isSmallerThan750) {
+      setSubtractWidth(600);
+      setSubtractHeight(15);
+      setSubtractPadding(20);
+      setFontSize(10);
+    } else if(isSmallerThan1000) {
+      setSubtractWidth(400);
+      setSubtractHeight(10);
+      setSubtractPadding(10);
+      setFontSize(12);
+    } else if(isSmallerThan1200) {
+      setSubtractWidth(200);
+      setSubtractHeight(0);
+      setSubtractPadding(5);
+      setFontSize(16);
+    } else {
+      setSubtractWidth(0);
+      setSubtractHeight(0);
+      setSubtractPadding(0);
+      setFontSize(16);
+    }
+  }, [isSmallerThan500, isSmallerThan750, isSmallerThan1000, isSmallerThan1200, subtractWidth]);
+
   return (
-    <Box width={props.w} height={props.h} marginBlock={props.mBlock}>
-      <HStack spacing="0px">
+    <Box w={(parseInt(props.w) - subtractWidth) + "px"} h={(parseInt(props.h) - subtractHeight) + "px"} marginBlock={props.mBlock}>
+      <HStack spacing="0px" height={"inherit"}>
         {props.guessNum &&
-          <Box width={props.guessW} height={props.h} borderLeftRadius={props.borderRadius} bgColor="var(--gray-600)" textAlign="center">
-            <Text pt={props.pt}>
+          <Box w={parseInt(props.guessW) - (subtractWidth / 33) + "px"} h={"inherit"} borderLeftRadius={props.borderRadius} bgColor="var(--gray-600)" display="flex" alignItems="center" justifyContent="center">
+            <Text fontSize={fontSize}>
               {props.guessNum}
             </Text>
           </Box>
         }
-        <Box w="1px" h={props.h} background="white"/>
-        <Box width={props.albumW} height={props.h} bgColor={props.albumBGC}>
-          <Text pt={props.pt} pl={props.pl} align="left">
+        <Box w="1px" h={"inherit"} background="white"/>
+        <Box w={parseInt(props.albumW) - (subtractWidth / 2.25) + "px"} h={"inherit"} bgColor={props.albumBGC} display="flex" alignItems="center">
+          <Text paddingInline={parseInt(props.pl) - subtractPadding + "px"} align="left" fontSize={fontSize}>
             {props.album}
           </Text>
         </Box>
-        <Box w="1px" h={props.h} background="white"/>
-        <Box width={props.artistW} height={props.h} bgColor={props.artistBGC}>
-          <Text pt={props.pt} pl={props.pl} align="left">
+        <Box w="1px" h={"inherit"} background="white"/>
+        <Box w={parseInt(props.artistW) - (subtractWidth / 2.5) + "px"} h={"inherit"} bgColor={props.artistBGC} display="flex" alignItems="center">
+          <Text paddingInline={parseInt(props.pl) - subtractPadding + "px"} align="left" fontSize={fontSize}>
             {props.artist}
           </Text>
         </Box>
-        <Box w="1px" h={props.h} background="white"/>
-        <Box width={props.releaseW} height={props.h} borderRightRadius={props.borderRadius} bgColor={props.releaseBGC}>
-          <Text align="center"  pt={props.pt}>
+        <Box w="1px" h={"inherit"} background="white"/>
+        <Box w={parseInt(props.releaseW) - (subtractWidth / 9) + "px"} h={"inherit"} borderRightRadius={props.borderRadius} bgColor={props.releaseBGC} display="flex" alignItems="center" justifyContent="center">
+          <Text align="center" fontSize={fontSize}>
             {props.releaseDir}{props.release}
           </Text>
         </Box>
