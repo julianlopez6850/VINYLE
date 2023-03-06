@@ -28,6 +28,7 @@ import {
   Image,
   Tooltip,
   useToast,
+  useMediaQuery,
 } from "@chakra-ui/react";
 
 import {
@@ -53,9 +54,39 @@ const History = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  // media queries
+  const [isSmallerThan900] = useMediaQuery('(max-width: 900px)');
+  const [isSmallerThan700] = useMediaQuery('(max-width: 700px)');
+  const [isSmallerThan550] = useMediaQuery('(max-width: 550px)');
+
+  // these states will be used to change UI depending on the above media queries 
+  const [rowWidth, setRowWidth] = useState("800px");
+  const [subtractPadding, setSubtractPadding] = useState(0);
+  const [historyFontSize, setHistoryFontSize] = useState("16px");
+
   useEffect(() => {
     toast.closeAll();
   }, [])
+
+  useEffect(() => {
+    if(isSmallerThan550) {
+      setRowWidth("350px");
+      setHistoryFontSize("8px");
+      setSubtractPadding(10);
+    } else if(isSmallerThan700) {
+      setRowWidth("450px");
+      setHistoryFontSize("12px");
+      setSubtractPadding(10);
+    } else if(isSmallerThan900) {
+      setRowWidth("600px");
+      setHistoryFontSize("16px");
+      setSubtractPadding(0);
+    } else {
+      setRowWidth("800px");
+      setHistoryFontSize("16px");
+      setSubtractPadding(0);
+    }
+  }, [isSmallerThan900, isSmallerThan700, isSmallerThan550])
 
   // update colors depending on settings colorblind mode state
   useEffect(() => {
@@ -146,7 +177,7 @@ const History = () => {
         </HStack>
         
         {/* Games History Table */}
-        <TableContainer width={800} boxShadow="0px 0px 10px black">
+        <TableContainer width={rowWidth} fontSize={historyFontSize} boxShadow="0px 0px 10px black">
           <Table variant='unstyled' size='md' >
             {/* For each game... */}
             {gamesList.map((game, index) =>
@@ -161,19 +192,20 @@ const History = () => {
                 borderTop={(index === 0) ? "" : "1px solid white"}
               >
                 <Tr>
-                  <Td display="flex" flexDir="row" pos="relative">
+                  <Td display="flex" flexDir="row" pos="relative" p={20 - subtractPadding + "px"}>
                     {/* Display Album art. */}
-                    <Image src={game.albumArt} w="60px" h="60px" mr="20px"/>
+                    <Image src={game.albumArt} w="60px" h="60px" mr={20 - (subtractPadding / 2) + "px"}/>
 
                     {/* Display number of guesses, or X if the player lossed that game. */}
                     <Box
                       w="23px" h="23px"
                       borderRadius="23px"
                       border={"2px solid " + (game.win ? colors[0] : colors[1])}
-                      bottom="2" left="70"
+                      bottom={8 - (subtractPadding / 2) + "px"} left={70 - subtractPadding + "px"}
                       align="center" justifyContent="center"
                       pos="absolute"
                       bg="var(--background-color)"
+                      fontSize={"16px"}
                     >
                       <Text lineHeight="1">
                         {(game.win) ? game.numGuesses : "X"}
@@ -183,14 +215,14 @@ const History = () => {
                     {/* Display Album name, artist, and release year. */}
                     <VStack align="left" spacing="0">
                       {[game.album,game.artists,game.releaseYear].map((item, index) => {
-                        return <Text key={index} fontWeight={(index === 0) && "bold"}>
+                        return <Text key={index} fontWeight={(index === 0) && "bold"} h={20 - (subtractPadding / 2) + "px"}>
                             {item}
                           </Text>
                       })}
                     </VStack>
 
                   </Td>
-                  <Td>
+                  <Td minW="80px" p="0px" pr={20 - subtractPadding + "px"}>
                     {/* Display Game mode and date. */}
                     <VStack align="center" spacing="0">
                       {[game.mode,game.date].map((item, index) => {
